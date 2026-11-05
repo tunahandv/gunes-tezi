@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Güneş Döngüleri 23–25 boyunca güneş patlamaları, güneş lekeleri ve jeomanyetik fırtınaların zaman serisi analizi. Tunahan İnci, lisans tezi.">
+<meta name="author" content="Tunahan İnci">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='18' fill='%23ffb54a'/%3E%3Ccircle cx='32' cy='32' r='27' fill='none' stroke='%23ffb54a' stroke-opacity='.35' stroke-width='4'/%3E%3C/svg%3E">
+<title>Güneş Döngüleri 23–25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Düzen: tam genişlikte 3B Güneş–Dünya sahnesi, ardından sunum sırasıyla dizilmiş bölümler (soru → veri sorunu → Güneş → Dünya → vaka → sonuç).
+   Tek görünüm: uzay karanlığı. Sıcak tonlar Güneş tarafını, soğuk tonlar Dünya tarafını taşır. */
+:root{
+  --uzay:#04060d; --panel:#0a1020; --panel2:#0e1730; --cizgi:#1c2642; --metin:#e8ecf6; --soluk:#8f99b6; --silik:#5d6785;
+  --gunes:#ffb54a; --gunes-koyu:#e8862a; --aurora:#5fd4c4; --dst:#7aa7ff;
+  --cA:#5b74e6; --cB:#3fa0c9; --cC:#4cc38a; --cM:#f5a524; --cX:#f0705a;
+  --f-baslik:"Syne","Segoe UI",system-ui,sans-serif;
+  --f-govde:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-veri:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--uzay);color:var(--metin);font-family:var(--f-govde);font-size:17px;line-height:1.62;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--uzay)}
+h1,h2,h3{font-family:var(--f-baslik);line-height:1.12;margin:0;text-wrap:balance}
+p{margin:0}
+a{color:var(--gunes)}
+.veri{font-family:var(--f-veri);font-variant-numeric:tabular-nums}
+.kas{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.etiket{font-family:var(--f-veri);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--soluk)}
+
+/* Üst menü */
+nav.ust{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--uzay) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--cizgi)}
+nav.ust .kas{display:flex;align-items:center;gap:14px;padding-block:8px}
+nav.ust .marka{font-family:var(--f-baslik);font-weight:700;font-size:.95rem;white-space:nowrap}
+nav.ust ul{list-style:none;margin:0;padding:0;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+nav.ust a{display:block;padding:5px 10px;border-radius:6px;color:var(--soluk);text-decoration:none;font-size:.86rem;white-space:nowrap}
+nav.ust a:hover,nav.ust a.aktif{color:var(--metin);background:var(--panel2)}
+button{font:inherit;color:inherit}
+.dugme{background:var(--panel2);border:1px solid var(--cizgi);color:var(--metin);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:.86rem;white-space:nowrap}
+.dugme:hover{border-color:var(--gunes)}
+.dugme.secili{background:var(--gunes);color:#1a1004;border-color:var(--gunes)}
+:focus-visible{outline:2px solid var(--gunes);outline-offset:2px}
+
+/* Sahne */
+header.sahne{position:relative;height:clamp(520px,78vh,780px);overflow:hidden;border-bottom:1px solid var(--cizgi)}
+#sahne{position:absolute;inset:0}
+.karartma{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(4,6,13,.82) 0%,rgba(4,6,13,.5) 34%,rgba(4,6,13,0) 58%)}
+#sahne canvas{display:block;width:100%;height:100%;cursor:grab}
+#sahne canvas:active{cursor:grabbing}
+.sahne-yazi{position:absolute;left:0;right:0;top:0;pointer-events:none}
+.sahne-yazi .kas{padding-block:clamp(28px,6vh,64px) 0;display:grid;gap:14px;max-width:1120px}
+.sahne-yazi h1{font-size:clamp(2rem,5.4vw,4.1rem);font-weight:800;letter-spacing:-.01em;max-width:13ch}
+.sahne-yazi h1 em{font-style:normal;color:var(--gunes)}
+.sahne-yazi p.alt{color:var(--soluk);max-width:48ch;font-size:1.02rem}
+.etiket3b{position:absolute;font-family:var(--f-veri);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--soluk);pointer-events:none;transform:translate(-50%,0);white-space:nowrap}
+.kontrol{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,var(--uzay) 38%)}
+.kontrol .kas{padding-block:46px 18px;display:grid;grid-template-columns:auto 1fr auto;gap:10px 18px;align-items:center}
+.kontrol .yil{font-family:var(--f-baslik);font-size:2.4rem;font-weight:800;color:var(--gunes);min-width:4ch;font-variant-numeric:tabular-nums}
+.kontrol input[type=range]{width:100%;accent-color:var(--gunes)}
+.kontrol .dugmeler{display:flex;gap:6px}
+.yil-ozet{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:.86rem;color:var(--soluk)}
+.yil-ozet b{color:var(--metin);font-family:var(--f-veri);font-weight:500}
+.yil-ozet .buyuk{color:var(--metin)}
+.ipucu-sahne{grid-column:1/-1;font-size:.78rem;color:var(--silik)}
+
+/* Bölümler */
+section.bolum{padding-block:72px 24px;scroll-margin-top:56px}
+.bolum-bas{display:grid;gap:10px;margin-bottom:26px;max-width:760px}
+.bolum-bas h2{font-size:clamp(1.6rem,3.4vw,2.35rem);font-weight:700}
+.bolum-bas p{color:var(--soluk);max-width:65ch}
+.iki{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.35fr);gap:28px;align-items:start}
+.iki > *{min-width:0}
+.metin{display:grid;gap:14px;max-width:62ch}
+.metin p{color:#c9d0e2}
+.metin strong{color:var(--metin)}
+.kutu{background:var(--panel);border:1px solid var(--cizgi);border-radius:12px;padding:18px 18px 14px;display:grid;gap:10px;min-width:0}
+.kutu h3{font-size:1.02rem;font-weight:700;font-family:var(--f-govde)}
+.kutu .not{font-size:.8rem;color:var(--silik)}
+.grafik{position:relative;width:100%;min-height:120px}
+.grafik svg{display:block;width:100%;height:auto;overflow:visible}
+.grafik text{font-family:var(--f-veri);font-size:11px}
+.grafik text:not([fill]){fill:var(--soluk)}
+.ipucu{position:absolute;pointer-events:none;background:var(--panel2);border:1px solid var(--cizgi);border-radius:8px;padding:7px 10px;font-size:.78rem;line-height:1.45;white-space:nowrap;z-index:5;box-shadow:0 6px 24px rgba(0,0,0,.45)}
+.lejant{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.8rem;color:var(--soluk)}
+.lejant span{display:inline-flex;align-items:center;gap:6px}
+.lejant i{display:inline-block;width:12px;height:12px;border-radius:2px}
+.lejant i.cizgi{height:3px;border-radius:2px}
+.sekmeler{display:flex;flex-wrap:wrap;gap:6px}
+
+/* Sorular */
+.sorular{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.soru{border-top:2px solid var(--cizgi);padding-top:12px;display:grid;gap:6px}
+.soru .no{font-family:var(--f-veri);color:var(--gunes);font-size:.82rem}
+.soru.dunya .no{color:var(--aurora)}
+.soru h3{font-size:1.02rem;font-family:var(--f-govde);font-weight:600}
+.soru p{font-size:.88rem;color:var(--soluk)}
+
+/* Veri kaynakları */
+.kaynaklar{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.kaynak{background:var(--panel);border:1px solid var(--cizgi);border-radius:12px;padding:16px;display:grid;gap:6px;align-content:start}
+.kaynak .sayi{font-family:var(--f-baslik);font-size:1.9rem;font-weight:700;font-variant-numeric:tabular-nums}
+.kaynak p{font-size:.86rem;color:var(--soluk)}
+
+/* Bulgu şeridi */
+.bulgu{border-left:3px solid var(--gunes);padding:4px 0 4px 16px;display:grid;gap:4px}
+.bulgu.dunya{border-color:var(--aurora)}
+.bulgu .buyuk-sayi{font-family:var(--f-baslik);font-size:clamp(2.2rem,5vw,3.2rem);font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.bulgu p{color:var(--soluk);font-size:.92rem}
+
+/* Tablo */
+.tablo{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{padding:8px 10px;border-bottom:1px solid var(--cizgi);text-align:left;white-space:nowrap}
+th{font-family:var(--f-veri);font-weight:500;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--soluk)}
+td.sag,th.sag{text-align:right}
+tr.vurgu td{background:color-mix(in srgb,var(--gunes) 10%,transparent)}
+.rozet{display:inline-block;font-family:var(--f-veri);font-size:.74rem;padding:1px 7px;border-radius:99px;border:1px solid currentColor}
+
+/* Sonuç */
+.sonuclar{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.sinir{display:grid;gap:8px;padding-left:1.1em;margin:0;color:#c9d0e2}
+.defterler{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px 22px;font-size:.88rem}
+.defterler div{display:flex;gap:10px}
+.defterler .veri{color:var(--gunes);min-width:2ch}
+footer{border-top:1px solid var(--cizgi);margin-top:56px;padding-block:22px 40px;color:var(--silik);font-size:.82rem}
+
+/* Sunum modu */
+body.sunum section.bolum{min-height:calc(100vh - 50px);display:flex;flex-direction:column;justify-content:center}
+body.sunum{scroll-snap-type:y proximity}
+body.sunum section.bolum,body.sunum header.sahne{scroll-snap-align:start}
+.sayac{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:25;background:var(--panel2);border:1px solid var(--cizgi);border-radius:8px;padding:6px 10px;font-family:var(--f-veri);font-size:.8rem;color:var(--soluk)}
+
+@media (max-width:860px){
+  .iki{grid-template-columns:1fr}
+  nav.ust .marka{display:none}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .kontrol .kas{grid-template-columns:auto 1fr}
+  .kontrol .dugmeler{grid-column:1/-1}
+  .kontrol .yil{font-size:1.9rem}
+  .sahne-yazi p.alt{display:none}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+
+<nav class="ust" aria-label="Bölümler">
+  <div class="kas">
+    <span class="marka">Güneş Döngüleri 23–25</span>
+    <ul id="menu">
+      <li><a href="#soru">Soru</a></li>
+      <li><a href="#veri">Veri</a></li>
+      <li><a href="#sorun">Veri sorunu</a></li>
+      <li><a href="#gunes">Güneş</a></li>
+      <li><a href="#dunya">Dünya'ya etki</a></li>
+      <li><a href="#vaka">Vakalar</a></li>
+      <li><a href="#sonuc">Sonuç</a></li>
+      <li><a href="#yontem">Yöntem</a></li>
+      <li><a href="proje-defteri.html">Proje defteri</a></li>
+    </ul>
+    <button class="dugme" id="sunumDugme" type="button">Sunum modu</button>
+  </div>
+</nav>
+
+<header class="sahne" id="giris">
+  <div id="sahne" aria-label="Güneş ve Dünya'nın üç boyutlu sahnesi. Seçilen yılın X sınıfı patlamaları Güneş üzerinde gösterilir."></div>
+  <div class="karartma"></div>
+  <div class="sahne-yazi">
+    <div class="kas">
+      <span class="etiket">Lisans tezi · Tunahan İnci · 2026</span>
+      <h1>Güneşin 26 yılı, <em>Dünya'ya</em> yansıması</h1>
+      <p class="alt">Güneş Döngüleri 23–25 boyunca güneş patlamaları, güneş lekeleri ve jeomanyetik fırtınaların zaman serisi analizi. 2000–2025.</p>
+    </div>
+  </div>
+  <div class="kontrol">
+    <div class="kas">
+      <span class="yil" id="yilYazi">2003</span>
+      <input type="range" id="yilKaydir" min="2000" max="2025" step="1" value="2003" aria-label="Yıl seç">
+      <div class="dugmeler">
+        <button class="dugme" id="oynat" type="button">Oynat</button>
+        <button class="dugme" id="tumu" type="button">Tüm yıllar</button>
+      </div>
+      <div class="yil-ozet" id="yilOzet"></div>
+      <div class="ipucu-sahne">Sahneyi sürükleyerek döndürebilirsin. Noktalar X sınıfı patlamaların Güneş diskindeki konumu. Parçacık bulutu, yılın en büyük patlamasından çıkan bir koronal kütle atımını temsil eder; yönü patlamanın konumuna göre değişir.</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="bolum" id="soru">
+    <div class="kas">
+      <div class="bolum-bas">
+        <span class="etiket">01 · Araştırma sorusu</span>
+        <h2>Güneş aktivitesi nasıl değişiyor ve bu değişim Dünya'ya nasıl yansıyor?</h2>
+        <p>Güneş yaklaşık 11 yıllık döngülerle sakinleşip hareketleniyor. Tez, 2000–2025 arasındaki üç döngüyü (23, 24, 25) güneş lekeleri, X-ışını patlamaları ve Dünya'daki jeomanyetik fırtınalar üzerinden karşılaştırıyor.</p>
+      </div>
+      <div class="sorular">
+        <div class="soru"><span class="no">S1</span><h3>Döngüler arası fark</h3><p>Patlama sayısı ve şiddeti döngüden döngüye nasıl değişiyor?</p></div>
+        <div class="soru"><span class="no">S2</span><h3>İlişki ve gecikme</h3><p>Leke sayısıyla patlamalar ve fırtınalar arasında zaman gecikmesi var mı?</p></div>
+        <div class="soru"><span class="no">S3</span><h3>Şiddet dağılımı</h3><p>Patlama büyüklükleri güç yasasına uyuyor mu?</p></div>
+        <div class="soru"><span class="no">S4</span><h3>Modelleme</h3><p>SARIMA, Prophet ve LSTM basit referans modelleri geçebiliyor mu?</p></div>
+        <div class="soru dunya"><span class="no">S5</span><h3>Dünya'ya etki</h3><p>Büyük patlamalardan sonra fırtına olasılığı ne kadar artıyor?</p></div>
+      </div>
+      <p class="metin" style="margin-top:18px;color:var(--silik);font-size:.86rem">Bu sitede S1, S2 (ön çalışma) ve S5'in sonuçları var. S3 ve S4 sıradaki aşamada.</p>
+    </div>
+  </section>
+
+  <section class="bolum" id="veri">
+    <div class="kas">
+      <div class="bolum-bas">
+        <span class="etiket">02 · Veri</span>
+        <h2>Dört kaynak, 26 yıl</h2>
+        <p>Tüm veriler resmi kaynaklardan Colab defterleriyle indirildi. Ham veri elle düzenlenmedi; her dosyanın adresi ve özeti kayıt altında.</p>
+      </div>
+      <div class="kaynaklar" id="kaynaklar"></div>
+    </div>
+  </section>
+
+  <section class="bolum" id="sorun">
+    <div class="kas">
+      <div class="bolum-bas">
+        <span class="etiket">03 · Veri sorunu ve çözümü</span>
+        <h2>Ham patlama listesi döngüleri karşılaştırmaya uygun değildi</h2>
+        <p>İlk grafikte Döngü 25, daha az lekeye rağmen Döngü 23'ten iki kat fazla büyük patlama gösteriyordu. Sebebi Güneş değil, ölçüm zinciriydi.</p>
+      </div>
+      <div class="iki">
+        <div class="metin">
+          <p><strong>1. Ölçek farkı.</strong> NOAA'nın operasyonel listesi 2020'ye kadar eski uydularda 0,7 çarpanı kullanıyordu. Bilimsel kalite verisiyle her patlamayı eşleştirince oran yıllar boyunca 1/0,7 = 1,43 çıktı, 2020'den sonra 1'e indi. Geçiş tarihi bu veriden tespit edildi.</p>
+          <p><strong>2. Uydular arası kalibrasyon.</strong> 12 GOES uydusu aynı patlamayı farklı ölçüyor. Ortak gözlemlerden her uydunun GOES-16'ya göre katsayısı çıkarıldı. GOES-16 / GOES-15 için bulunan 1,08, Hudson ve ark. (2023) sonucuyla (1,10 ± 0,04) uyumlu.</p>
+          <p><strong>3. Eski–yeni köprüsü.</strong> 2009'dan önceki uydular sonrakilerle yalnızca 2009 sonbaharında birkaç hafta çakışıyor. Bu köprü sabit fark düzeltmesiyle ölçüldü ve belirsizliği senaryolarla raporlandı.</p>
+          <p><strong>4. Doymuş patlamalar.</strong> En büyük 4 patlamada dedektör doydu. Bunlar alt sınır (≥) olarak işaretlendi.</p>
+        </div>
+        <div class="kutu">
+          <h3>Operasyonel ve bilimsel kalite akı oranı</h3>
+          <div class="grafik" id="gOlcek" style="aspect-ratio:16/9"></div>
+          <div class="lejant"><span><i class="cizgi" style="background:var(--gunes)"></i>Yıllık medyan</span><span><i style="background:color-mix(in srgb,var(--gunes) 25%,transparent)"></i>Çeyrekler arası</span><span><i class="cizgi" style="background:var(--soluk)"></i>1/0,7 = 1,43 ve 1,00</span></div>
+        </div>
+      </div>
+      <div class="kutu" style="margin-top:22px">
+        <h3>GOES uydularının kapsamı ve GOES-16 ölçeğine göre katsayıları</h3>
+        <div class="grafik" id="gUydu"></div>
+        <p class="not">Katsayı 1'den küçükse uydu GOES-16'dan düşük ölçüyor; akısı bu sayıya bölünür. Eski grubun (GOES 8–12) katsayıları 2009 köprüsünden (S4 senaryosu) gelir. Koyu turuncu bant: eski ve yeni uyduların tek ortak dönemi.</p>
+      </div>
+      <div class="kutu" style="margin-top:22px">
+        <h3>Her düzeltme adımında Döngü 25'in diğer döngülere oranı (1000 leke başına M+X)</h3>
+        <div class="grafik" id="gAsama"></div>
+        <div class="lejant"><span><i style="background:var(--gunes)"></i>Döngü 25 / Döngü 24</span><span><i style="background:var(--cB)"></i>Döngü 25 / Döngü 23</span><span><i class="cizgi" style="background:var(--soluk)"></i>Eşitlik (1,0)</span></div>
+        <p class="not">Düzeltme yapılmasaydı Döngü 25 / Döngü 24 oranı 2,39 olarak, yani 1,7 kat abartılmış raporlanacaktı.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bolum" id="gunes">
+    <div class="kas">
+      <div class="bolum-bas">
+        <span class="etiket">04 · Güneş tarafı (S1, S2)</span>
+        <h2>Döngü 24 yalnızca az lekeli değildi, leke başına da az patlama üretti</h2>
+        <p>Homojenleştirilmiş listede 67.466 patlama var. Döngüleri adil karşılaştırmak için patlama sayısı, döngü boyunca toplanan leke sayısına bölündü.</p>
+      </div>
+      <div class="kutu">
+        <h3>Aylık M ve X sınıfı patlama sayısı ve güneş lekesi sayısı</h3>
+        <div class="sekmeler" role="group" aria-label="Patlama listesi">
+          <button class="dugme secili" id="ayNihai" type="button">Düzeltilmiş liste</button>
+          <button class="dugme" id="ayHam" type="button">Ham liste (HEK)</button>
+        </div>
+        <div class="grafik" id="gAylik"></div>
+        <div class="lejant"><span><i style="background:var(--cB)"></i>M+X patlama / ay</span><span><i style="background:var(--cX)"></i>X patlama / ay</span><span><i class="cizgi" style="background:var(--gunes)"></i>Leke sayısı (13 ay düzleştirilmiş, sağ eksen)</span></div>
+      </div>
+      <div class="iki" style="margin-top:22px">
+        <div class="kutu">
+          <h3>1000 leke başına M+X patlama</h3>
+          <div class="grafik" id="gDongu"></div>
+          <p class="not">Döngü 23 için çubuk referans senaryo (S4), dikey çizgi ise diğer köprü varsayımlarının aralığı (S0–S2). Döngü 23 bu pencerede 2000'den başlıyor; yükseliş evresi eksik.</p>
+        </div>
+        <div class="metin" id="gunesMetin"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bolum" id="dunya">
+    <div class="kas">
+      <div class="bolum-bas">
+        <span class="etiket">05 · Dünya'ya etki (S5)</span>
+        <h2>Patlama büyüdükçe fırtına olasılığı artıyor, ama büyük patlamaların çoğu fırtına getirmiyor</h2>
+        <p>Her patlamadan sonraki 12–96 saatte Dst indeksi incelendi. Karşılaştırma için her olay için aynı dönemden rastgele zamanlar seçildi; böylece güneş döngüsünün etkisi ayıklandı.</p>
+      </div>
+      <div class="iki">
+        <div class="kutu">
+          <h3>Şiddetli fırtına olasılığı (Dst ≤ −100 nT)</h3>
+          <div class="grafik" id="gOlasilik"></div>
+          <div class="lejant"><span><i style="background:var(--aurora)"></i>Patlamadan sonra</span><span><i style="background:var(--silik)"></i>Rastgele zaman</span></div>
+        </div>
+        <div class="metin" id="dunyaMetin"></div>
+      </div>
+      <div class="kutu" style="margin-top:22px">
+        <h3>Patlamadan önce ve sonra Dst: üst üste bindirilmiş olay analizi</h3>
+        <div class="sekmeler" id="seaSekme" role="group" aria-label="Patlama sınıfı"></div>
+        <div class="grafik" id="gSea"></div>
+        <div class="lejant"><span><i class="cizgi" style="background:var(--dst)"></i>Medyan Dst</span><span><i style="background:color-mix(in srgb,var(--dst) 22%,transparent)"></i>Çeyrekler arası</span><span><i style="background:color-mix(in srgb,var(--soluk) 30%,transparent)"></i>Rastgele zamanların %95 aralığı</span></div>
+        <p class="not">Eğri gri bandın altına iniyorsa düşüş rastlantı değildir. X sınıfında etki 2. günden itibaren belirginleşiyor; bu süre koronal kütle atımlarının Güneş'ten Dünya'ya yolculuk süresiyle uyumlu.</p>
+      </div>
+      <div class="iki" style="margin-top:22px">
+        <div class="kutu">
+          <h3>Fırtına günleri ve leke sayısı</h3>
+          <div class="grafik" id="gYillik"></div>
+          <div class="lejant"><span><i style="background:var(--cX)"></i>Şiddetli (Dst ≤ −100)</span><span><i style="background:var(--dst)"></i>Orta (−100 &lt; Dst ≤ −50)</span><span><i class="cizgi" style="background:var(--gunes)"></i>Leke sayısı</span></div>
+        </div>
+        <div class="kutu">
+          <h3>Leke sayısının ardından gelme süresi</h3>
+          <div class="grafik" id="gGecikme"></div>
+          <div class="lejant"><span><i class="cizgi" style="background:var(--cB)"></i>M+X patlama</span><span><i class="cizgi" style="background:var(--dst)"></i>Orta fırtına günü</span><span><i class="cizgi" style="background:var(--cX)"></i>Şiddetli fırtına günü</span></div>
+          <p class="not">13 ay düzleştirilmiş aylık seriler. Pozitif gecikme: seri leke sayısını geriden izliyor. Anlamlılık testi S2 aşamasında yapılacak.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bolum" id="vaka">
+    <div class="kas">
+      <div class="bolum-bas">
+        <span class="etiket">06 · Vaka çalışmaları</span>
+        <h2>En büyük patlama, en büyük fırtınayı üretmedi</h2>
+        <p>Dünya'yı etkileyen, patlamanın kendisinden çok onunla fırlatılan koronal kütle atımının yönü ve manyetik yapısıdır. İki tarihi dönem ve en büyük fırtınaların kaynakları bunu gösteriyor.</p>
+      </div>
+      <div class="kutu">
+        <div class="sekmeler" role="group" aria-label="Vaka">
+          <button class="dugme secili" id="vaka2003" type="button">Ekim–Kasım 2003</button>
+          <button class="dugme" id="vaka2024" type="button">Mayıs 2024</button>
+        </div>
+        <div class="grafik" id="gVaka"></div>
+        <div class="lejant"><span><i style="background:var(--cC)"></i>C</span><span><i style="background:var(--cM)"></i>M</span><span><i style="background:var(--cX)"></i>X sınıfı patlama (sol eksen, log)</span><span><i class="cizgi" style="background:var(--dst)"></i>Dst (sağ eksen)</span></div>
+        <p class="not" id="vakaNot"></p>
+      </div>
+      <div class="iki" style="margin-top:22px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+        <div class="kutu">
+          <h3>En güçlü 10 fırtına ve önceki 4 günün en büyük patlaması</h3>
+          <div class="tablo"><table id="tFirtina"></table></div>
+        </div>
+        <div class="kutu">
+          <h3>En büyük 10 patlama ve sonraki 4 günün en düşük Dst değeri</h3>
+          <div class="tablo"><table id="tPatlama"></table></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bolum" id="sonuc">
+    <div class="kas">
+      <div class="bolum-bas">
+        <span class="etiket">07 · Sonuç</span>
+        <h2>Bulgular, sınırlar ve sıradaki adımlar</h2>
+      </div>
+      <div class="sonuclar" id="sonuclar"></div>
+      <div class="iki" style="margin-top:30px">
+        <div class="kutu">
+          <h3>Sınırlılıklar</h3>
+          <ul class="sinir">
+            <li>Eski ve yeni uydular tek bir kısa dönemle (2009 sonbaharı, 12 gün, 176 dakika) bağlanıyor. Döngü 23 karşılaştırması bu yüzden aralık olarak verildi.</li>
+            <li>Döngü 23'ün yükseliş evresi (1996–1999) pencerede yok; Döngü 25 henüz bitmedi.</li>
+            <li>Fırtınaları asıl üreten koronal kütle atımları; bu aşamada patlama onların göstergesi olarak kullanıldı.</li>
+            <li>Kenar bölgelerdeki X patlaması sayısı az (33 ve 36); konum farkı için anlamlılık testi gerekli.</li>
+          </ul>
+        </div>
+        <div class="kutu">
+          <h3>Sıradaki adımlar</h3>
+          <ul class="sinir">
+            <li>S2: gecikme ve korelasyonların blok bootstrap ile anlamlılık testi.</li>
+            <li>S3: döngü bazında güç yasası üssü, arka plan çıkarılmış akılarla.</li>
+            <li>S4: SARIMA, Prophet ve LSTM; zamana göre ayrılmış test, basit referans modellerle karşılaştırma.</li>
+            <li>SOHO/LASCO CME kataloğunun eklenmesi; S5'te patlama yerine CME ile analiz.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bolum" id="yontem">
+    <div class="kas">
+      <div class="bolum-bas">
+        <span class="etiket">08 · Yöntem ve tekrarlanabilirlik</span>
+        <h2>Her sayı bir defterden geliyor</h2>
+        <p>Analiz sıralı Google Colab defterleriyle yapıldı. Bu sitedeki tüm grafik ve sayılar 07 numaralı defterin ürettiği tek bir veri dosyasından okunuyor.</p>
+      </div>
+      <div class="defterler">
+        <div><span class="veri">01</span><span>Veri çekme: SILSO, OMNI2, HEK flare listesi</span></div>
+        <div><span class="veri">02</span><span>NCEI bilimsel kalite flare listesi, uydu birleştirme, ölçek farkı</span></div>
+        <div><span class="veri">03</span><span>Uydular arası çapraz kalibrasyon (en küçük kareler + bootstrap)</span></div>
+        <div><span class="veri">04</span><span>1 dakikalık veride eski–yeni uydu çakışması taraması</span></div>
+        <div><span class="veri">05</span><span>Köprü testi, M sınıfı duyarlılık, Döngü 23 senaryoları</span></div>
+        <div><span class="veri">06</span><span>Nihai liste (S4), Dünya'ya etki, gecikme, vaka çalışmaları</span></div>
+        <div><span class="veri">07</span><span>Web sitesi verisi</span></div>
+      </div>
+      <div class="kutu" style="margin-top:24px">
+        <h3>Kaynaklar</h3>
+        <ul class="sinir" style="font-size:.9rem">
+          <li>SILSO, Belçika Kraliyet Gözlemevi. Güneş lekesi sayısı, sürüm 2.0. <a href="https://www.sidc.be/SILSO/" target="_blank" rel="noopener">sidc.be/SILSO</a></li>
+          <li>NASA SPDF OMNI2 saatlik veri seti (Dst, Kp). <a href="https://spdf.gsfc.nasa.gov/" target="_blank" rel="noopener">spdf.gsfc.nasa.gov</a></li>
+          <li>NOAA NCEI, GOES XRS bilimsel kalite flare özetleri (GOES 8–19). <a href="https://www.ncei.noaa.gov/products/goes-r-extreme-ultraviolet-xray-irradiance" target="_blank" rel="noopener">ncei.noaa.gov</a></li>
+          <li>Hudson, H. S., Cliver, E. W., White, S. M., Machol, J. ve ark. (2023). The greatest GOES soft X-ray flares: Saturation and recalibration over two Hale cycles. <a href="https://arxiv.org/abs/2310.11457" target="_blank" rel="noopener">arXiv:2310.11457</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="kas" id="altBilgi"></div>
+</footer>
+<div class="sayac" id="sayac" hidden></div>
+
+<script type="application/json" id="veriJson">{"aylik":{"tarih":["2000-01","2000-02","2000-03","2000-04","2000-05","2000-06","2000-07","2000-08","2000-09","2000-10","2000-11","2000-12","2001-01","2001-02","2001-03","2001-04","2001-05","2001-06","2001-07","2001-08","2001-09","2001-10","2001-11","2001-12","2002-01","2002-02","2002-03","2002-04","2002-05","2002-06","2002-07","2002-08","2002-09","2002-10","2002-11","2002-12","2003-01","2003-02","2003-03","2003-04","2003-05","2003-06","2003-07","2003-08","2003-09","2003-10","2003-11","2003-12","2004-01","2004-02","2004-03","2004-04","2004-05","2004-06","2004-07","2004-08","2004-09","2004-10","2004-11","2004-12","2005-01","2005-02","2005-03","2005-04","2005-05","2005-06","2005-07","2005-08","2005-09","2005-10","2005-11","2005-12","2006-01","2006-02","2006-03","2006-04","2006-05","2006-06","2006-07","2006-08","2006-09","2006-10","2006-11","2006-12","2007-01","2007-02","2007-03","2007-04","2007-05","2007-06","2007-07","2007-08","2007-09","2007-10","2007-11","2007-12","2008-01","2008-02","2008-03","2008-04","2008-05","2008-06","2008-07","2008-08","2008-09","2008-10","2008-11","2008-12","2009-01","2009-02","2009-03","2009-04","2009-05","2009-06","2009-07","2009-08","2009-09","2009-10","2009-11","2009-12","2010-01","2010-02","2010-03","2010-04","2010-05","2010-06","2010-07","2010-08","2010-09","2010-10","2010-11","2010-12","2011-01","2011-02","2011-03","2011-04","2011-05","2011-06","2011-07","2011-08","2011-09","2011-10","2011-11","2011-12","2012-01","2012-02","2012-03","2012-04","2012-05","2012-06","2012-07","2012-08","2012-09","2012-10","2012-11","2012-12","2013-01","2013-02","2013-03","2013-04","2013-05","2013-06","2013-07","2013-08","2013-09","2013-10","2013-11","2013-12","2014-01","2014-02","2014-03","2014-04","2014-05","2014-06","2014-07","2014-08","2014-09","2014-10","2014-11","2014-12","2015-01","2015-02","2015-03","2015-04","2015-05","2015-06","2015-07","2015-08","2015-09","2015-10","2015-11","2015-12","2016-01","2016-02","2016-03","2016-04","2016-05","2016-06","2016-07","2016-08","2016-09","2016-10","2016-11","2016-12","2017-01","2017-02","2017-03","2017-04","2017-05","2017-06","2017-07","2017-08","2017-09","2017-10","2017-11","2017-12","2018-01","2018-02","2018-03","2018-04","2018-05","2018-06","2018-07","2018-08","2018-09","2018-10","2018-11","2018-12","2019-01","2019-02","2019-03","2019-04","2019-05","2019-06","2019-07","2019-08","2019-09","2019-10","2019-11","2019-12","2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12"],"sn":[133.1,165.7,217.7,191.5,165.9,188.0,244.3,180.5,156.0,141.6,158.1,143.3,142.6,121.5,165.8,161.7,142.1,202.9,123.0,161.5,238.2,194.1,176.6,213.4,184.6,170.2,147.1,186.9,187.5,128.8,161.0,175.6,187.9,151.2,147.2,135.3,133.5,75.7,100.7,97.9,86.8,118.7,128.3,115.4,78.5,97.8,82.9,72.2,60.6,74.6,74.8,59.2,72.8,66.5,83.8,69.7,48.8,74.2,70.1,28.9,48.1,43.5,39.6,38.7,61.9,56.8,62.4,60.5,37.2,13.2,27.5,59.3,20.9,5.7,17.3,50.3,37.2,24.5,22.2,20.8,23.7,14.9,35.7,22.3,29.3,18.4,7.2,5.4,19.5,21.3,15.1,9.8,4.0,1.5,2.8,17.3,4.1,2.9,15.5,3.6,4.6,5.2,0.6,0.3,1.2,4.2,6.6,1.0,1.3,1.2,0.6,1.2,2.9,6.3,5.5,0.0,7.1,7.7,6.9,16.3,19.5,28.5,24.0,10.4,13.9,18.8,25.2,29.6,36.4,33.6,34.4,24.5,27.3,48.3,78.6,76.1,58.2,56.1,64.5,65.8,120.1,125.7,139.1,109.3,94.4,47.8,86.6,85.9,96.5,92.0,100.1,94.8,93.7,76.5,87.6,56.8,96.1,60.9,78.3,107.3,120.2,76.7,86.2,91.8,54.5,114.4,113.9,124.2,117.0,146.1,128.7,112.5,112.5,102.9,100.2,106.9,130.0,90.0,103.6,112.9,93.0,66.7,54.5,75.3,88.8,66.5,65.8,64.4,78.6,63.6,62.2,58.0,57.0,56.4,54.1,37.9,51.5,20.5,32.4,50.2,44.6,33.4,21.4,18.5,26.1,26.4,17.7,32.3,18.9,19.2,17.8,32.6,43.7,13.2,5.7,8.2,6.8,10.7,2.5,8.9,13.1,15.6,1.6,8.7,3.3,4.9,4.9,3.1,7.7,0.8,9.4,9.1,9.9,1.2,0.9,0.5,1.1,0.4,0.5,1.5,6.2,0.2,1.5,5.2,0.2,5.8,6.1,7.5,0.6,14.6,34.5,23.1,10.4,8.2,17.2,24.5,21.2,25.0,34.3,22.0,51.3,37.4,34.8,67.5,55.3,60.9,78.6,84.0,96.5,70.3,91.4,74.6,96.0,95.5,80.5,112.8,144.4,111.3,123.3,97.6,137.4,160.5,160.0,114.8,134.2,99.9,107.1,113.5,126.0,123.0,103.7,137.0,172.1,164.1,196.8,216.0,141.1,165.8,154.1,154.6,137.0,155.7,134.2,141.4,78.5,114.6,125.9,133.7,129.7,114.8,91.7,124.2],"sn_duz":[166.1,170.6,174.3,175.2,172.9,172.7,174.2,172.8,168.8,165.3,163.1,162.7,158.3,152.5,155.1,160.7,163.7,167.4,172.0,175.8,177.1,177.3,180.3,179.1,177.6,179.7,178.2,174.4,171.3,166.9,161.5,155.4,149.5,143.9,136.0,131.4,129.6,125.7,118.7,111.9,107.0,101.7,96.0,92.9,91.8,89.1,86.9,84.1,80.1,76.4,73.2,71.0,69.5,67.1,64.8,63.0,60.2,57.9,56.6,55.7,54.5,53.2,52.3,49.3,45.0,44.5,44.6,41.9,39.4,38.9,38.4,36.0,33.0,29.7,27.4,27.0,27.4,26.2,25.0,25.9,26.0,23.7,21.1,20.2,19.8,19.0,17.7,16.4,14.4,12.8,11.6,9.9,9.6,9.9,9.2,7.9,6.6,5.6,5.1,5.1,5.4,4.8,4.0,3.8,3.2,2.4,2.3,2.2,2.5,2.7,2.9,3.3,3.5,4.1,5.5,7.4,9.5,10.9,11.7,12.7,14.0,16.1,18.5,20.8,23.1,24.6,25.2,26.4,29.5,34.5,39.1,42.5,45.7,48.8,53.8,61.1,69.3,77.2,83.6,86.3,86.6,87.4,89.4,92.5,95.5,98.1,98.3,95.1,90.9,86.6,84.5,85.1,85.3,85.8,87.7,88.1,86.8,86.1,84.4,84.3,87.0,90.9,94.6,99.0,104.6,107.0,106.9,107.6,109.3,110.5,114.3,116.4,115.0,114.1,112.6,108.3,101.9,97.3,94.7,92.2,89.3,86.1,82.1,78.9,76.1,72.1,68.3,66.4,65.9,64.3,61.2,57.8,54.4,52.5,50.4,47.8,44.8,41.5,38.5,36.0,33.2,31.5,29.9,28.5,27.8,26.5,25.7,24.8,23.3,22.2,21.0,19.6,18.3,16.7,15.4,15.1,14.2,12.6,9.9,7.8,7.5,7.2,7.0,6.7,6.5,6.8,6.7,6.0,5.4,5.0,4.6,4.3,3.9,3.7,3.5,3.4,3.1,2.6,2.0,1.8,2.2,2.7,3.0,3.6,5.6,7.9,9.0,9.5,10.5,11.9,13.6,15.3,17.3,19.0,21.7,24.8,25.8,27.6,31.4,35.4,40.2,45.2,50.8,55.9,60.1,64.7,68.7,73.0,77.4,81.1,86.7,92.6,96.5,98.9,101.2,106.7,113.3,117.8,121.1,122.9,124.2,125.3,124.6,124.3,124.0,124.8,127.9,129.5,131.2,136.9,141.4,144.4,149.1,152.8,155.0,156.8,159.4,160.9,157.2,151.2,146.2,139.8,135.9,133.3,128.6,124.7,122.5,118.4,113.1,108.5,106.9,107.0],"mx":[23,37,105,37,70,57,156,10,42,33,45,24,22,6,80,98,23,44,11,73,139,92,129,102,63,47,36,49,27,7,68,110,27,55,51,31,19,7,25,32,18,78,15,10,5,112,44,20,19,10,18,11,7,2,65,55,5,21,34,12,61,2,1,1,30,8,39,16,68,0,13,7,0,0,0,9,0,0,1,0,0,0,2,13,1,0,0,0,1,14,3,0,0,0,0,2,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,9,16,0,0,3,3,0,1,0,1,4,0,1,26,38,5,8,5,2,11,61,14,21,19,10,4,31,4,19,15,88,16,9,10,18,0,7,4,3,6,30,8,7,5,0,56,34,23,49,80,39,11,13,27,8,12,23,100,30,37,26,3,48,15,10,20,3,19,33,22,6,15,2,10,0,1,1,0,14,3,0,0,3,0,1,0,0,10,0,2,4,3,44,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,4,0,4,1,2,7,4,8,5,3,16,33,22,3,7,31,14,20,6,44,41,53,22,9,59,24,51,27,37,7,17,25,35,50,56,50,154,53,98,121,60,89,81,91,43,51,22,33,23,19,5,43,20,35,32,34],"x":[0,1,4,0,1,8,10,0,2,1,7,0,1,0,3,12,1,5,0,1,6,8,7,7,1,1,1,3,1,0,10,6,0,2,1,1,0,0,2,1,4,7,0,0,0,13,6,0,4,2,0,0,0,0,13,5,0,2,5,0,9,0,0,0,1,0,3,2,14,0,0,2,0,0,0,1,0,0,0,0,0,0,0,6,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,3,1,0,0,0,1,2,7,0,1,0,2,0,4,0,0,0,4,0,0,2,1,0,0,0,0,0,4,0,0,0,0,5,4,0,4,1,2,2,0,3,1,0,1,15,3,3,0,0,3,0,1,2,0,0,1,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,3,2,0,0,0,0,1,0,0,3,2,2,0,0,1,1,2,0,0,0,2,0,5,2,0,21,3,3,4,2,8,1,3,3,1,1,0,3,2,0,0,0,0,6,2],"mx_hek":[9,15,40,11,20,25,55,3,15,11,22,7,11,1,38,47,11,14,3,23,51,36,48,50,22,18,15,17,15,4,35,47,13,23,12,10,8,3,9,14,11,45,7,4,1,44,28,6,12,3,5,7,1,1,39,28,4,10,17,7,27,1,0,0,13,4,21,8,36,0,7,4,0,0,0,4,0,0,1,0,0,0,0,9,0,0,0,0,0,10,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,6,9,0,0,1,2,0,1,0,1,3,0,1,14,22,3,2,2,2,8,35,8,14,8,6,1,22,2,12,11,47,10,4,7,14,0,5,1,3,4,18,4,1,3,0,37,23,12,26,40,23,4,5,19,5,7,12,47,17,18,13,3,29,11,6,13,3,12,20,10,4,6,1,4,0,1,0,0,7,1,0,0,2,0,0,0,0,7,0,0,3,1,31,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,4,0,4,1,2,7,3,8,5,3,14,32,22,3,7,30,13,19,6,40,44,53,22,8,53,22,40,24,33,6,12,16,31,51,52,48,146,56,100,123,71,90,84,93,45,50,17,33,22,16,5,40,19,35,30,32],"dst_min":[-96.0,-135.0,-59.0,-292.0,-147.0,-90.0,-300.0,-234.0,-201.0,-181.0,-159.0,-62.0,-61.0,-50.0,-387.0,-271.0,-76.0,-61.0,-38.0,-105.0,-102.0,-187.0,-292.0,-67.0,-72.0,-86.0,-100.0,-149.0,-110.0,-38.0,-41.0,-106.0,-181.0,-176.0,-128.0,-75.0,-66.0,-74.0,-78.0,-68.0,-144.0,-141.0,-105.0,-148.0,-65.0,-383.0,-422.0,-55.0,-130.0,-93.0,-78.0,-117.0,-33.0,-29.0,-170.0,-129.0,-45.0,-49.0,-374.0,-56.0,-103.0,-80.0,-54.0,-70.0,-247.0,-106.0,-92.0,-184.0,-139.0,-74.0,-51.0,-55.0,-51.0,-36.0,-52.0,-98.0,-53.0,-42.0,-48.0,-79.0,-55.0,-55.0,-74.0,-162.0,-49.0,-41.0,-72.0,-63.0,-58.0,-28.0,-45.0,-31.0,-40.0,-53.0,-59.0,-33.0,-34.0,-52.0,-86.0,-46.0,-29.0,-41.0,-34.0,-33.0,-51.0,-54.0,-29.0,-26.0,-29.0,-42.0,-32.0,-27.0,-26.0,-28.0,-83.0,-36.0,-22.0,-47.0,-26.0,-12.0,-35.0,-59.0,-30.0,-81.0,-80.0,-53.0,-31.0,-74.0,-38.0,-75.0,-45.0,-43.0,-42.0,-63.0,-88.0,-60.0,-80.0,-45.0,-59.0,-115.0,-118.0,-147.0,-66.0,-34.0,-75.0,-67.0,-145.0,-120.0,-46.0,-86.0,-139.0,-34.0,-69.0,-122.0,-108.0,-16.0,-52.0,-40.0,-132.0,-48.0,-72.0,-124.0,-87.0,-59.0,-31.0,-72.0,-80.0,-66.0,-39.0,-119.0,-52.0,-87.0,-47.0,-37.0,-28.0,-79.0,-88.0,-57.0,-65.0,-71.0,-107.0,-69.0,-234.0,-88.0,-82.0,-198.0,-74.0,-103.0,-105.0,-130.0,-87.0,-166.0,-116.0,-65.0,-99.0,-62.0,-95.0,-41.0,-38.0,-73.0,-65.0,-110.0,-60.0,-39.0,-32.0,-42.0,-71.0,-66.0,-146.0,-31.0,-71.0,-68.0,-148.0,-70.0,-82.0,-51.0,-28.0,-38.0,-45.0,-78.0,-55.0,-47.0,-26.0,-176.0,-73.0,-54.0,-57.0,-26.0,-25.0,-41.0,-43.0,-35.0,-68.0,-29.0,-32.0,-53.0,-59.0,-52.0,-34.0,-29.0,-34.0,-58.0,-45.0,-68.0,-26.0,-25.0,-50.0,-39.0,-60.0,-41.0,-45.0,-28.0,-44.0,-44.0,-58.0,-54.0,-61.0,-37.0,-41.0,-82.0,-64.0,-65.0,-105.0,-43.0,-91.0,-66.0,-85.0,-81.0,-63.0,-47.0,-81.0,-59.0,-71.0,-76.0,-92.0,-68.0,-61.0,-132.0,-163.0,-213.0,-67.0,-72.0,-53.0,-93.0,-85.0,-88.0,-163.0,-108.0,-27.0,-27.0,-128.0,-117.0,-406.0,-107.0,-50.0,-188.0,-121.0,-333.0,-101.0,-43.0,-212.0,-45.0,-66.0,-138.0,-70.0,-119.0,-65.0,-85.0,-106.0,-89.0,-217.0,-82.0],"firtina50":[5,3,2,9,4,5,9,6,10,11,8,1,1,1,10,14,2,1,0,2,7,16,10,4,2,4,3,7,8,0,0,8,9,20,14,5,2,6,12,8,8,8,7,8,5,12,10,4,8,2,4,4,0,0,9,3,0,0,10,1,11,2,1,3,11,4,5,4,11,2,1,1,1,0,1,6,1,0,0,2,1,4,2,7,0,0,1,1,1,0,0,0,0,1,1,0,0,1,2,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,2,0,5,4,1,0,3,0,1,0,0,0,2,5,1,2,0,2,3,9,3,2,0,3,3,15,6,0,4,5,0,3,5,2,0,3,0,5,0,5,7,4,3,0,4,3,1,0,9,1,4,0,0,0,2,2,3,2,5,4,4,9,5,3,6,5,8,7,11,6,4,3,5,6,7,2,0,0,2,5,7,1,0,0,0,5,5,1,0,2,3,12,5,5,1,0,0,0,1,1,0,0,3,3,1,1,0,0,0,0,0,2,0,0,1,4,1,0,0,0,1,0,1,0,0,1,0,4,0,0,0,0,0,1,2,1,0,0,2,1,3,1,0,3,4,4,2,1,0,4,2,3,2,3,2,2,6,3,5,2,3,2,1,7,3,7,5,0,0,8,5,10,2,1,8,10,6,2,0,5,0,6,11,6,7,1,2,6,6,4,4],"firtina100":[0,1,0,2,1,0,3,2,2,5,3,0,0,0,3,6,0,0,0,1,1,7,5,0,0,0,1,3,2,0,0,2,3,8,1,0,0,0,0,0,2,1,1,2,0,3,2,0,1,0,0,2,0,0,2,1,0,0,5,0,1,0,0,0,4,2,0,3,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,1,0,0,0,0,1,2,0,0,2,0,0,2,1,0,0,0,1,0,0,2,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,2,0,0,2,0,2,1,1,0,3,2,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,2,2,0,0,0,0,0,0,2,2,0,0,2,1,3,1,0,3,3,3,1,0,2,0,0,1,0,4,0,0,1,0,3,0]},"dongu_s4":{"sutunlar":["Döngü","M+X","X","Σ SN","M+X /1000SN","X /1000SN"],"satirlar":[[23.0,2966.0,216.0,9109.0,325.6,23.71],[24.0,1409.0,93.0,6529.0,215.8,14.24],[25.0,1906.0,91.0,6297.0,302.7,14.45]]},"dongu_asamalar":{"sutunlar":["Döngü","Σ SN","HEK","NCEI","NCEI+kal","NCEI+kal(köprü)","HEK /1000SN","NCEI /1000SN","NCEI+kal /1000SN","NCEI+kal(köprü) /1000SN"],"satirlar":[["23 (2000–2008/11)",9109.0,1257.0,2183.0,2207.0,3010.0,138.0,239.7,242.3,330.4],["24 (2008/12–2019/11)",6529.0,801.0,1298.0,1409.0,1409.0,122.7,198.8,215.8,215.8],["25 (2019/12–2025)",6297.0,1847.0,1909.0,1906.0,1906.0,293.3,303.2,302.7,302.7]]},"senaryolar":{"sutunlar":["Senaryo","GOES-10 katsayısı","D23 /1000SN","D24 /1000SN","D25 /1000SN","D25/D23","D25/D24"],"satirlar":[["S0 Bağlantısız",1.0,242.3,215.8,302.7,1.249,1.403],["S1 Literatür (=GOES-15)",0.936,262.9,215.8,302.7,1.151,1.403],["S2 Patlama köprüsü (2009, 11 olay)",0.776,330.5,215.8,302.7,0.916,1.403],["S3 Dakika köprüsü (2009, B+)",0.716,361.7,215.8,302.7,0.837,1.403]]},"kalibrasyon":{"sutunlar":["uydu","c","faktor","referansa_bagli","faktor_q025","faktor_q975"],"satirlar":[[8.0,-0.012,0.9881,0.0,0.9876,0.9887],[10.0,-0.0,1.0,0.0,1.0,1.0],[11.0,-0.0933,0.9109,0.0,0.9086,0.9128],[12.0,-0.029,0.9714,0.0,0.9703,0.9724],[13.0,-0.0053,0.9947,1.0,0.9924,0.9964],[14.0,-0.1524,0.8586,1.0,0.8571,0.8606],[15.0,-0.0666,0.9355,1.0,0.9333,0.937],[16.0,0.0,1.0,1.0,1.0,1.0],[17.0,0.0164,1.0165,1.0,1.0163,1.0168],[18.0,-0.0048,0.9952,1.0,0.9951,0.9953],[19.0,0.0035,1.0035,1.0,1.0033,1.0037]]},"yillik":{"sutunlar":["yıl","Dst≤−50 gün","Dst≤−100 gün","Kp≥5 gün","M+X","SN"],"satirlar":[[2000.0,73.0,19.0,67.0,639.0,173.8],[2001.0,68.0,23.0,50.0,819.0,170.3],[2002.0,80.0,20.0,50.0,571.0,163.6],[2003.0,90.0,11.0,120.0,385.0,99.0],[2004.0,41.0,11.0,41.0,259.0,65.3],[2005.0,56.0,11.0,55.0,246.0,45.7],[2006.0,25.0,1.0,28.0,25.0,24.6],[2007.0,5.0,0.0,19.0,21.0,12.6],[2008.0,5.0,0.0,11.0,1.0,4.1],[2009.0,1.0,0.0,3.0,2.0,4.8],[2010.0,16.0,0.0,11.0,37.0,24.9],[2011.0,29.0,4.0,26.0,211.0,80.8],[2012.0,46.0,8.0,35.0,224.0,84.4],[2013.0,35.0,3.0,23.0,183.0,93.7],[2014.0,28.0,1.0,12.0,429.0,113.6],[2015.0,72.0,12.0,56.0,220.0,69.8],[2016.0,38.0,4.0,43.0,34.0,39.8],[2017.0,39.0,2.0,37.0,65.0,21.8],[2018.0,10.0,1.0,13.0,1.0,7.0],[2019.0,8.0,0.0,12.0,3.0,3.6],[2020.0,7.0,0.0,3.0,2.0,8.8],[2021.0,11.0,1.0,17.0,31.0,29.5],[2022.0,30.0,0.0,36.0,204.0,83.0],[2023.0,46.0,10.0,41.0,372.0,125.3],[2024.0,52.0,17.0,36.0,938.0,154.5],[2025.0,58.0,11.0,62.0,360.0,123.4]]},"dongu_firtina":{"sutunlar":["Döngü","Dst≤−50 gün","Dst≤−100 gün","≤−50 /1000SN","≤−100 /1000SN"],"satirlar":[[23.0,443.0,96.0,48.6,10.54],[24.0,322.0,35.0,49.3,5.36],[25.0,204.0,39.0,32.4,6.19]]},"olasilik":{"sutunlar":["Grup","n","Fırtına","Patlama sonrası %","Rastgele %","Kat"],"satirlar":[["M1–M5",1099.0,"Dst ≤ -50",35.9,29.5,1.21],["M1–M5",1099.0,"Dst ≤ -100",11.0,7.7,1.43],["M5–X1",295.0,"Dst ≤ -50",39.0,28.9,1.35],["M5–X1",295.0,"Dst ≤ -100",13.9,8.2,1.69],["≥X1",238.0,"Dst ≤ -50",48.7,29.3,1.66],["≥X1",238.0,"Dst ≤ -100",22.7,8.7,2.6],["≥X1 · doğu kenarı",33.0,"Dst ≤ -50",51.5,29.1,1.77],["≥X1 · doğu kenarı",33.0,"Dst ≤ -100",21.2,10.2,2.09],["≥X1 · merkez",167.0,"Dst ≤ -50",48.5,29.1,1.67],["≥X1 · merkez",167.0,"Dst ≤ -100",24.0,8.7,2.74],["≥X1 · batı kenarı",36.0,"Dst ≤ -50",50.0,27.8,1.8],["≥X1 · batı kenarı",36.0,"Dst ≤ -100",19.4,7.1,2.75]]},"olcek_orani":{"yil":[2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023,2024,2025],"medyan":[1.476,1.478,1.472,1.443,1.445,1.445,1.446,1.584,1.452,1.445,1.439,1.445,1.45,1.439,1.441,1.439,1.428,1.56,1.539,1.582,1.023,1.025,1.021,1.016,1.013,1.021],"q25":[1.448,1.45,1.444,1.431,1.436,1.436,1.435,1.488,1.434,1.431,1.421,1.427,1.431,1.416,1.427,1.416,1.39,1.523,1.515,1.532,1.008,1.011,1.011,1.008,1.007,1.011],"q75":[1.506,1.513,1.503,1.469,1.471,1.47,1.48,1.614,1.482,1.482,1.471,1.468,1.478,1.457,1.46,1.461,1.457,1.602,1.561,1.615,1.044,1.045,1.039,1.029,1.024,1.034],"n":[2532,2419,2447,1813,1359,893,219,141,12,33,272,1543,1700,1609,2012,1664,488,396,33,63,83,457,2338,2789,3683,2913]},"sea":{"M1–M5":{"n":1099,"saat":[-48,-45,-42,-39,-36,-33,-30,-27,-24,-21,-18,-15,-12,-9,-6,-3,0,3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48,51,54,57,60,63,66,69,72,75,78,81,84,87,90,93,96,99,102,105,108,111,114,117,120],"medyan":[-12.0,-12.0,-12.0,-13.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-11.0,-11.0,-11.0,-11.0,-11.0,-11.0,-11.0,-12.0,-12.0,-11.0,-11.0,-12.0,-12.0,-12.0,-12.0,-13.0,-12.0,-12.0,-11.0,-12.0,-12.0,-12.0,-11.0,-11.0,-11.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-13.0,-12.0,-12.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0],"q1":[-25.0,-24.5,-24.0,-24.0,-25.0,-24.0,-24.0,-25.5,-24.0,-25.0,-25.0,-25.0,-25.0,-25.0,-25.0,-25.0,-24.0,-24.0,-24.0,-24.0,-24.0,-24.5,-24.0,-25.0,-25.0,-25.0,-25.0,-25.0,-24.0,-24.5,-26.0,-24.5,-25.0,-26.0,-26.0,-26.0,-27.0,-25.0,-26.0,-26.0,-26.0,-27.0,-28.0,-28.0,-26.5,-28.0,-29.0,-27.0,-27.0,-28.0,-27.0,-27.0,-27.0,-27.0,-27.0,-25.0,-25.0],"q3":[-1.5,-1.0,-2.0,-2.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-2.0,-1.0,-2.0,-1.0,-1.0,-2.0,-1.5,-2.0,-1.0,-2.0,-1.5,-1.0,-1.0,-1.0,-2.0,-2.0,-1.0,-2.0,-2.0,-2.0,-2.0,-2.0,-1.0,-1.0,-2.0,-1.0,-2.0,-2.0,-2.0,-2.0,-2.0,-2.0,-2.0],"rast_alt":[-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-11.0,-12.0,-12.0,-12.0,-12.0,-12.0,-11.0,-12.0,-11.0,-11.0,-11.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-11.0,-12.0,-12.0,-12.0,-11.0,-12.0,-12.0,-12.0,-12.0,-12.0,-11.0,-12.0,-11.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0,-12.0],"rast_ust":[-10.0,-9.0,-10.0,-9.0,-9.0,-10.0,-10.0,-9.0,-10.0,-9.0,-10.0,-10.0,-10.0,-10.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-10.0,-9.0,-9.0,-10.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-10.0,-10.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0,-9.0]},"M5–X1":{"n":295,"saat":[-48,-45,-42,-39,-36,-33,-30,-27,-24,-21,-18,-15,-12,-9,-6,-3,0,3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48,51,54,57,60,63,66,69,72,75,78,81,84,87,90,93,96,99,102,105,108,111,114,117,120],"medyan":[-10.0,-11.0,-11.0,-12.0,-12.0,-11.0,-12.0,-11.0,-11.0,-11.0,-11.0,-11.0,-12.0,-12.0,-13.0,-14.0,-14.0,-14.0,-14.0,-12.0,-13.0,-13.0,-13.0,-12.0,-13.0,-13.0,-11.0,-13.0,-12.0,-12.0,-13.0,-14.0,-13.0,-13.0,-12.0,-13.0,-15.0,-13.0,-12.0,-13.0,-14.0,-15.0,-14.0,-14.0,-15.0,-15.0,-13.0,-13.0,-13.0,-13.0,-14.0,-14.0,-15.0,-15.0,-15.0,-15.0,-14.0],"q1":[-24.0,-25.0,-26.0,-26.5,-28.5,-27.5,-26.0,-26.5,-25.0,-26.0,-28.0,-26.5,-28.0,-27.0,-26.0,-30.0,-28.5,-28.0,-29.0,-27.0,-26.5,-27.0,-27.0,-24.5,-24.0,-24.0,-25.0,-24.5,-27.0,-25.0,-27.5,-27.5,-27.0,-29.0,-29.0,-29.0,-29.0,-28.0,-30.0,-32.5,-32.0,-32.5,-29.0,-30.0,-30.0,-32.0,-32.0,-32.0,-30.5,-29.0,-30.0,-30.5,-31.5,-31.0,-31.5,-33.0,-31.0],"q3":[-2.0,-2.0,-3.0,-2.0,-2.0,-1.0,0.0,-2.0,-1.0,0.0,0.0,-0.5,-1.0,0.0,-1.5,-1.0,-1.0,-1.0,-2.0,-3.0,-2.0,-1.0,-1.0,-1.0,-2.0,-2.0,0.0,0.0,-1.0,-1.0,-2.0,-2.0,-2.0,-3.0,-2.0,-2.0,-3.0,-3.0,-2.0,-2.5,-2.0,-1.5,-3.0,-2.0,-3.5,-1.0,-2.0,-2.0,-2.0,-3.0,-2.5,-1.0,-2.0,-1.5,-3.0,-2.0,-2.0],"rast_alt":[-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-14.0,-13.0,-13.0,-12.0,-13.0,-13.0,-13.0,-13.0,-12.0,-13.0,-13.0,-13.0,-12.0,-13.0,-12.0,-13.0,-13.0,-12.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-12.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-12.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0],"rast_ust":[-9.0,-8.0,-9.0,-8.0,-8.0,-8.0,-8.0,-8.0,-9.0,-8.0,-9.0,-8.0,-9.0,-9.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-9.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-9.0,-9.0,-9.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-9.0,-9.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0]},"≥X1":{"n":238,"saat":[-48,-45,-42,-39,-36,-33,-30,-27,-24,-21,-18,-15,-12,-9,-6,-3,0,3,6,9,12,15,18,21,24,27,30,33,36,39,42,45,48,51,54,57,60,63,66,69,72,75,78,81,84,87,90,93,96,99,102,105,108,111,114,117,120],"medyan":[-13.0,-13.5,-11.0,-12.0,-14.0,-12.5,-13.0,-12.0,-11.5,-11.0,-12.0,-13.0,-12.5,-12.5,-13.0,-13.5,-12.5,-13.5,-14.5,-13.0,-14.0,-14.5,-14.0,-14.5,-14.0,-13.5,-13.0,-12.5,-13.0,-12.5,-14.0,-15.0,-13.5,-15.0,-15.5,-15.0,-15.0,-18.0,-17.5,-16.0,-17.0,-19.0,-18.0,-19.0,-20.0,-20.0,-17.0,-16.0,-17.5,-17.0,-16.5,-17.0,-19.0,-19.0,-19.0,-17.0,-16.0],"q1":[-28.0,-27.0,-26.8,-27.0,-27.0,-27.8,-28.0,-27.0,-28.0,-31.0,-30.0,-30.8,-29.0,-28.0,-29.8,-29.0,-27.8,-29.8,-28.0,-30.0,-28.0,-27.0,-28.0,-27.0,-28.0,-30.0,-31.0,-30.0,-30.0,-32.0,-35.8,-33.0,-34.0,-35.0,-36.8,-36.0,-37.0,-38.0,-39.8,-40.8,-41.0,-42.0,-42.8,-41.0,-39.8,-39.0,-36.0,-36.0,-36.8,-36.8,-34.0,-35.0,-34.0,-33.0,-32.0,-32.0,-33.0],"q3":[-3.0,-3.0,-3.0,-3.0,-3.0,-2.0,-1.2,-0.2,0.8,0.0,-1.0,-0.2,0.0,-1.0,-1.0,-3.0,-2.0,-1.0,-2.0,-1.2,-3.0,-3.2,-4.0,-4.0,-3.0,-2.2,-3.0,-3.0,-2.0,-1.0,-2.2,-0.2,-1.0,-3.0,-3.0,-2.0,-3.0,-4.0,-4.0,-2.0,-4.0,-4.0,-5.0,-5.0,-6.0,-4.0,-5.0,-3.0,-5.0,-4.0,-4.0,-6.0,-5.0,-6.0,-5.2,-3.0,-6.0],"rast_alt":[-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-14.0,-13.0,-13.0,-13.0,-13.0,-13.0,-12.5,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.5,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-12.5,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0,-13.0],"rast_ust":[-8.0,-8.0,-8.0,-8.0,-7.5,-8.0,-8.0,-8.0,-9.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-7.5,-8.0,-8.0,-8.0,-7.5,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0,-8.0]}},"gecikme":{"ay":[-48,-47,-46,-45,-44,-43,-42,-41,-40,-39,-38,-37,-36,-35,-34,-33,-32,-31,-30,-29,-28,-27,-26,-25,-24,-23,-22,-21,-20,-19,-18,-17,-16,-15,-14,-13,-12,-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48],"M+X":[-0.482,-0.461,-0.438,-0.414,-0.389,-0.363,-0.336,-0.308,-0.279,-0.249,-0.217,-0.186,-0.152,-0.116,-0.079,-0.041,-0.002,0.04,0.081,0.123,0.165,0.207,0.248,0.288,0.329,0.369,0.409,0.448,0.486,0.524,0.56,0.594,0.627,0.659,0.69,0.719,0.747,0.773,0.796,0.818,0.839,0.857,0.876,0.892,0.907,0.921,0.931,0.938,0.942,0.941,0.938,0.933,0.926,0.917,0.908,0.899,0.889,0.877,0.863,0.847,0.829,0.812,0.793,0.772,0.751,0.728,0.703,0.675,0.644,0.612,0.579,0.544,0.509,0.475,0.44,0.404,0.368,0.33,0.29,0.25,0.211,0.176,0.137,0.097,0.059,0.02,-0.017,-0.055,-0.092,-0.128,-0.162,-0.196,-0.23,-0.264,-0.299,-0.328,-0.356],"Dst≤−50 gün":[-0.681,-0.666,-0.648,-0.628,-0.607,-0.585,-0.562,-0.537,-0.51,-0.482,-0.452,-0.422,-0.391,-0.358,-0.323,-0.287,-0.251,-0.213,-0.174,-0.135,-0.097,-0.058,-0.019,0.02,0.059,0.098,0.136,0.173,0.209,0.245,0.279,0.312,0.344,0.377,0.408,0.439,0.469,0.499,0.527,0.555,0.583,0.61,0.636,0.661,0.685,0.709,0.732,0.754,0.775,0.793,0.81,0.825,0.838,0.85,0.862,0.873,0.884,0.894,0.902,0.907,0.91,0.91,0.909,0.905,0.899,0.892,0.883,0.872,0.858,0.841,0.821,0.799,0.777,0.755,0.732,0.707,0.681,0.654,0.626,0.598,0.568,0.539,0.508,0.476,0.445,0.411,0.375,0.337,0.299,0.261,0.223,0.183,0.143,0.103,0.064,0.025,-0.011],"Dst≤−100 gün":[-0.5,-0.484,-0.466,-0.447,-0.427,-0.406,-0.384,-0.362,-0.338,-0.313,-0.288,-0.263,-0.238,-0.212,-0.183,-0.153,-0.119,-0.085,-0.05,-0.016,0.019,0.055,0.09,0.127,0.165,0.203,0.241,0.279,0.314,0.348,0.381,0.414,0.446,0.477,0.509,0.54,0.569,0.598,0.626,0.651,0.675,0.698,0.721,0.741,0.761,0.781,0.798,0.814,0.827,0.838,0.847,0.853,0.86,0.865,0.869,0.873,0.876,0.878,0.879,0.878,0.876,0.871,0.864,0.857,0.848,0.837,0.824,0.811,0.794,0.776,0.758,0.735,0.711,0.687,0.661,0.634,0.607,0.579,0.551,0.522,0.49,0.458,0.426,0.398,0.372,0.344,0.316,0.288,0.257,0.224,0.193,0.159,0.124,0.092,0.059,0.024,-0.008]},"x_patlamalar":[{"t":"2000-02-05 19:28","sinif":"X2.3","aki":0.0002269,"x":-690.0,"y":484.0,"bolge":"doğu kenarı","ar":8858,"doymus":false,"hudson":null,"dst":-43.0},{"t":"2000-03-02 08:28","sinif":"X2.3","aki":0.0002251,"x":0.0,"y":122.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-19.0},{"t":"2000-03-02 13:43","sinif":"X1.3","aki":0.0001282,"x":0.0,"y":122.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-19.0},{"t":"2000-03-22 18:48","sinif":"X2.2","aki":0.000216,"x":0.0,"y":117.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-18.0},{"t":"2000-03-24 07:52","sinif":"X3.7","aki":0.0003667,"x":916.0,"y":279.0,"bolge":"batı kenarı","ar":8910,"doymus":false,"hudson":null,"dst":-18.0},{"t":"2000-05-04 11:08","sinif":"X1.4","aki":0.0001352,"x":0.0,"y":63.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-28.0},{"t":"2000-06-02 19:38","sinif":"X1.4","aki":0.0001421,"x":-789.0,"y":264.0,"bolge":"doğu kenarı","ar":9026,"doymus":false,"hudson":null,"dst":-34.0},{"t":"2000-06-03 19:24","sinif":"X1.2","aki":0.0001162,"x":-672.0,"y":327.0,"bolge":"doğu kenarı","ar":9026,"doymus":false,"hudson":null,"dst":-34.0},{"t":"2000-06-06 13:39","sinif":"X2.3","aki":0.0002269,"x":0.0,"y":-1.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-90.0},{"t":"2000-06-06 14:01","sinif":"X1.4","aki":0.0001358,"x":0.0,"y":-1.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-90.0},{"t":"2000-06-06 15:25","sinif":"X4.5","aki":0.0004465,"x":-276.0,"y":324.0,"bolge":"merkez","ar":9026,"doymus":false,"hudson":null,"dst":-90.0},{"t":"2000-06-07 15:53","sinif":"X2.4","aki":0.0002396,"x":-46.0,"y":368.0,"bolge":"merkez","ar":9026,"doymus":false,"hudson":null,"dst":-90.0},{"t":"2000-06-10 17:00","sinif":"X1.0","aki":0.0001007,"x":541.0,"y":348.0,"bolge":"batı kenarı","ar":9026,"doymus":false,"hudson":null,"dst":-37.0},{"t":"2000-06-18 01:59","sinif":"X2.0","aki":0.0001997,"x":0.0,"y":-24.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-12.0},{"t":"2000-07-09 07:22","sinif":"X1.1","aki":0.0001071,"x":-864.0,"y":241.0,"bolge":"doğu kenarı","ar":9077,"doymus":false,"hudson":null,"dst":-25.0},{"t":"2000-07-10 21:42","sinif":"X1.1","aki":0.0001082,"x":0.0,"y":-65.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-43.0},{"t":"2000-07-11 13:08","sinif":"X1.9","aki":0.0001942,"x":-409.0,"y":236.0,"bolge":"merkez","ar":9077,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2000-07-12 10:37","sinif":"X3.7","aki":0.0003739,"x":-411.0,"y":218.0,"bolge":"merkez","ar":9077,"doymus":false,"hudson":null,"dst":-300.0},{"t":"2000-07-12 18:49","sinif":"X1.1","aki":0.000112,"x":0.0,"y":-68.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-300.0},{"t":"2000-07-14 10:23","sinif":"X11.0","aki":0.001098,"x":0.0,"y":-71.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-300.0},{"t":"2000-07-16 02:03","sinif":"X1.0","aki":0.0001044,"x":-921.0,"y":136.0,"bolge":"doğu kenarı","ar":9090,"doymus":false,"hudson":null,"dst":-138.0},{"t":"2000-07-19 07:24","sinif":"X1.2","aki":0.0001205,"x":0.0,"y":-79.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-92.0},{"t":"2000-07-21 14:37","sinif":"X1.1","aki":0.0001055,"x":-194.0,"y":85.0,"bolge":"merkez","ar":9090,"doymus":false,"hudson":null,"dst":-67.0},{"t":"2000-07-25 02:49","sinif":"X1.6","aki":0.0001552,"x":0.0,"y":-87.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-49.0},{"t":"2000-09-16 04:26","sinif":"X1.1","aki":0.0001071,"x":113.0,"y":115.0,"bolge":"merkez","ar":9165,"doymus":false,"hudson":null,"dst":-201.0},{"t":"2000-09-30 23:21","sinif":"X2.6","aki":0.0002614,"x":0.0,"y":-112.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-143.0},{"t":"2000-10-01 07:00","sinif":"X1.0","aki":0.0001013,"x":0.0,"y":-112.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-175.0},{"t":"2000-11-08 23:27","sinif":"X1.4","aki":0.0001439,"x":930.0,"y":155.0,"bolge":"batı kenarı","ar":9213,"doymus":false,"hudson":null,"dst":-95.0},{"t":"2000-11-24 05:02","sinif":"X3.9","aki":0.0003921,"x":0.0,"y":-29.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-79.0},{"t":"2000-11-24 15:13","sinif":"X4.6","aki":0.0004611,"x":110.0,"y":340.0,"bolge":"merkez","ar":9236,"doymus":false,"hudson":null,"dst":-79.0},{"t":"2000-11-24 21:59","sinif":"X3.7","aki":0.0003703,"x":0.0,"y":-27.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-79.0},{"t":"2000-11-25 01:31","sinif":"X1.5","aki":0.000153,"x":0.0,"y":-27.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-79.0},{"t":"2000-11-25 18:45","sinif":"X3.8","aki":0.0003848,"x":358.0,"y":312.0,"bolge":"merkez","ar":9236,"doymus":false,"hudson":null,"dst":-119.0},{"t":"2000-11-26 16:48","sinif":"X7.9","aki":0.0007932,"x":571.0,"y":284.0,"bolge":"batı kenarı","ar":9236,"doymus":false,"hudson":null,"dst":-119.0},{"t":"2001-01-20 21:20","sinif":"X1.4","aki":0.0001412,"x":-698.0,"y":-58.0,"bolge":"doğu kenarı","ar":9313,"doymus":false,"hudson":null,"dst":-61.0},{"t":"2001-03-08 11:18","sinif":"X1.1","aki":0.0001122,"x":0.0,"y":122.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-12.0},{"t":"2001-03-10 04:05","sinif":"X1.3","aki":0.0001331,"x":577.0,"y":517.0,"bolge":"batı kenarı","ar":9368,"doymus":false,"hudson":null,"dst":-28.0},{"t":"2001-03-29 10:15","sinif":"X3.3","aki":0.0003323,"x":295.0,"y":427.0,"bolge":"merkez","ar":9402,"doymus":false,"hudson":null,"dst":-387.0},{"t":"2001-04-01 12:18","sinif":"X1.0","aki":0.0001025,"x":0.0,"y":109.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-101.0},{"t":"2001-04-02 10:14","sinif":"X2.8","aki":0.0002784,"x":0.0,"y":108.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-50.0},{"t":"2001-04-02 11:36","sinif":"X2.2","aki":0.0002194,"x":0.0,"y":108.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-50.0},{"t":"2001-04-02 21:52","sinif":"≥X33.4","aki":0.003339,"x":0.0,"y":108.0,"bolge":"merkez","ar":9393,"doymus":true,"hudson":0.00296,"dst":-50.0},{"t":"2001-04-03 03:58","sinif":"X2.3","aki":0.000232,"x":-889.0,"y":-330.0,"bolge":"doğu kenarı","ar":9415,"doymus":false,"hudson":null,"dst":-50.0},{"t":"2001-04-05 09:22","sinif":"X1.6","aki":0.0001555,"x":0.0,"y":105.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-63.0},{"t":"2001-04-06 19:21","sinif":"X10.8","aki":0.001085,"x":0.0,"y":104.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-63.0},{"t":"2001-04-09 15:34","sinif":"X1.5","aki":0.0001538,"x":63.0,"y":-249.0,"bolge":"merkez","ar":9415,"doymus":false,"hudson":null,"dst":-271.0},{"t":"2001-04-10 05:26","sinif":"X4.2","aki":0.0004192,"x":138.0,"y":-283.0,"bolge":"merkez","ar":9415,"doymus":false,"hudson":null,"dst":-271.0},{"t":"2001-04-12 10:28","sinif":"X4.0","aki":0.0004049,"x":0.0,"y":97.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-77.0},{"t":"2001-04-15 13:50","sinif":"X28.7","aki":0.00287,"x":895.0,"y":-318.0,"bolge":"batı kenarı","ar":9415,"doymus":false,"hudson":null,"dst":-114.0},{"t":"2001-04-26 13:12","sinif":"X1.5","aki":0.0001532,"x":471.0,"y":342.0,"bolge":"merkez","ar":9433,"doymus":false,"hudson":null,"dst":-47.0},{"t":"2001-05-20 06:03","sinif":"X1.3","aki":0.0001296,"x":0.0,"y":34.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-2.0},{"t":"2001-06-13 11:42","sinif":"X1.4","aki":0.0001414,"x":0.0,"y":-14.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-7.0},{"t":"2001-06-15 10:12","sinif":"X1.2","aki":0.0001186,"x":0.0,"y":-18.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-61.0},{"t":"2001-06-22 22:22","sinif":"X1.2","aki":0.0001229,"x":0.0,"y":-32.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-21.0},{"t":"2001-06-23 00:15","sinif":"X1.1","aki":0.0001081,"x":-381.0,"y":119.0,"bolge":"merkez","ar":9511,"doymus":false,"hudson":null,"dst":-21.0},{"t":"2001-06-23 04:08","sinif":"X2.4","aki":0.0002426,"x":-365.0,"y":135.0,"bolge":"merkez","ar":9511,"doymus":false,"hudson":null,"dst":-21.0},{"t":"2001-08-25 16:45","sinif":"X10.4","aki":0.001044,"x":-509.0,"y":-369.0,"bolge":"doğu kenarı","ar":9591,"doymus":false,"hudson":null,"dst":-25.0},{"t":"2001-09-05 14:32","sinif":"X1.2","aki":0.0001168,"x":0.0,"y":-120.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-26.0},{"t":"2001-09-09 20:45","sinif":"X1.9","aki":0.0001855,"x":0.0,"y":-121.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2001-09-16 03:53","sinif":"X1.1","aki":0.0001115,"x":0.0,"y":-120.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-25.0},{"t":"2001-09-17 15:50","sinif":"X1.6","aki":0.0001607,"x":775.0,"y":-532.0,"bolge":"batı kenarı","ar":9608,"doymus":false,"hudson":null,"dst":-25.0},{"t":"2001-09-24 10:40","sinif":"X4.9","aki":0.0004892,"x":0.0,"y":-117.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-102.0},{"t":"2001-09-25 04:40","sinif":"X1.4","aki":0.0001382,"x":16.0,"y":-405.0,"bolge":"merkez","ar":9628,"doymus":false,"hudson":null,"dst":-102.0},{"t":"2001-10-01 05:15","sinif":"X1.7","aki":0.0001654,"x":0.0,"y":-112.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-166.0},{"t":"2001-10-19 01:04","sinif":"X3.2","aki":0.0003171,"x":0.0,"y":-94.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-187.0},{"t":"2001-10-19 09:42","sinif":"X1.1","aki":0.000113,"x":0.0,"y":-93.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-187.0},{"t":"2001-10-19 16:30","sinif":"X3.2","aki":0.000317,"x":453.0,"y":171.0,"bolge":"merkez","ar":9661,"doymus":false,"hudson":null,"dst":-187.0},{"t":"2001-10-22 15:08","sinif":"X1.3","aki":0.0001269,"x":-279.0,"y":-424.0,"bolge":"merkez","ar":9672,"doymus":false,"hudson":null,"dst":-130.0},{"t":"2001-10-22 17:59","sinif":"X2.3","aki":0.0002291,"x":0.0,"y":-88.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-127.0},{"t":"2001-10-23 02:23","sinif":"X1.3","aki":0.000128,"x":0.0,"y":-88.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-85.0},{"t":"2001-10-25 15:02","sinif":"X2.7","aki":0.0002662,"x":334.0,"y":-341.0,"bolge":"merkez","ar":9672,"doymus":false,"hudson":null,"dst":-157.0},{"t":"2001-11-04 16:20","sinif":"X2.0","aki":0.0001976,"x":299.0,"y":37.0,"bolge":"merkez","ar":9684,"doymus":false,"hudson":null,"dst":-292.0},{"t":"2001-11-07 20:00","sinif":"X1.1","aki":0.0001087,"x":0.0,"y":-62.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-64.0},{"t":"2001-11-08 07:04","sinif":"X1.8","aki":0.0001774,"x":0.0,"y":-61.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-47.0},{"t":"2001-11-22 23:28","sinif":"X1.9","aki":0.0001894,"x":0.0,"y":-32.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-221.0},{"t":"2001-11-25 09:51","sinif":"X2.3","aki":0.0002313,"x":0.0,"y":-27.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-86.0},{"t":"2001-11-28 16:35","sinif":"X1.3","aki":0.0001324,"x":-269.0,"y":49.0,"bolge":"merkez","ar":9715,"doymus":false,"hudson":null,"dst":-22.0},{"t":"2001-11-29 10:36","sinif":"X1.1","aki":0.0001054,"x":0.0,"y":-18.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-22.0},{"t":"2001-12-11 08:08","sinif":"X5.3","aki":0.0005277,"x":0.0,"y":8.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-39.0},{"t":"2001-12-12 22:00","sinif":"X1.1","aki":0.0001102,"x":0.0,"y":11.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-29.0},{"t":"2001-12-13 14:30","sinif":"X11.7","aki":0.001169,"x":-147.0,"y":282.0,"bolge":"merkez","ar":9733,"doymus":false,"hudson":null,"dst":-37.0},{"t":"2001-12-26 05:38","sinif":"X1.4","aki":0.0001384,"x":783.0,"y":159.0,"bolge":"batı kenarı","ar":9742,"doymus":false,"hudson":null,"dst":-58.0},{"t":"2001-12-28 20:47","sinif":"X6.4","aki":0.0006371,"x":0.0,"y":45.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-58.0},{"t":"2001-12-29 09:45","sinif":"X1.8","aki":0.0001818,"x":965.0,"y":-115.0,"bolge":"batı kenarı","ar":9748,"doymus":false,"hudson":null,"dst":-58.0},{"t":"2001-12-29 09:56","sinif":"X1.4","aki":0.0001422,"x":null,"y":null,"bolge":"bilinmiyor","ar":null,"doymus":false,"hudson":null,"dst":-58.0},{"t":"2002-01-09 18:01","sinif":"X1.8","aki":0.0001805,"x":0.0,"y":68.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-72.0},{"t":"2002-02-20 06:12","sinif":"X1.0","aki":0.0001025,"x":0.0,"y":119.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-17.0},{"t":"2002-03-14 01:50","sinif":"X1.1","aki":0.00011,"x":0.0,"y":121.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-4.0},{"t":"2002-04-04 15:32","sinif":"X1.1","aki":0.0001146,"x":0.0,"y":106.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-12.0},{"t":"2002-04-10 12:31","sinif":"X1.6","aki":0.0001578,"x":0.0,"y":100.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-48.0},{"t":"2002-04-21 01:50","sinif":"X3.0","aki":0.0003013,"x":0.0,"y":86.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2002-05-20 15:27","sinif":"X3.9","aki":0.0003864,"x":-803.0,"y":-327.0,"bolge":"doğu kenarı","ar":9961,"doymus":false,"hudson":null,"dst":-109.0},{"t":"2002-07-03 02:13","sinif":"X3.1","aki":0.0003068,"x":0.0,"y":-51.0,"bolge":"merkez","ar":10017,"doymus":false,"hudson":null,"dst":-41.0},{"t":"2002-07-03 20:10","sinif":"X1.0","aki":0.0001048,"x":789.0,"y":-330.0,"bolge":"batı kenarı","ar":10017,"doymus":false,"hudson":null,"dst":-41.0},{"t":"2002-07-11 14:51","sinif":"X1.1","aki":0.0001076,"x":0.0,"y":-66.0,"bolge":"merkez","ar":10030,"doymus":false,"hudson":null,"dst":-36.0},{"t":"2002-07-15 20:08","sinif":"X5.9","aki":0.0005884,"x":0.0,"y":-73.0,"bolge":"merkez","ar":10030,"doymus":false,"hudson":null,"dst":-17.0},{"t":"2002-07-17 07:13","sinif":"X1.6","aki":0.000164,"x":259.0,"y":272.0,"bolge":"merkez","ar":10030,"doymus":false,"hudson":null,"dst":-34.0},{"t":"2002-07-18 07:44","sinif":"X3.6","aki":0.000356,"x":448.0,"y":245.0,"bolge":"merkez","ar":10030,"doymus":false,"hudson":null,"dst":-36.0},{"t":"2002-07-20 21:29","sinif":"X6.1","aki":0.0006116,"x":0.0,"y":-80.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-38.0},{"t":"2002-07-23 00:35","sinif":"X9.3","aki":0.0009262,"x":-876.0,"y":-237.0,"bolge":"doğu kenarı","ar":10039,"doymus":false,"hudson":null,"dst":-21.0},{"t":"2002-07-26 21:12","sinif":"X1.7","aki":0.0001655,"x":0.0,"y":-89.0,"bolge":"merkez","ar":10044,"doymus":false,"hudson":null,"dst":-25.0},{"t":"2002-07-26 22:17","sinif":"X1.0","aki":0.0001023,"x":0.0,"y":-89.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-25.0},{"t":"2002-08-03 19:07","sinif":"X2.1","aki":0.000214,"x":0.0,"y":-99.0,"bolge":"merkez","ar":10039,"doymus":false,"hudson":null,"dst":-46.0},{"t":"2002-08-04 09:54","sinif":"X1.3","aki":0.0001293,"x":0.0,"y":-99.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-28.0},{"t":"2002-08-21 05:34","sinif":"X2.0","aki":0.0001984,"x":723.0,"y":-266.0,"bolge":"batı kenarı","ar":10069,"doymus":false,"hudson":null,"dst":-58.0},{"t":"2002-08-22 01:57","sinif":"X1.1","aki":0.0001069,"x":0.0,"y":-115.0,"bolge":"merkez","ar":10069,"doymus":false,"hudson":null,"dst":-38.0},{"t":"2002-08-24 01:11","sinif":"X6.4","aki":0.0006384,"x":0.0,"y":-116.0,"bolge":"merkez","ar":10069,"doymus":false,"hudson":null,"dst":-45.0},{"t":"2002-08-30 13:29","sinif":"X2.9","aki":0.0002915,"x":-883.0,"y":213.0,"bolge":"doğu kenarı","ar":10095,"doymus":false,"hudson":null,"dst":-32.0},{"t":"2002-10-05 21:00","sinif":"X1.1","aki":0.0001143,"x":0.0,"y":-109.0,"bolge":"merkez","ar":10139,"doymus":false,"hudson":null,"dst":-115.0},{"t":"2002-10-31 16:52","sinif":"X2.4","aki":0.0002449,"x":0.0,"y":-75.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-75.0},{"t":"2002-11-18 02:08","sinif":"X1.4","aki":0.0001385,"x":-771.0,"y":-307.0,"bolge":"doğu kenarı","ar":10198,"doymus":false,"hudson":null,"dst":-128.0},{"t":"2002-12-20 13:18","sinif":"X1.3","aki":0.0001327,"x":496.0,"y":-393.0,"bolge":"merkez","ar":10226,"doymus":false,"hudson":null,"dst":-75.0},{"t":"2003-03-17 19:05","sinif":"X2.9","aki":0.0002934,"x":591.0,"y":-142.0,"bolge":"batı kenarı","ar":10314,"doymus":false,"hudson":null,"dst":-64.0},{"t":"2003-03-18 12:08","sinif":"X2.8","aki":0.0002822,"x":672.0,"y":-168.0,"bolge":"batı kenarı","ar":10314,"doymus":false,"hudson":null,"dst":-64.0},{"t":"2003-04-26 08:07","sinif":"X1.2","aki":0.000119,"x":0.0,"y":78.0,"bolge":"merkez","ar":10338,"doymus":false,"hudson":null,"dst":-67.0},{"t":"2003-05-27 23:07","sinif":"X2.5","aki":0.0002541,"x":276.0,"y":-97.0,"bolge":"merkez","ar":10365,"doymus":false,"hudson":null,"dst":-144.0},{"t":"2003-05-28 00:27","sinif":"X6.8","aki":0.0006764,"x":0.0,"y":20.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-144.0},{"t":"2003-05-29 01:05","sinif":"X2.1","aki":0.0002149,"x":568.0,"y":-85.0,"bolge":"batı kenarı","ar":10365,"doymus":false,"hudson":null,"dst":-144.0},{"t":"2003-05-31 02:24","sinif":"X1.7","aki":0.000174,"x":853.0,"y":-110.0,"bolge":"batı kenarı","ar":10365,"doymus":false,"hudson":null,"dst":-91.0},{"t":"2003-06-02 00:21","sinif":"X1.2","aki":0.0001224,"x":940.0,"y":-99.0,"bolge":"batı kenarı","ar":10365,"doymus":false,"hudson":null,"dst":-62.0},{"t":"2003-06-09 21:39","sinif":"X3.0","aki":0.0002971,"x":0.0,"y":-6.0,"bolge":"merkez","ar":10375,"doymus":false,"hudson":null,"dst":-35.0},{"t":"2003-06-10 18:15","sinif":"X1.1","aki":0.0001056,"x":0.0,"y":-8.0,"bolge":"merkez","ar":10375,"doymus":false,"hudson":null,"dst":-38.0},{"t":"2003-06-11 00:02","sinif":"X2.5","aki":0.0002541,"x":600.0,"y":159.0,"bolge":"batı kenarı","ar":10375,"doymus":false,"hudson":null,"dst":-38.0},{"t":"2003-06-11 20:14","sinif":"X3.1","aki":0.0003102,"x":770.0,"y":224.0,"bolge":"batı kenarı","ar":10375,"doymus":false,"hudson":null,"dst":-38.0},{"t":"2003-06-12 01:30","sinif":"X1.3","aki":0.0001343,"x":828.0,"y":241.0,"bolge":"batı kenarı","ar":10375,"doymus":false,"hudson":null,"dst":-38.0},{"t":"2003-06-15 23:56","sinif":"X2.5","aki":0.0002485,"x":-924.0,"y":-118.0,"bolge":"doğu kenarı","ar":10386,"doymus":false,"hudson":null,"dst":-141.0},{"t":"2003-10-19 16:50","sinif":"X2.1","aki":0.0002091,"x":-811.0,"y":85.0,"bolge":"doğu kenarı","ar":10484,"doymus":false,"hudson":null,"dst":-61.0},{"t":"2003-10-22 20:07","sinif":"X1.9","aki":0.0001858,"x":-897.0,"y":-314.0,"bolge":"doğu kenarı","ar":10486,"doymus":false,"hudson":null,"dst":-49.0},{"t":"2003-10-23 08:35","sinif":"X10.2","aki":0.001017,"x":-899.0,"y":-347.0,"bolge":"doğu kenarı","ar":10486,"doymus":false,"hudson":null,"dst":-52.0},{"t":"2003-10-23 20:04","sinif":"X2.1","aki":0.0002077,"x":-917.0,"y":-289.0,"bolge":"doğu kenarı","ar":10486,"doymus":false,"hudson":null,"dst":-52.0},{"t":"2003-10-24 02:54","sinif":"X1.4","aki":0.0001431,"x":-868.0,"y":-338.0,"bolge":"doğu kenarı","ar":10486,"doymus":false,"hudson":null,"dst":-52.0},{"t":"2003-10-26 06:20","sinif":"X2.1","aki":0.0002124,"x":null,"y":null,"bolge":"bilinmiyor","ar":null,"doymus":false,"hudson":null,"dst":-353.0},{"t":"2003-10-26 06:54","sinif":"X2.4","aki":0.0002424,"x":0.0,"y":-84.0,"bolge":"merkez","ar":10486,"doymus":false,"hudson":null,"dst":-353.0},{"t":"2003-10-26 18:15","sinif":"X2.4","aki":0.000237,"x":596.0,"y":-32.0,"bolge":"batı kenarı","ar":10484,"doymus":false,"hudson":null,"dst":-353.0},{"t":"2003-10-26 21:40","sinif":"X1.4","aki":0.0001437,"x":596.0,"y":-49.0,"bolge":"batı kenarı","ar":10484,"doymus":false,"hudson":null,"dst":-353.0},{"t":"2003-10-27 12:43","sinif":"X1.3","aki":0.0001265,"x":0.0,"y":-82.0,"bolge":"merkez","ar":10486,"doymus":false,"hudson":null,"dst":-383.0},{"t":"2003-10-28 10:48","sinif":"X1.5","aki":0.0001507,"x":null,"y":null,"bolge":"bilinmiyor","ar":null,"doymus":false,"hudson":null,"dst":-383.0},{"t":"2003-10-28 11:10","sinif":"≥X32.2","aki":0.003219,"x":0.0,"y":-81.0,"bolge":"merkez","ar":10486,"doymus":true,"hudson":0.00257,"dst":-383.0},{"t":"2003-10-29 20:49","sinif":"X18.8","aki":0.001879,"x":33.0,"y":-326.0,"bolge":"merkez","ar":10486,"doymus":false,"hudson":null,"dst":-383.0},{"t":"2003-11-02 17:25","sinif":"X15.6","aki":0.001565,"x":779.0,"y":-273.0,"bolge":"batı kenarı","ar":10486,"doymus":false,"hudson":null,"dst":-69.0},{"t":"2003-11-03 01:29","sinif":"X5.1","aki":0.000508,"x":945.0,"y":159.0,"bolge":"batı kenarı","ar":10488,"doymus":false,"hudson":null,"dst":-69.0},{"t":"2003-11-03 09:55","sinif":"X7.3","aki":0.0007344,"x":934.0,"y":119.0,"bolge":"batı kenarı","ar":10488,"doymus":false,"hudson":null,"dst":-69.0},{"t":"2003-11-04 19:52","sinif":"≥X32.5","aki":0.003254,"x":908.0,"y":-322.0,"bolge":"batı kenarı","ar":10486,"doymus":true,"hudson":0.00432,"dst":-29.0},{"t":"2003-11-20 07:47","sinif":"X1.8","aki":0.0001801,"x":136.0,"y":-21.0,"bolge":"merkez","ar":10501,"doymus":false,"hudson":null,"dst":-422.0},{"t":"2003-11-20 23:53","sinif":"X1.1","aki":0.0001094,"x":285.0,"y":-2.0,"bolge":"merkez","ar":10501,"doymus":false,"hudson":null,"dst":-122.0},{"t":"2004-01-05 03:45","sinif":"X1.3","aki":0.0001295,"x":0.0,"y":59.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-50.0},{"t":"2004-01-06 06:29","sinif":"X1.1","aki":0.0001095,"x":-972.0,"y":85.0,"bolge":"doğu kenarı","ar":10537,"doymus":false,"hudson":null,"dst":-50.0},{"t":"2004-01-07 10:27","sinif":"X1.6","aki":0.0001551,"x":-938.0,"y":118.0,"bolge":"doğu kenarı","ar":10537,"doymus":false,"hudson":null,"dst":-45.0},{"t":"2004-01-20 07:43","sinif":"X1.2","aki":0.0001153,"x":213.0,"y":-172.0,"bolge":"merkez","ar":10540,"doymus":false,"hudson":null,"dst":-130.0},{"t":"2004-02-26 02:03","sinif":"X2.2","aki":0.000215,"x":244.0,"y":347.0,"bolge":"merkez","ar":10564,"doymus":false,"hudson":null,"dst":-26.0},{"t":"2004-02-26 22:30","sinif":"X1.1","aki":0.0001078,"x":414.0,"y":339.0,"bolge":"merkez","ar":10564,"doymus":false,"hudson":null,"dst":-26.0},{"t":"2004-07-13 00:17","sinif":"X1.3","aki":0.000127,"x":649.0,"y":181.0,"bolge":"batı kenarı","ar":10646,"doymus":false,"hudson":null,"dst":-26.0},{"t":"2004-07-13 08:48","sinif":"X1.0","aki":0.0001016,"x":729.0,"y":154.0,"bolge":"batı kenarı","ar":10646,"doymus":false,"hudson":null,"dst":-76.0},{"t":"2004-07-13 19:32","sinif":"X1.2","aki":0.0001165,"x":764.0,"y":174.0,"bolge":"batı kenarı","ar":10646,"doymus":false,"hudson":null,"dst":-76.0},{"t":"2004-07-14 05:23","sinif":"X1.2","aki":0.0001165,"x":817.0,"y":197.0,"bolge":"batı kenarı","ar":10646,"doymus":false,"hudson":null,"dst":-76.0},{"t":"2004-07-15 01:41","sinif":"X3.4","aki":0.0003373,"x":-754.0,"y":-205.0,"bolge":"doğu kenarı","ar":10649,"doymus":false,"hudson":null,"dst":-76.0},{"t":"2004-07-15 18:24","sinif":"X3.2","aki":0.0003163,"x":-657.0,"y":-231.0,"bolge":"doğu kenarı","ar":10649,"doymus":false,"hudson":null,"dst":-76.0},{"t":"2004-07-16 02:06","sinif":"X2.6","aki":0.0002568,"x":-610.0,"y":-235.0,"bolge":"doğu kenarı","ar":10649,"doymus":false,"hudson":null,"dst":-76.0},{"t":"2004-07-16 10:41","sinif":"X2.1","aki":0.0002096,"x":-548.0,"y":-223.0,"bolge":"doğu kenarı","ar":10649,"doymus":false,"hudson":null,"dst":-76.0},{"t":"2004-07-16 13:55","sinif":"X6.9","aki":0.0006858,"x":-533.0,"y":-240.0,"bolge":"doğu kenarı","ar":10649,"doymus":false,"hudson":null,"dst":-76.0},{"t":"2004-07-17 07:57","sinif":"X2.0","aki":0.000197,"x":-378.0,"y":-248.0,"bolge":"merkez","ar":10649,"doymus":false,"hudson":null,"dst":-31.0},{"t":"2004-07-20 12:32","sinif":"X1.6","aki":0.0001609,"x":-535.0,"y":99.0,"bolge":"doğu kenarı","ar":10652,"doymus":false,"hudson":null,"dst":-99.0},{"t":"2004-07-22 00:32","sinif":"X1.7","aki":0.0001704,"x":-277.0,"y":-30.0,"bolge":"merkez","ar":10652,"doymus":false,"hudson":null,"dst":-136.0},{"t":"2004-07-25 05:51","sinif":"X1.3","aki":0.0001329,"x":467.0,"y":90.0,"bolge":"merkez","ar":10652,"doymus":false,"hudson":null,"dst":-170.0},{"t":"2004-08-13 18:12","sinif":"X2.0","aki":0.0002028,"x":377.0,"y":-310.0,"bolge":"merkez","ar":10656,"doymus":false,"hudson":null,"dst":-14.0},{"t":"2004-08-14 05:44","sinif":"X1.4","aki":0.0001392,"x":449.0,"y":-306.0,"bolge":"merkez","ar":10656,"doymus":false,"hudson":null,"dst":-19.0},{"t":"2004-08-14 13:43","sinif":"X1.1","aki":0.0001051,"x":516.0,"y":-317.0,"bolge":"batı kenarı","ar":10656,"doymus":false,"hudson":null,"dst":-20.0},{"t":"2004-08-15 12:41","sinif":"X1.8","aki":0.0001759,"x":666.0,"y":-287.0,"bolge":"batı kenarı","ar":10656,"doymus":false,"hudson":null,"dst":-20.0},{"t":"2004-08-18 17:40","sinif":"X3.4","aki":0.0003397,"x":919.0,"y":-228.0,"bolge":"batı kenarı","ar":10656,"doymus":false,"hudson":null,"dst":-33.0},{"t":"2004-10-30 11:46","sinif":"X2.3","aki":0.0002267,"x":399.0,"y":150.0,"bolge":"merkez","ar":10691,"doymus":false,"hudson":null,"dst":-20.0},{"t":"2004-10-30 16:33","sinif":"X1.1","aki":0.0001104,"x":444.0,"y":152.0,"bolge":"merkez","ar":10691,"doymus":false,"hudson":null,"dst":-20.0},{"t":"2004-11-04 23:09","sinif":"X1.0","aki":0.0001022,"x":-297.0,"y":72.0,"bolge":"merkez","ar":10696,"doymus":false,"hudson":null,"dst":-374.0},{"t":"2004-11-06 00:34","sinif":"X1.8","aki":0.0001754,"x":-133.0,"y":105.0,"bolge":"merkez","ar":10696,"doymus":false,"hudson":null,"dst":-374.0},{"t":"2004-11-07 16:06","sinif":"X3.8","aki":0.0003813,"x":281.0,"y":93.0,"bolge":"merkez","ar":10696,"doymus":false,"hudson":null,"dst":-374.0},{"t":"2004-11-09 17:19","sinif":"X1.7","aki":0.0001678,"x":747.0,"y":99.0,"bolge":"batı kenarı","ar":10696,"doymus":false,"hudson":null,"dst":-263.0},{"t":"2004-11-10 02:13","sinif":"X4.8","aki":0.0004805,"x":724.0,"y":115.0,"bolge":"batı kenarı","ar":10696,"doymus":false,"hudson":null,"dst":-176.0},{"t":"2005-01-01 00:31","sinif":"X3.3","aki":0.0003255,"x":-544.0,"y":145.0,"bolge":"doğu kenarı","ar":10715,"doymus":false,"hudson":null,"dst":-50.0},{"t":"2005-01-15 00:43","sinif":"X2.3","aki":0.0002342,"x":-132.0,"y":311.0,"bolge":"merkez","ar":10720,"doymus":false,"hudson":null,"dst":-103.0},{"t":"2005-01-15 04:31","sinif":"X1.6","aki":0.0001583,"x":-99.0,"y":312.0,"bolge":"merkez","ar":10720,"doymus":false,"hudson":null,"dst":-103.0},{"t":"2005-01-15 06:38","sinif":"X1.6","aki":0.0001617,"x":-100.0,"y":263.0,"bolge":"merkez","ar":10720,"doymus":false,"hudson":null,"dst":-103.0},{"t":"2005-01-15 23:02","sinif":"X5.0","aki":0.0004954,"x":132.0,"y":313.0,"bolge":"merkez","ar":10720,"doymus":false,"hudson":null,"dst":-103.0},{"t":"2005-01-17 09:52","sinif":"X7.2","aki":0.0007219,"x":400.0,"y":324.0,"bolge":"merkez","ar":10720,"doymus":false,"hudson":null,"dst":-103.0},{"t":"2005-01-19 07:31","sinif":"X1.3","aki":0.0001269,"x":750.0,"y":317.0,"bolge":"batı kenarı","ar":10720,"doymus":false,"hudson":null,"dst":-97.0},{"t":"2005-01-19 08:22","sinif":"X2.6","aki":0.0002613,"x":734.0,"y":304.0,"bolge":"batı kenarı","ar":10720,"doymus":false,"hudson":null,"dst":-97.0},{"t":"2005-01-20 07:01","sinif":"X13.3","aki":0.001331,"x":829.0,"y":276.0,"bolge":"batı kenarı","ar":10720,"doymus":false,"hudson":null,"dst":-97.0},{"t":"2005-05-13 16:57","sinif":"X1.5","aki":0.0001503,"x":-178.0,"y":243.0,"bolge":"merkez","ar":10759,"doymus":false,"hudson":null,"dst":-247.0},{"t":"2005-07-14 07:25","sinif":"X1.7","aki":0.0001703,"x":932.0,"y":147.0,"bolge":"batı kenarı","ar":10786,"doymus":false,"hudson":null,"dst":-67.0},{"t":"2005-07-14 10:55","sinif":"X2.4","aki":0.0002429,"x":926.0,"y":180.0,"bolge":"batı kenarı","ar":10786,"doymus":false,"hudson":null,"dst":-67.0},{"t":"2005-07-30 06:35","sinif":"X2.5","aki":0.0002453,"x":-810.0,"y":152.0,"bolge":"doğu kenarı","ar":10792,"doymus":false,"hudson":null,"dst":-23.0},{"t":"2005-08-22 17:27","sinif":"X1.1","aki":0.0001061,"x":839.0,"y":-260.0,"bolge":"batı kenarı","ar":10798,"doymus":false,"hudson":null,"dst":-184.0},{"t":"2005-08-25 04:40","sinif":"X1.2","aki":0.0001198,"x":-924.0,"y":127.0,"bolge":"doğu kenarı","ar":10803,"doymus":false,"hudson":null,"dst":-64.0},{"t":"2005-09-07 17:40","sinif":"≥X31.9","aki":0.003195,"x":-911.0,"y":-207.0,"bolge":"doğu kenarı","ar":10808,"doymus":true,"hudson":0.00246,"dst":-139.0},{"t":"2005-09-08 21:06","sinif":"X10.2","aki":0.001016,"x":-899.0,"y":-213.0,"bolge":"doğu kenarı","ar":10808,"doymus":false,"hudson":null,"dst":-139.0},{"t":"2005-09-09 03:00","sinif":"X2.2","aki":0.0002187,"x":-865.0,"y":-241.0,"bolge":"doğu kenarı","ar":10808,"doymus":false,"hudson":null,"dst":-139.0},{"t":"2005-09-09 05:48","sinif":"X1.2","aki":0.0001173,"x":-858.0,"y":-213.0,"bolge":"doğu kenarı","ar":10808,"doymus":false,"hudson":null,"dst":-139.0},{"t":"2005-09-09 09:59","sinif":"X6.8","aki":0.0006757,"x":-855.0,"y":-229.0,"bolge":"doğu kenarı","ar":10808,"doymus":false,"hudson":null,"dst":-139.0},{"t":"2005-09-09 20:04","sinif":"X11.6","aki":0.00116,"x":-797.0,"y":-227.0,"bolge":"doğu kenarı","ar":10808,"doymus":false,"hudson":null,"dst":-139.0},{"t":"2005-09-10 16:43","sinif":"X2.2","aki":0.000219,"x":-686.0,"y":-261.0,"bolge":"doğu kenarı","ar":10808,"doymus":false,"hudson":null,"dst":-139.0},{"t":"2005-09-10 22:10","sinif":"X4.0","aki":0.0003952,"x":-681.0,"y":-293.0,"bolge":"doğu kenarı","ar":10808,"doymus":false,"hudson":null,"dst":-139.0},{"t":"2005-09-12 09:03","sinif":"X1.1","aki":0.0001148,"x":-397.0,"y":-288.0,"bolge":"merkez","ar":10808,"doymus":false,"hudson":null,"dst":-89.0},{"t":"2005-09-13 19:27","sinif":"X2.8","aki":0.0002807,"x":-164.0,"y":-266.0,"bolge":"merkez","ar":10808,"doymus":false,"hudson":null,"dst":-80.0},{"t":"2005-09-13 20:04","sinif":"X2.7","aki":0.0002743,"x":null,"y":null,"bolge":"bilinmiyor","ar":null,"doymus":false,"hudson":null,"dst":-80.0},{"t":"2005-09-13 23:22","sinif":"X3.3","aki":0.0003321,"x":-66.0,"y":-283.0,"bolge":"merkez","ar":10808,"doymus":false,"hudson":null,"dst":-80.0},{"t":"2005-09-15 08:38","sinif":"X2.2","aki":0.0002192,"x":227.0,"y":-311.0,"bolge":"merkez","ar":10808,"doymus":false,"hudson":null,"dst":-76.0},{"t":"2005-09-17 06:05","sinif":"X1.8","aki":0.0001832,"x":593.0,"y":-256.0,"bolge":"batı kenarı","ar":10808,"doymus":false,"hudson":null,"dst":-53.0},{"t":"2005-12-02 02:52","sinif":"X1.2","aki":0.0001228,"x":-318.0,"y":-63.0,"bolge":"merkez","ar":10826,"doymus":false,"hudson":null,"dst":-21.0},{"t":"2005-12-02 10:12","sinif":"X1.5","aki":0.0001472,"x":-219.0,"y":-80.0,"bolge":"merkez","ar":10826,"doymus":false,"hudson":null,"dst":-21.0},{"t":"2006-04-27 15:52","sinif":"X1.5","aki":0.000148,"x":-415.0,"y":-66.0,"bolge":"merkez","ar":10875,"doymus":false,"hudson":null,"dst":-22.0},{"t":"2006-12-05 10:35","sinif":"X16.9","aki":0.001694,"x":-897.0,"y":-121.0,"bolge":"doğu kenarı","ar":10930,"doymus":false,"hudson":null,"dst":-55.0},{"t":"2006-12-06 08:23","sinif":"X1.1","aki":0.0001136,"x":-867.0,"y":-70.0,"bolge":"doğu kenarı","ar":10930,"doymus":false,"hudson":null,"dst":-47.0},{"t":"2006-12-06 08:35","sinif":"X1.1","aki":0.000108,"x":null,"y":null,"bolge":"bilinmiyor","ar":null,"doymus":false,"hudson":null,"dst":-47.0},{"t":"2006-12-06 18:47","sinif":"X12.3","aki":0.001229,"x":-864.0,"y":-103.0,"bolge":"doğu kenarı","ar":10930,"doymus":false,"hudson":null,"dst":-47.0},{"t":"2006-12-13 02:40","sinif":"X6.4","aki":0.0006379,"x":380.0,"y":-92.0,"bolge":"merkez","ar":10930,"doymus":false,"hudson":null,"dst":-162.0},{"t":"2006-12-14 22:15","sinif":"X2.8","aki":0.0002847,"x":699.0,"y":-92.0,"bolge":"batı kenarı","ar":10930,"doymus":false,"hudson":null,"dst":-116.0},{"t":"2007-06-03 02:12","sinif":"X1.4","aki":0.0001425,"x":0.0,"y":8.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-12.0},{"t":"2007-06-04 05:13","sinif":"X1.8","aki":0.0001815,"x":-731.0,"y":-112.0,"bolge":"doğu kenarı","ar":10960,"doymus":false,"hudson":null,"dst":-12.0},{"t":"2010-02-07 02:34","sinif":"X1.1","aki":0.0001068,"x":-158.0,"y":448.0,"bolge":"merkez","ar":11045,"doymus":false,"hudson":null,"dst":-22.0},{"t":"2010-02-12 11:26","sinif":"X1.4","aki":0.0001402,"x":0.0,"y":114.0,"bolge":"merkez","ar":11046,"doymus":false,"hudson":null,"dst":-59.0},{"t":"2011-02-13 17:37","sinif":"X1.0","aki":0.0001016,"x":-64.0,"y":-224.0,"bolge":"merkez","ar":11158,"doymus":false,"hudson":null,"dst":-40.0},{"t":"2011-02-15 01:56","sinif":"X3.5","aki":0.0003528,"x":0.0,"y":116.0,"bolge":"merkez","ar":11158,"doymus":false,"hudson":null,"dst":-32.0},{"t":"2011-02-18 10:11","sinif":"X1.0","aki":0.0001028,"x":0.0,"y":118.0,"bolge":"merkez","ar":11158,"doymus":false,"hudson":null,"dst":-30.0},{"t":"2011-03-09 23:23","sinif":"X2.4","aki":0.0002399,"x":150.0,"y":254.0,"bolge":"merkez","ar":11166,"doymus":false,"hudson":null,"dst":-83.0},{"t":"2011-07-30 02:09","sinif":"X1.4","aki":0.0001432,"x":0.0,"y":-93.0,"bolge":"merkez","ar":11261,"doymus":false,"hudson":null,"dst":-40.0},{"t":"2011-08-04 03:57","sinif":"X1.4","aki":0.0001428,"x":527.0,"y":232.0,"bolge":"batı kenarı","ar":11261,"doymus":false,"hudson":null,"dst":-115.0},{"t":"2011-08-09 08:04","sinif":"X10.8","aki":0.00108,"x":846.0,"y":240.0,"bolge":"batı kenarı","ar":11263,"doymus":false,"hudson":null,"dst":-28.0},{"t":"2011-09-06 22:20","sinif":"X3.2","aki":0.0003235,"x":287.0,"y":118.0,"bolge":"merkez","ar":1283,"doymus":false,"hudson":null,"dst":-75.0},{"t":"2011-09-07 22:38","sinif":"X2.8","aki":0.0002778,"x":435.0,"y":126.0,"bolge":"merkez","ar":11283,"doymus":false,"hudson":null,"dst":-75.0},{"t":"2011-09-08 15:46","sinif":"X1.0","aki":0.0001027,"x":596.0,"y":140.0,"bolge":"batı kenarı","ar":11283,"doymus":false,"hudson":null,"dst":-75.0},{"t":"2011-09-22 11:01","sinif":"X2.3","aki":0.0002284,"x":0.0,"y":-118.0,"bolge":"merkez","ar":11302,"doymus":false,"hudson":null,"dst":-22.0},{"t":"2011-09-24 09:40","sinif":"X2.9","aki":0.0002925,"x":-812.0,"y":141.0,"bolge":"doğu kenarı","ar":11302,"doymus":false,"hudson":null,"dst":-118.0},{"t":"2011-09-24 13:20","sinif":"X1.1","aki":0.0001092,"x":0.0,"y":-117.0,"bolge":"merkez","ar":11302,"doymus":false,"hudson":null,"dst":-118.0},{"t":"2011-09-25 04:50","sinif":"X1.1","aki":0.0001145,"x":-689.0,"y":104.0,"bolge":"doğu kenarı","ar":11302,"doymus":false,"hudson":null,"dst":-118.0},{"t":"2011-11-03 20:27","sinif":"X3.0","aki":0.0003047,"x":-800.0,"y":333.0,"bolge":"doğu kenarı","ar":11339,"doymus":false,"hudson":null,"dst":-40.0},{"t":"2012-01-23 03:59","sinif":"X1.3","aki":0.0001343,"x":309.0,"y":531.0,"bolge":"merkez","ar":11402,"doymus":false,"hudson":null,"dst":-75.0},{"t":"2012-01-27 18:37","sinif":"X2.8","aki":0.000275,"x":821.0,"y":468.0,"bolge":"batı kenarı","ar":11402,"doymus":false,"hudson":null,"dst":-28.0},{"t":"2012-03-05 04:09","sinif":"X1.7","aki":0.0001749,"x":-730.0,"y":353.0,"bolge":"doğu kenarı","ar":11429,"doymus":false,"hudson":null,"dst":-88.0},{"t":"2012-03-07 00:24","sinif":"X8.3","aki":0.0008329,"x":0.0,"y":123.0,"bolge":"merkez","ar":11429,"doymus":false,"hudson":null,"dst":-145.0},{"t":"2012-03-10 17:44","sinif":"X1.3","aki":0.0001302,"x":0.0,"y":122.0,"bolge":"merkez","ar":11429,"doymus":false,"hudson":null,"dst":-64.0},{"t":"2012-03-13 17:41","sinif":"X1.2","aki":0.0001222,"x":0.0,"y":121.0,"bolge":"merkez","ar":11429,"doymus":false,"hudson":null,"dst":-88.0},{"t":"2012-07-06 23:08","sinif":"X1.7","aki":0.0001726,"x":0.0,"y":-59.0,"bolge":"merkez","ar":11515,"doymus":false,"hudson":null,"dst":-78.0},{"t":"2012-07-08 16:32","sinif":"X1.1","aki":0.0001062,"x":868.0,"y":-292.0,"bolge":"batı kenarı","ar":11515,"doymus":false,"hudson":null,"dst":-78.0},{"t":"2012-07-12 16:52","sinif":"X2.2","aki":0.000218,"x":16.0,"y":-310.0,"bolge":"merkez","ar":11520,"doymus":false,"hudson":null,"dst":-139.0},{"t":"2012-07-19 05:53","sinif":"X1.2","aki":0.0001185,"x":0.0,"y":-78.0,"bolge":"merkez","ar":11520,"doymus":false,"hudson":null,"dst":-31.0},{"t":"2012-10-20 18:14","sinif":"X1.4","aki":0.0001392,"x":0.0,"y":-91.0,"bolge":"merkez","ar":11598,"doymus":false,"hudson":null,"dst":-14.0},{"t":"2012-10-23 03:17","sinif":"X2.8","aki":0.0002762,"x":0.0,"y":-88.0,"bolge":"merkez","ar":11598,"doymus":false,"hudson":null,"dst":-18.0},{"t":"2012-11-13 02:03","sinif":"X1.0","aki":0.0001012,"x":0.0,"y":-52.0,"bolge":"merkez","ar":11613,"doymus":false,"hudson":null,"dst":-108.0},{"t":"2013-05-13 02:17","sinif":"X2.7","aki":0.0002681,"x":0.0,"y":48.0,"bolge":"merkez","ar":11748,"doymus":false,"hudson":null,"dst":-35.0},{"t":"2013-05-13 16:05","sinif":"X4.4","aki":0.0004389,"x":-928.0,"y":185.0,"bolge":"doğu kenarı","ar":11748,"doymus":false,"hudson":null,"dst":-35.0},{"t":"2013-05-14 01:11","sinif":"X5.0","aki":0.0004959,"x":0.0,"y":46.0,"bolge":"merkez","ar":11748,"doymus":false,"hudson":null,"dst":-35.0},{"t":"2013-05-15 01:48","sinif":"X2.0","aki":0.0001982,"x":-836.0,"y":216.0,"bolge":"doğu kenarı","ar":11748,"doymus":false,"hudson":null,"dst":-61.0},{"t":"2013-10-24 00:30","sinif":"X1.4","aki":0.0001434,"x":-133.0,"y":-252.0,"bolge":"merkez","ar":11877,"doymus":false,"hudson":null,"dst":-5.0},{"t":"2013-10-25 08:01","sinif":"X2.7","aki":0.0002665,"x":0.0,"y":-85.0,"bolge":"merkez","ar":11882,"doymus":false,"hudson":null,"dst":-1.0},{"t":"2013-10-25 15:03","sinif":"X3.3","aki":0.0003265,"x":0.0,"y":-84.0,"bolge":"merkez","ar":11882,"doymus":false,"hudson":null,"dst":-1.0},{"t":"2013-10-28 02:03","sinif":"X1.6","aki":0.0001569,"x":881.0,"y":35.0,"bolge":"batı kenarı","ar":11875,"doymus":false,"hudson":null,"dst":-56.0},{"t":"2013-10-29 21:54","sinif":"X3.6","aki":0.0003598,"x":0.0,"y":-78.0,"bolge":"merkez","ar":11875,"doymus":false,"hudson":null,"dst":-56.0},{"t":"2013-11-05 22:12","sinif":"X5.3","aki":0.0005264,"x":-683.0,"y":-246.0,"bolge":"doğu kenarı","ar":11890,"doymus":false,"hudson":null,"dst":-80.0},{"t":"2013-11-08 04:25","sinif":"X1.7","aki":0.0001727,"x":-244.0,"y":-292.0,"bolge":"merkez","ar":11890,"doymus":false,"hudson":null,"dst":-80.0},{"t":"2013-11-10 05:14","sinif":"X1.7","aki":0.0001732,"x":212.0,"y":-289.0,"bolge":"merkez","ar":11890,"doymus":false,"hudson":null,"dst":-68.0},{"t":"2013-11-19 10:26","sinif":"X1.6","aki":0.0001589,"x":0.0,"y":-39.0,"bolge":"merkez","ar":11893,"doymus":false,"hudson":null,"dst":-23.0},{"t":"2014-01-01 18:52","sinif":"X1.5","aki":0.0001523,"x":694.0,"y":-201.0,"bolge":"batı kenarı","ar":11936,"doymus":false,"hudson":null,"dst":-31.0},{"t":"2014-01-07 10:13","sinif":"X1.1","aki":0.0001108,"x":-182.0,"y":-159.0,"bolge":"merkez","ar":11944,"doymus":false,"hudson":null,"dst":-22.0},{"t":"2014-01-07 18:32","sinif":"X1.9","aki":0.0001916,"x":0.0,"y":64.0,"bolge":"merkez","ar":11944,"doymus":false,"hudson":null,"dst":-22.0},{"t":"2014-01-30 16:11","sinif":"X1.0","aki":0.0001024,"x":-806.0,"y":-166.0,"bolge":"doğu kenarı","ar":11967,"doymus":false,"hudson":null,"dst":-7.0},{"t":"2014-02-25 00:49","sinif":"X7.6","aki":0.0007621,"x":-939.0,"y":-184.0,"bolge":"doğu kenarı","ar":11990,"doymus":false,"hudson":null,"dst":-97.0},{"t":"2014-03-12 22:34","sinif":"X1.4","aki":0.0001433,"x":912.0,"y":272.0,"bolge":"batı kenarı","ar":11996,"doymus":false,"hudson":null,"dst":-24.0},{"t":"2014-03-29 17:48","sinif":"X1.5","aki":0.000155,"x":501.0,"y":276.0,"bolge":"batı kenarı","ar":12017,"doymus":false,"hudson":null,"dst":-15.0},{"t":"2014-04-18 13:03","sinif":"X1.1","aki":0.000112,"x":0.0,"y":89.0,"bolge":"merkez","ar":12036,"doymus":false,"hudson":null,"dst":-32.0},{"t":"2014-04-25 00:27","sinif":"X2.1","aki":0.0002126,"x":0.0,"y":80.0,"bolge":"merkez","ar":12035,"doymus":false,"hudson":null,"dst":-25.0},{"t":"2014-06-10 11:42","sinif":"X3.4","aki":0.0003392,"x":-899.0,"y":-246.0,"bolge":"doğu kenarı","ar":12087,"doymus":false,"hudson":null,"dst":-8.0},{"t":"2014-06-10 12:52","sinif":"X2.4","aki":0.0002371,"x":-895.0,"y":-277.0,"bolge":"doğu kenarı","ar":12087,"doymus":false,"hudson":null,"dst":-8.0},{"t":"2014-06-11 09:06","sinif":"X1.5","aki":0.0001524,"x":-816.0,"y":-296.0,"bolge":"doğu kenarı","ar":12087,"doymus":false,"hudson":null,"dst":-8.0},{"t":"2014-07-08 16:20","sinif":"X1.0","aki":0.0001001,"x":-767.0,"y":163.0,"bolge":"doğu kenarı","ar":12113,"doymus":false,"hudson":null,"dst":-28.0},{"t":"2014-09-10 17:45","sinif":"X2.6","aki":0.0002551,"x":-32.0,"y":113.0,"bolge":"merkez","ar":12158,"doymus":false,"hudson":null,"dst":-88.0},{"t":"2014-10-02 19:01","sinif":"X1.1","aki":0.000112,"x":908.0,"y":-293.0,"bolge":"batı kenarı","ar":12173,"doymus":false,"hudson":null,"dst":-12.0},{"t":"2014-10-19 05:03","sinif":"X1.7","aki":0.0001688,"x":0.0,"y":-94.0,"bolge":"merkez","ar":12192,"doymus":false,"hudson":null,"dst":-51.0},{"t":"2014-10-22 01:59","sinif":"X1.3","aki":0.0001347,"x":0.0,"y":-90.0,"bolge":"merkez","ar":12192,"doymus":false,"hudson":null,"dst":-40.0},{"t":"2014-10-22 14:28","sinif":"X2.6","aki":0.0002554,"x":-211.0,"y":-317.0,"bolge":"merkez","ar":12192,"doymus":false,"hudson":null,"dst":-41.0},{"t":"2014-10-24 21:20","sinif":"X3.4","aki":0.0003362,"x":null,"y":null,"bolge":"bilinmiyor","ar":null,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2014-10-24 21:41","sinif":"X4.9","aki":0.0004895,"x":334.0,"y":-343.0,"bolge":"merkez","ar":12192,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2014-10-25 17:08","sinif":"X1.6","aki":0.0001598,"x":479.0,"y":-335.0,"bolge":"merkez","ar":12192,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2014-10-25 17:46","sinif":"X1.6","aki":0.0001633,"x":null,"y":null,"bolge":"bilinmiyor","ar":null,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2014-10-25 17:49","sinif":"X1.5","aki":0.0001496,"x":null,"y":null,"bolge":"bilinmiyor","ar":null,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2014-10-26 10:56","sinif":"X3.1","aki":0.0003079,"x":592.0,"y":-359.0,"bolge":"batı kenarı","ar":12192,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2014-10-27 00:26","sinif":"X1.1","aki":0.0001067,"x":652.0,"y":-291.0,"bolge":"batı kenarı","ar":12192,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2014-10-27 00:34","sinif":"X1.1","aki":0.0001098,"x":652.0,"y":-291.0,"bolge":"batı kenarı","ar":12192,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2014-10-27 10:09","sinif":"X1.0","aki":0.0001041,"x":0.0,"y":-82.0,"bolge":"merkez","ar":12192,"doymus":false,"hudson":null,"dst":-57.0},{"t":"2014-10-27 14:47","sinif":"X3.2","aki":0.0003169,"x":729.0,"y":-330.0,"bolge":"batı kenarı","ar":12192,"doymus":false,"hudson":null,"dst":-50.0},{"t":"2014-10-28 03:32","sinif":"X1.0","aki":0.0001014,"x":0.0,"y":-81.0,"bolge":"merkez","ar":12192,"doymus":false,"hudson":null,"dst":-42.0},{"t":"2014-11-03 22:40","sinif":"X1.0","aki":0.0001005,"x":0.0,"y":-70.0,"bolge":"merkez","ar":12205,"doymus":false,"hudson":null,"dst":-44.0},{"t":"2014-11-05 09:47","sinif":"X1.2","aki":0.000122,"x":0.0,"y":-67.0,"bolge":"merkez","ar":12205,"doymus":false,"hudson":null,"dst":-29.0},{"t":"2014-11-07 17:25","sinif":"X2.5","aki":0.000246,"x":0.0,"y":-63.0,"bolge":"merkez","ar":12205,"doymus":false,"hudson":null,"dst":-65.0},{"t":"2014-12-17 04:51","sinif":"X1.3","aki":0.0001341,"x":-144.0,"y":-316.0,"bolge":"merkez","ar":12242,"doymus":false,"hudson":null,"dst":-32.0},{"t":"2014-12-18 21:57","sinif":"X1.1","aki":0.0001062,"x":0.0,"y":23.0,"bolge":"merkez","ar":12241,"doymus":false,"hudson":null,"dst":-71.0},{"t":"2014-12-20 00:27","sinif":"X2.9","aki":0.0002883,"x":372.0,"y":-329.0,"bolge":"merkez","ar":12242,"doymus":false,"hudson":null,"dst":-71.0},{"t":"2015-03-03 01:35","sinif":"X1.3","aki":0.0001261,"x":902.0,"y":350.0,"bolge":"batı kenarı","ar":12290,"doymus":false,"hudson":null,"dst":-31.0},{"t":"2015-03-07 22:22","sinif":"X1.4","aki":0.0001423,"x":0.0,"y":123.0,"bolge":"merkez","ar":12297,"doymus":false,"hudson":null,"dst":-23.0},{"t":"2015-03-11 16:21","sinif":"X3.4","aki":0.0003368,"x":-332.0,"y":-172.0,"bolge":"merkez","ar":12297,"doymus":false,"hudson":null,"dst":-24.0},{"t":"2015-05-05 22:11","sinif":"X4.2","aki":0.0004196,"x":0.0,"y":62.0,"bolge":"merkez","ar":12339,"doymus":false,"hudson":null,"dst":-35.0},{"t":"2015-06-22 18:23","sinif":"X1.0","aki":0.0001011,"x":129.0,"y":167.0,"bolge":"merkez","ar":12371,"doymus":false,"hudson":null,"dst":-171.0},{"t":"2015-06-25 08:16","sinif":"X1.2","aki":0.0001213,"x":626.0,"y":122.0,"bolge":"batı kenarı","ar":12371,"doymus":false,"hudson":null,"dst":-77.0},{"t":"2015-09-28 14:58","sinif":"X1.2","aki":0.0001169,"x":0.0,"y":-115.0,"bolge":"merkez","ar":12422,"doymus":false,"hudson":null,"dst":-48.0},{"t":"2016-04-18 00:29","sinif":"X1.0","aki":0.000103,"x":826.0,"y":239.0,"bolge":"batı kenarı","ar":12529,"doymus":false,"hudson":null,"dst":-15.0},{"t":"2016-07-23 05:16","sinif":"X1.2","aki":0.000117,"x":0.0,"y":-84.0,"bolge":"merkez","ar":12567,"doymus":false,"hudson":null,"dst":-38.0},{"t":"2017-09-06 09:10","sinif":"X3.2","aki":0.0003219,"x":516.0,"y":-216.0,"bolge":"batı kenarı","ar":12673,"doymus":false,"hudson":null,"dst":-148.0},{"t":"2017-09-06 12:02","sinif":"X14.6","aki":0.001464,"x":515.0,"y":-232.0,"bolge":"batı kenarı","ar":12673,"doymus":false,"hudson":null,"dst":-148.0},{"t":"2017-09-07 10:15","sinif":"X1.2","aki":0.0001205,"x":0.0,"y":-121.0,"bolge":"merkez","ar":12673,"doymus":false,"hudson":null,"dst":-148.0},{"t":"2017-09-07 14:36","sinif":"X2.2","aki":0.0002186,"x":707.0,"y":-258.0,"bolge":"batı kenarı","ar":12673,"doymus":false,"hudson":null,"dst":-132.0},{"t":"2017-09-08 07:49","sinif":"X1.3","aki":0.0001266,"x":788.0,"y":-229.0,"bolge":"batı kenarı","ar":12673,"doymus":false,"hudson":null,"dst":-108.0},{"t":"2017-09-10 16:06","sinif":"X12.9","aki":0.001292,"x":0.0,"y":-121.0,"bolge":"merkez","ar":12673,"doymus":false,"hudson":null,"dst":-56.0},{"t":"2021-07-03 14:29","sinif":"X1.6","aki":0.0001591,"x":852.0,"y":376.0,"bolge":"batı kenarı","ar":12838,"doymus":false,"hudson":null,"dst":-18.0},{"t":"2022-03-30 17:37","sinif":"X1.4","aki":0.0001378,"x":0.0,"y":111.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-46.0},{"t":"2022-04-17 03:34","sinif":"X1.2","aki":0.0001163,"x":0.0,"y":91.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-13.0},{"t":"2022-04-20 03:57","sinif":"X2.2","aki":0.0002243,"x":0.0,"y":87.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-20.0},{"t":"2022-04-30 13:47","sinif":"X1.1","aki":0.0001129,"x":0.0,"y":71.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-23.0},{"t":"2022-05-03 13:25","sinif":"X1.1","aki":0.0001132,"x":0.0,"y":66.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-17.0},{"t":"2022-05-10 13:55","sinif":"X1.5","aki":0.0001505,"x":58.0,"y":-430.0,"bolge":"merkez","ar":13006,"doymus":false,"hudson":null,"dst":-39.0},{"t":"2022-10-02 20:25","sinif":"X1.1","aki":0.0001063,"x":0.0,"y":-111.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-32.0},{"t":"2023-01-06 00:57","sinif":"X1.2","aki":0.0001213,"x":0.0,"y":61.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-19.0},{"t":"2023-01-09 18:50","sinif":"X2.0","aki":0.0001972,"x":-901.0,"y":-216.0,"bolge":"doğu kenarı","ar":13184,"doymus":false,"hudson":null,"dst":-28.0},{"t":"2023-01-10 22:47","sinif":"X1.1","aki":0.0001061,"x":0.0,"y":70.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-39.0},{"t":"2023-02-11 15:48","sinif":"X1.2","aki":0.0001162,"x":0.0,"y":113.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-67.0},{"t":"2023-02-17 20:16","sinif":"X2.3","aki":0.0002275,"x":0.0,"y":118.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-50.0},{"t":"2023-03-03 17:52","sinif":"X2.1","aki":0.0002067,"x":0.0,"y":122.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-25.0},{"t":"2023-03-29 02:33","sinif":"X1.3","aki":0.0001268,"x":0.0,"y":113.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-44.0},{"t":"2023-06-20 17:09","sinif":"X1.1","aki":0.0001093,"x":0.0,"y":-27.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-39.0},{"t":"2023-07-02 23:14","sinif":"X1.1","aki":0.0001061,"x":null,"y":null,"bolge":"bilinmiyor","ar":null,"doymus":false,"hudson":null,"dst":-7.0},{"t":"2023-08-05 22:21","sinif":"X1.6","aki":0.0001613,"x":0.0,"y":-101.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-40.0},{"t":"2023-08-07 20:46","sinif":"X1.5","aki":0.0001491,"x":0.0,"y":-103.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-26.0},{"t":"2023-12-14 17:02","sinif":"X2.8","aki":0.0002835,"x":0.0,"y":14.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-77.0},{"t":"2023-12-31 21:55","sinif":"X4.9","aki":0.0004947,"x":0.0,"y":50.0,"bolge":"merkez","ar":13536,"doymus":false,"hudson":null,"dst":-27.0},{"t":"2024-02-09 13:14","sinif":"X3.3","aki":0.0003338,"x":0.0,"y":111.0,"bolge":"merkez","ar":13575,"doymus":false,"hudson":null,"dst":-21.0},{"t":"2024-02-16 06:53","sinif":"X2.5","aki":0.0002527,"x":0.0,"y":116.0,"bolge":"merkez","ar":13576,"doymus":false,"hudson":null,"dst":-26.0},{"t":"2024-02-21 23:07","sinif":"X1.9","aki":0.000187,"x":0.0,"y":120.0,"bolge":"merkez","ar":13590,"doymus":false,"hudson":null,"dst":-27.0},{"t":"2024-02-22 06:32","sinif":"X1.7","aki":0.0001679,"x":-536.0,"y":360.0,"bolge":"doğu kenarı","ar":13590,"doymus":false,"hudson":null,"dst":-27.0},{"t":"2024-02-22 22:34","sinif":"X6.4","aki":0.0006375,"x":0.0,"y":120.0,"bolge":"merkez","ar":13590,"doymus":false,"hudson":null,"dst":-27.0},{"t":"2024-03-23 01:33","sinif":"X1.1","aki":0.0001102,"x":0.0,"y":117.0,"bolge":"merkez","ar":13614,"doymus":false,"hudson":null,"dst":-128.0},{"t":"2024-03-28 20:56","sinif":"X1.1","aki":0.0001107,"x":0.0,"y":112.0,"bolge":"merkez","ar":13615,"doymus":false,"hudson":null,"dst":-33.0},{"t":"2024-05-03 02:22","sinif":"X1.7","aki":0.0001651,"x":0.0,"y":66.0,"bolge":"merkez","ar":13663,"doymus":false,"hudson":null,"dst":-43.0},{"t":"2024-05-05 06:01","sinif":"X1.3","aki":0.0001302,"x":149.0,"y":472.0,"bolge":"merkez","ar":13663,"doymus":false,"hudson":null,"dst":-43.0},{"t":"2024-05-05 11:54","sinif":"X1.3","aki":0.0001273,"x":0.0,"y":61.0,"bolge":"merkez","ar":13663,"doymus":false,"hudson":null,"dst":-43.0},{"t":"2024-05-06 06:35","sinif":"X4.5","aki":0.0004463,"x":0.0,"y":60.0,"bolge":"merkez","ar":13663,"doymus":false,"hudson":null,"dst":-15.0},{"t":"2024-05-08 01:41","sinif":"X1.1","aki":0.0001065,"x":0.0,"y":57.0,"bolge":"merkez","ar":13663,"doymus":false,"hudson":null,"dst":-406.0},{"t":"2024-05-08 05:09","sinif":"X1.0","aki":0.0001025,"x":265.0,"y":-243.0,"bolge":"merkez","ar":13664,"doymus":false,"hudson":null,"dst":-406.0},{"t":"2024-05-08 21:40","sinif":"X1.0","aki":0.0001004,"x":0.0,"y":55.0,"bolge":"merkez","ar":13664,"doymus":false,"hudson":null,"dst":-406.0},{"t":"2024-05-09 09:13","sinif":"X2.2","aki":0.0002222,"x":0.0,"y":54.0,"bolge":"merkez","ar":13664,"doymus":false,"hudson":null,"dst":-406.0},{"t":"2024-05-09 17:44","sinif":"X1.1","aki":0.0001106,"x":0.0,"y":54.0,"bolge":"merkez","ar":13664,"doymus":false,"hudson":null,"dst":-406.0},{"t":"2024-05-10 06:54","sinif":"X3.9","aki":0.0003929,"x":0.0,"y":53.0,"bolge":"merkez","ar":13664,"doymus":false,"hudson":null,"dst":-406.0},{"t":"2024-05-11 01:23","sinif":"X5.8","aki":0.0005821,"x":0.0,"y":51.0,"bolge":"merkez","ar":13664,"doymus":false,"hudson":null,"dst":-281.0},{"t":"2024-05-11 11:44","sinif":"X1.5","aki":0.0001515,"x":0.0,"y":51.0,"bolge":"merkez","ar":13664,"doymus":false,"hudson":null,"dst":-167.0},{"t":"2024-05-12 16:26","sinif":"X1.0","aki":0.0001009,"x":860.0,"y":-279.0,"bolge":"batı kenarı","ar":13664,"doymus":false,"hudson":null,"dst":-93.0},{"t":"2024-05-14 02:09","sinif":"X1.7","aki":0.0001697,"x":0.0,"y":46.0,"bolge":"merkez","ar":13664,"doymus":false,"hudson":null,"dst":-88.0},{"t":"2024-05-14 12:55","sinif":"X1.2","aki":0.0001231,"x":0.0,"y":45.0,"bolge":"merkez","ar":13664,"doymus":false,"hudson":null,"dst":-88.0},{"t":"2024-05-14 16:51","sinif":"X8.7","aki":0.0008688,"x":0.0,"y":45.0,"bolge":"merkez","ar":13664,"doymus":false,"hudson":null,"dst":-88.0},{"t":"2024-05-15 08:37","sinif":"X3.4","aki":0.0003438,"x":0.0,"y":43.0,"bolge":"merkez","ar":null,"doymus":false,"hudson":null,"dst":-88.0},{"t":"2024-05-15 14:38","sinif":"X2.9","aki":0.0002948,"x":0.0,"y":43.0,"bolge":"merkez","ar":13685,"doymus":false,"hudson":null,"dst":-88.0},{"t":"2024-05-27 07:08","sinif":"X2.9","aki":0.000286,"x":0.0,"y":20.0,"bolge":"merkez","ar":13697,"doymus":false,"hudson":null,"dst":-22.0},{"t":"2024-05-29 14:37","sinif":"X1.4","aki":0.0001425,"x":-806.0,"y":-302.0,"bolge":"doğu kenarı","ar":13697,"doymus":false,"hudson":null,"dst":-28.0},{"t":"2024-05-31 22:03","sinif":"X1.2","aki":0.0001166,"x":0.0,"y":11.0,"bolge":"merkez","ar":13697,"doymus":false,"hudson":null,"dst":-23.0},{"t":"2024-06-01 08:48","sinif":"X1.4","aki":0.0001407,"x":0.0,"y":10.0,"bolge":"merkez","ar":13697,"doymus":false,"hudson":null,"dst":-23.0},{"t":"2024-06-01 18:36","sinif":"X1.0","aki":0.0001011,"x":0.0,"y":9.0,"bolge":"merkez","ar":13697,"doymus":false,"hudson":null,"dst":-23.0},{"t":"2024-06-10 11:08","sinif":"X1.5","aki":0.000153,"x":0.0,"y":-8.0,"bolge":"merkez","ar":13697,"doymus":false,"hudson":null,"dst":-44.0},{"t":"2024-07-14 02:34","sinif":"X1.3","aki":0.0001254,"x":0.0,"y":-70.0,"bolge":"merkez","ar":13738,"doymus":false,"hudson":null,"dst":-13.0},{"t":"2024-07-16 13:26","sinif":"X2.0","aki":0.000197,"x":935.0,"y":-105.0,"bolge":"batı kenarı","ar":13738,"doymus":false,"hudson":null,"dst":-3.0},{"t":"2024-07-29 02:37","sinif":"X1.5","aki":0.0001544,"x":0.0,"y":-92.0,"bolge":"merkez","ar":13766,"doymus":false,"hudson":null,"dst":-31.0},{"t":"2024-08-05 13:40","sinif":"X1.7","aki":0.0001709,"x":0.0,"y":-101.0,"bolge":"merkez","ar":13767,"doymus":false,"hudson":null,"dst":-19.0},{"t":"2024-08-05 15:27","sinif":"X1.2","aki":0.0001154,"x":-769.0,"y":-189.0,"bolge":"doğu kenarı","ar":13780,"doymus":false,"hudson":null,"dst":-19.0},{"t":"2024-08-08 19:35","sinif":"X1.3","aki":0.0001286,"x":0.0,"y":-104.0,"bolge":"merkez","ar":13777,"doymus":false,"hudson":null,"dst":-188.0},{"t":"2024-08-14 06:40","sinif":"X1.1","aki":0.0001096,"x":-81.0,"y":90.0,"bolge":"merkez","ar":13784,"doymus":false,"hudson":null,"dst":-31.0},{"t":"2024-09-12 09:43","sinif":"X1.3","aki":0.0001282,"x":0.0,"y":-121.0,"bolge":"merkez","ar":13824,"doymus":false,"hudson":null,"dst":-109.0},{"t":"2024-09-14 15:29","sinif":"X4.5","aki":0.0004477,"x":-765.0,"y":-310.0,"bolge":"doğu kenarı","ar":13825,"doymus":false,"hudson":null,"dst":-121.0},{"t":"2024-10-01 22:20","sinif":"X7.1","aki":0.0007061,"x":0.0,"y":-112.0,"bolge":"merkez","ar":13842,"doymus":false,"hudson":null,"dst":-4.0},{"t":"2024-10-03 12:18","sinif":"X8.9","aki":0.0008943,"x":0.0,"y":-110.0,"bolge":"merkez","ar":13842,"doymus":false,"hudson":null,"dst":-47.0},{"t":"2024-10-07 19:13","sinif":"X2.2","aki":0.0002162,"x":810.0,"y":-357.0,"bolge":"batı kenarı","ar":13842,"doymus":false,"hudson":null,"dst":-333.0},{"t":"2024-10-09 01:56","sinif":"X1.8","aki":0.0001816,"x":0.0,"y":-105.0,"bolge":"merkez","ar":13848,"doymus":false,"hudson":null,"dst":-333.0},{"t":"2024-10-09 15:47","sinif":"X1.4","aki":0.0001411,"x":0.0,"y":-105.0,"bolge":"merkez","ar":13842,"doymus":false,"hudson":null,"dst":-333.0},{"t":"2024-10-24 03:57","sinif":"X3.3","aki":0.0003288,"x":0.0,"y":-86.0,"bolge":"merkez","ar":13869,"doymus":false,"hudson":null,"dst":-20.0},{"t":"2024-10-26 07:19","sinif":"X1.8","aki":0.0001836,"x":-787.0,"y":-229.0,"bolge":"doğu kenarı","ar":13873,"doymus":false,"hudson":null,"dst":-24.0},{"t":"2024-10-31 21:20","sinif":"X2.0","aki":0.0002003,"x":0.0,"y":-74.0,"bolge":"merkez","ar":13878,"doymus":false,"hudson":null,"dst":-43.0},{"t":"2024-11-06 13:40","sinif":"X2.4","aki":0.0002359,"x":0.0,"y":-64.0,"bolge":"merkez","ar":13883,"doymus":false,"hudson":null,"dst":-101.0},{"t":"2024-12-08 09:06","sinif":"X2.3","aki":0.0002255,"x":0.0,"y":1.0,"bolge":"merkez","ar":13912,"doymus":false,"hudson":null,"dst":-43.0},{"t":"2024-12-29 07:17","sinif":"X1.1","aki":0.0001116,"x":495.0,"y":225.0,"bolge":"merkez","ar":13936,"doymus":false,"hudson":null,"dst":-212.0},{"t":"2024-12-30 04:14","sinif":"X1.6","aki":0.0001601,"x":0.0,"y":48.0,"bolge":"merkez","ar":13936,"doymus":false,"hudson":null,"dst":-212.0},{"t":"2025-01-03 11:39","sinif":"X1.2","aki":0.000122,"x":0.0,"y":57.0,"bolge":"merkez","ar":13947,"doymus":false,"hudson":null,"dst":-92.0},{"t":"2025-01-03 22:41","sinif":"X1.1","aki":0.0001144,"x":0.0,"y":57.0,"bolge":"merkez","ar":13947,"doymus":false,"hudson":null,"dst":-92.0},{"t":"2025-01-04 12:48","sinif":"X1.9","aki":0.0001864,"x":0.0,"y":59.0,"bolge":"merkez","ar":13947,"doymus":false,"hudson":null,"dst":-80.0},{"t":"2025-02-23 19:27","sinif":"X2.0","aki":0.0001999,"x":0.0,"y":121.0,"bolge":"merkez","ar":14001,"doymus":false,"hudson":null,"dst":-35.0},{"t":"2025-03-28 15:20","sinif":"X1.1","aki":0.0001121,"x":0.0,"y":113.0,"bolge":"merkez","ar":14046,"doymus":false,"hudson":null,"dst":-15.0},{"t":"2025-05-13 15:38","sinif":"X1.2","aki":0.0001189,"x":0.0,"y":47.0,"bolge":"merkez","ar":14086,"doymus":false,"hudson":null,"dst":-65.0},{"t":"2025-05-14 08:19","sinif":"X2.5","aki":0.0002482,"x":-851.0,"y":262.0,"bolge":"doğu kenarı","ar":14087,"doymus":false,"hudson":null,"dst":-65.0},{"t":"2025-05-25 01:52","sinif":"X1.1","aki":0.0001132,"x":0.0,"y":25.0,"bolge":"merkez","ar":14098,"doymus":false,"hudson":null,"dst":-46.0},{"t":"2025-06-17 21:49","sinif":"X1.3","aki":0.0001281,"x":0.0,"y":-22.0,"bolge":"merkez","ar":14114,"doymus":false,"hudson":null,"dst":-15.0},{"t":"2025-06-19 23:50","sinif":"X1.9","aki":0.0001933,"x":null,"y":null,"bolge":"bilinmiyor","ar":null,"doymus":false,"hudson":null,"dst":-15.0},{"t":"2025-11-04 17:34","sinif":"X1.8","aki":0.0001836,"x":0.0,"y":-68.0,"bolge":"merkez","ar":14274,"doymus":false,"hudson":null,"dst":-116.0},{"t":"2025-11-04 22:01","sinif":"X1.2","aki":0.0001186,"x":0.0,"y":-67.0,"bolge":"merkez","ar":14276,"doymus":false,"hudson":null,"dst":-116.0},{"t":"2025-11-09 07:35","sinif":"X1.8","aki":0.0001822,"x":0.0,"y":-59.0,"bolge":"merkez","ar":14274,"doymus":false,"hudson":null,"dst":-217.0},{"t":"2025-11-10 09:19","sinif":"X1.2","aki":0.0001236,"x":0.0,"y":-57.0,"bolge":"merkez","ar":14274,"doymus":false,"hudson":null,"dst":-217.0},{"t":"2025-11-11 10:04","sinif":"X5.3","aki":0.0005268,"x":0.0,"y":-56.0,"bolge":"merkez","ar":14274,"doymus":false,"hudson":null,"dst":-217.0},{"t":"2025-11-14 08:30","sinif":"X4.1","aki":0.0004131,"x":0.0,"y":-50.0,"bolge":"merkez","ar":14274,"doymus":false,"hudson":null,"dst":-28.0},{"t":"2025-12-01 02:49","sinif":"X2.0","aki":0.0001978,"x":0.0,"y":-15.0,"bolge":"merkez","ar":14299,"doymus":false,"hudson":null,"dst":-64.0},{"t":"2025-12-08 05:01","sinif":"X1.2","aki":0.0001158,"x":0.0,"y":0.0,"bolge":"merkez","ar":14298,"doymus":false,"hudson":null,"dst":-82.0}],"en_buyuk_firtinalar":[{"gun":"2003-11-20","dst":-422,"kp":8.7,"kaynak_t":"2003-11-17 09:05","kaynak_sinif":"M7.9","kaynak_bolge":"doğu kenarı"},{"gun":"2024-05-11","dst":-406,"kp":9.0,"kaynak_t":"2024-05-10 06:54","kaynak_sinif":"X3.9","kaynak_bolge":"merkez"},{"gun":"2001-03-31","dst":-387,"kp":8.7,"kaynak_t":"2001-03-29 10:15","kaynak_sinif":"X3.3","kaynak_bolge":"merkez"},{"gun":"2003-10-30","dst":-383,"kp":9.0,"kaynak_t":"2003-10-28 11:10","kaynak_sinif":"≥X32.2","kaynak_bolge":"merkez"},{"gun":"2004-11-08","dst":-374,"kp":8.7,"kaynak_t":"2004-11-07 16:06","kaynak_sinif":"X3.8","kaynak_bolge":"merkez"},{"gun":"2024-10-11","dst":-333,"kp":8.3,"kaynak_t":"2024-10-07 19:13","kaynak_sinif":"X2.2","kaynak_bolge":"batı kenarı"},{"gun":"2000-07-16","dst":-300,"kp":7.7,"kaynak_t":"2000-07-14 10:23","kaynak_sinif":"X11.0","kaynak_bolge":"merkez"},{"gun":"2000-04-07","dst":-292,"kp":8.7,"kaynak_t":"2000-04-06 02:29","kaynak_sinif":"M3.6","kaynak_bolge":"merkez"},{"gun":"2001-11-06","dst":-292,"kp":8.7,"kaynak_t":"2001-11-04 16:20","kaynak_sinif":"X2.0","kaynak_bolge":"merkez"},{"gun":"2001-04-11","dst":-271,"kp":8.3,"kaynak_t":"2001-04-10 05:26","kaynak_sinif":"X4.2","kaynak_bolge":"merkez"}],"en_buyuk_patlamalar":[{"t":"2001-04-02 21:52","sinif":"≥X33.4","aki":0.003339,"x":0.0,"y":108.0,"bolge":"merkez","ar":9393,"doymus":true,"hudson":0.00296,"dst":-50.0},{"t":"2003-11-04 19:52","sinif":"≥X32.5","aki":0.003254,"x":908.0,"y":-322.0,"bolge":"batı kenarı","ar":10486,"doymus":true,"hudson":0.00432,"dst":-29.0},{"t":"2003-10-28 11:10","sinif":"≥X32.2","aki":0.003219,"x":0.0,"y":-81.0,"bolge":"merkez","ar":10486,"doymus":true,"hudson":0.00257,"dst":-383.0},{"t":"2005-09-07 17:40","sinif":"≥X31.9","aki":0.003195,"x":-911.0,"y":-207.0,"bolge":"doğu kenarı","ar":10808,"doymus":true,"hudson":0.00246,"dst":-139.0},{"t":"2001-04-15 13:50","sinif":"X28.7","aki":0.00287,"x":895.0,"y":-318.0,"bolge":"batı kenarı","ar":9415,"doymus":false,"hudson":null,"dst":-114.0},{"t":"2003-10-29 20:49","sinif":"X18.8","aki":0.001879,"x":33.0,"y":-326.0,"bolge":"merkez","ar":10486,"doymus":false,"hudson":null,"dst":-383.0},{"t":"2006-12-05 10:35","sinif":"X16.9","aki":0.001694,"x":-897.0,"y":-121.0,"bolge":"doğu kenarı","ar":10930,"doymus":false,"hudson":null,"dst":-55.0},{"t":"2003-11-02 17:25","sinif":"X15.6","aki":0.001565,"x":779.0,"y":-273.0,"bolge":"batı kenarı","ar":10486,"doymus":false,"hudson":null,"dst":-69.0},{"t":"2017-09-06 12:02","sinif":"X14.6","aki":0.001464,"x":515.0,"y":-232.0,"bolge":"batı kenarı","ar":12673,"doymus":false,"hudson":null,"dst":-148.0},{"t":"2005-01-20 07:01","sinif":"X13.3","aki":0.001331,"x":829.0,"y":276.0,"bolge":"batı kenarı","ar":10720,"doymus":false,"hudson":null,"dst":-97.0},{"t":"2017-09-10 16:06","sinif":"X12.9","aki":0.001292,"x":0.0,"y":-121.0,"bolge":"merkez","ar":12673,"doymus":false,"hudson":null,"dst":-56.0},{"t":"2006-12-06 18:47","sinif":"X12.3","aki":0.001229,"x":-864.0,"y":-103.0,"bolge":"doğu kenarı","ar":10930,"doymus":false,"hudson":null,"dst":-47.0}],"vaka":{"2003":{"zaman":["2003-10-25 00:00","2003-10-25 01:00","2003-10-25 02:00","2003-10-25 03:00","2003-10-25 04:00","2003-10-25 05:00","2003-10-25 06:00","2003-10-25 07:00","2003-10-25 08:00","2003-10-25 09:00","2003-10-25 10:00","2003-10-25 11:00","2003-10-25 12:00","2003-10-25 13:00","2003-10-25 14:00","2003-10-25 15:00","2003-10-25 16:00","2003-10-25 17:00","2003-10-25 18:00","2003-10-25 19:00","2003-10-25 20:00","2003-10-25 21:00","2003-10-25 22:00","2003-10-25 23:00","2003-10-26 00:00","2003-10-26 01:00","2003-10-26 02:00","2003-10-26 03:00","2003-10-26 04:00","2003-10-26 05:00","2003-10-26 06:00","2003-10-26 07:00","2003-10-26 08:00","2003-10-26 09:00","2003-10-26 10:00","2003-10-26 11:00","2003-10-26 12:00","2003-10-26 13:00","2003-10-26 14:00","2003-10-26 15:00","2003-10-26 16:00","2003-10-26 17:00","2003-10-26 18:00","2003-10-26 19:00","2003-10-26 20:00","2003-10-26 21:00","2003-10-26 22:00","2003-10-26 23:00","2003-10-27 00:00","2003-10-27 01:00","2003-10-27 02:00","2003-10-27 03:00","2003-10-27 04:00","2003-10-27 05:00","2003-10-27 06:00","2003-10-27 07:00","2003-10-27 08:00","2003-10-27 09:00","2003-10-27 10:00","2003-10-27 11:00","2003-10-27 12:00","2003-10-27 13:00","2003-10-27 14:00","2003-10-27 15:00","2003-10-27 16:00","2003-10-27 17:00","2003-10-27 18:00","2003-10-27 19:00","2003-10-27 20:00","2003-10-27 21:00","2003-10-27 22:00","2003-10-27 23:00","2003-10-28 00:00","2003-10-28 01:00","2003-10-28 02:00","2003-10-28 03:00","2003-10-28 04:00","2003-10-28 05:00","2003-10-28 06:00","2003-10-28 07:00","2003-10-28 08:00","2003-10-28 09:00","2003-10-28 10:00","2003-10-28 11:00","2003-10-28 12:00","2003-10-28 13:00","2003-10-28 14:00","2003-10-28 15:00","2003-10-28 16:00","2003-10-28 17:00","2003-10-28 18:00","2003-10-28 19:00","2003-10-28 20:00","2003-10-28 21:00","2003-10-28 22:00","2003-10-28 23:00","2003-10-29 00:00","2003-10-29 01:00","2003-10-29 02:00","2003-10-29 03:00","2003-10-29 04:00","2003-10-29 05:00","2003-10-29 06:00","2003-10-29 07:00","2003-10-29 08:00","2003-10-29 09:00","2003-10-29 10:00","2003-10-29 11:00","2003-10-29 12:00","2003-10-29 13:00","2003-10-29 14:00","2003-10-29 15:00","2003-10-29 16:00","2003-10-29 17:00","2003-10-29 18:00","2003-10-29 19:00","2003-10-29 20:00","2003-10-29 21:00","2003-10-29 22:00","2003-10-29 23:00","2003-10-30 00:00","2003-10-30 01:00","2003-10-30 02:00","2003-10-30 03:00","2003-10-30 04:00","2003-10-30 05:00","2003-10-30 06:00","2003-10-30 07:00","2003-10-30 08:00","2003-10-30 09:00","2003-10-30 10:00","2003-10-30 11:00","2003-10-30 12:00","2003-10-30 13:00","2003-10-30 14:00","2003-10-30 15:00","2003-10-30 16:00","2003-10-30 17:00","2003-10-30 18:00","2003-10-30 19:00","2003-10-30 20:00","2003-10-30 21:00","2003-10-30 22:00","2003-10-30 23:00","2003-10-31 00:00","2003-10-31 01:00","2003-10-31 02:00","2003-10-31 03:00","2003-10-31 04:00","2003-10-31 05:00","2003-10-31 06:00","2003-10-31 07:00","2003-10-31 08:00","2003-10-31 09:00","2003-10-31 10:00","2003-10-31 11:00","2003-10-31 12:00","2003-10-31 13:00","2003-10-31 14:00","2003-10-31 15:00","2003-10-31 16:00","2003-10-31 17:00","2003-10-31 18:00","2003-10-31 19:00","2003-10-31 20:00","2003-10-31 21:00","2003-10-31 22:00","2003-10-31 23:00","2003-11-01 00:00","2003-11-01 01:00","2003-11-01 02:00","2003-11-01 03:00","2003-11-01 04:00","2003-11-01 05:00","2003-11-01 06:00","2003-11-01 07:00","2003-11-01 08:00","2003-11-01 09:00","2003-11-01 10:00","2003-11-01 11:00","2003-11-01 12:00","2003-11-01 13:00","2003-11-01 14:00","2003-11-01 15:00","2003-11-01 16:00","2003-11-01 17:00","2003-11-01 18:00","2003-11-01 19:00","2003-11-01 20:00","2003-11-01 21:00","2003-11-01 22:00","2003-11-01 23:00","2003-11-02 00:00","2003-11-02 01:00","2003-11-02 02:00","2003-11-02 03:00","2003-11-02 04:00","2003-11-02 05:00","2003-11-02 06:00","2003-11-02 07:00","2003-11-02 08:00","2003-11-02 09:00","2003-11-02 10:00","2003-11-02 11:00","2003-11-02 12:00","2003-11-02 13:00","2003-11-02 14:00","2003-11-02 15:00","2003-11-02 16:00","2003-11-02 17:00","2003-11-02 18:00","2003-11-02 19:00","2003-11-02 20:00","2003-11-02 21:00","2003-11-02 22:00","2003-11-02 23:00","2003-11-03 00:00","2003-11-03 01:00","2003-11-03 02:00","2003-11-03 03:00","2003-11-03 04:00","2003-11-03 05:00","2003-11-03 06:00","2003-11-03 07:00","2003-11-03 08:00","2003-11-03 09:00","2003-11-03 10:00","2003-11-03 11:00","2003-11-03 12:00","2003-11-03 13:00","2003-11-03 14:00","2003-11-03 15:00","2003-11-03 16:00","2003-11-03 17:00","2003-11-03 18:00","2003-11-03 19:00","2003-11-03 20:00","2003-11-03 21:00","2003-11-03 22:00","2003-11-03 23:00","2003-11-04 00:00","2003-11-04 01:00","2003-11-04 02:00","2003-11-04 03:00","2003-11-04 04:00","2003-11-04 05:00","2003-11-04 06:00","2003-11-04 07:00","2003-11-04 08:00","2003-11-04 09:00","2003-11-04 10:00","2003-11-04 11:00","2003-11-04 12:00","2003-11-04 13:00","2003-11-04 14:00","2003-11-04 15:00","2003-11-04 16:00","2003-11-04 17:00","2003-11-04 18:00","2003-11-04 19:00","2003-11-04 20:00","2003-11-04 21:00","2003-11-04 22:00","2003-11-04 23:00","2003-11-05 00:00","2003-11-05 01:00","2003-11-05 02:00","2003-11-05 03:00","2003-11-05 04:00","2003-11-05 05:00","2003-11-05 06:00","2003-11-05 07:00","2003-11-05 08:00","2003-11-05 09:00","2003-11-05 10:00","2003-11-05 11:00","2003-11-05 12:00","2003-11-05 13:00","2003-11-05 14:00","2003-11-05 15:00","2003-11-05 16:00","2003-11-05 17:00","2003-11-05 18:00","2003-11-05 19:00","2003-11-05 20:00","2003-11-05 21:00","2003-11-05 22:00","2003-11-05 23:00","2003-11-06 00:00","2003-11-06 01:00","2003-11-06 02:00","2003-11-06 03:00","2003-11-06 04:00","2003-11-06 05:00","2003-11-06 06:00","2003-11-06 07:00","2003-11-06 08:00","2003-11-06 09:00","2003-11-06 10:00","2003-11-06 11:00","2003-11-06 12:00","2003-11-06 13:00","2003-11-06 14:00","2003-11-06 15:00","2003-11-06 16:00","2003-11-06 17:00","2003-11-06 18:00","2003-11-06 19:00","2003-11-06 20:00","2003-11-06 21:00","2003-11-06 22:00","2003-11-06 23:00","2003-11-07 00:00","2003-11-07 01:00","2003-11-07 02:00","2003-11-07 03:00","2003-11-07 04:00","2003-11-07 05:00","2003-11-07 06:00","2003-11-07 07:00","2003-11-07 08:00","2003-11-07 09:00","2003-11-07 10:00","2003-11-07 11:00","2003-11-07 12:00","2003-11-07 13:00","2003-11-07 14:00","2003-11-07 15:00","2003-11-07 16:00","2003-11-07 17:00","2003-11-07 18:00","2003-11-07 19:00","2003-11-07 20:00","2003-11-07 21:00","2003-11-07 22:00","2003-11-07 23:00","2003-11-08 00:00","2003-11-08 01:00","2003-11-08 02:00","2003-11-08 03:00","2003-11-08 04:00","2003-11-08 05:00","2003-11-08 06:00","2003-11-08 07:00","2003-11-08 08:00","2003-11-08 09:00","2003-11-08 10:00","2003-11-08 11:00","2003-11-08 12:00","2003-11-08 13:00","2003-11-08 14:00","2003-11-08 15:00","2003-11-08 16:00","2003-11-08 17:00","2003-11-08 18:00","2003-11-08 19:00","2003-11-08 20:00","2003-11-08 21:00","2003-11-08 22:00","2003-11-08 23:00"],"dst":[-29.0,-19.0,0.0,-3.0,-11.0,-10.0,-13.0,-19.0,-20.0,-18.0,-21.0,-20.0,-26.0,-27.0,-41.0,-49.0,-43.0,-30.0,-33.0,-38.0,-41.0,-39.0,-33.0,-32.0,-31.0,-33.0,-32.0,-29.0,-27.0,-25.0,-24.0,-24.0,-19.0,-11.0,-4.0,-4.0,-4.0,-4.0,-6.0,-6.0,-5.0,-5.0,-7.0,-8.0,-15.0,-18.0,-29.0,-33.0,-43.0,-49.0,-47.0,-49.0,-52.0,-52.0,-50.0,-46.0,-48.0,-51.0,-49.0,-41.0,-36.0,-35.0,-34.0,-34.0,-30.0,-30.0,-30.0,-27.0,-27.0,-27.0,-25.0,-24.0,-24.0,-24.0,-14.0,-18.0,-4.0,-1.0,-1.0,-5.0,-14.0,-32.0,-32.0,-24.0,-20.0,-16.0,-8.0,-4.0,-4.0,-9.0,-16.0,-18.0,-19.0,-22.0,-14.0,-20.0,-34.0,-42.0,-32.0,-25.0,-28.0,-30.0,-10.0,-105.0,-130.0,-151.0,-151.0,-147.0,-111.0,-79.0,-99.0,-107.0,-124.0,-126.0,-169.0,-213.0,-253.0,-268.0,-281.0,-350.0,-353.0,-341.0,-335.0,-303.0,-273.0,-244.0,-220.0,-203.0,-192.0,-178.0,-164.0,-155.0,-156.0,-148.0,-138.0,-129.0,-111.0,-97.0,-111.0,-142.0,-240.0,-316.0,-383.0,-371.0,-307.0,-246.0,-244.0,-241.0,-196.0,-131.0,-106.0,-113.0,-113.0,-109.0,-113.0,-55.0,-77.0,-80.0,-88.0,-80.0,-76.0,-68.0,-70.0,-66.0,-63.0,-52.0,-55.0,-66.0,-69.0,-69.0,-61.0,-62.0,-61.0,-62.0,-56.0,-48.0,-47.0,-44.0,-41.0,-38.0,-43.0,-46.0,-46.0,-39.0,-35.0,-31.0,-28.0,-32.0,-36.0,-33.0,-31.0,-37.0,-41.0,-40.0,-31.0,-23.0,-27.0,-30.0,-26.0,-23.0,-23.0,-22.0,-27.0,-31.0,-25.0,-25.0,-28.0,-29.0,-28.0,-23.0,-23.0,-21.0,-23.0,-22.0,-26.0,-32.0,-36.0,-38.0,-32.0,-26.0,-26.0,-28.0,-21.0,-18.0,-17.0,-14.0,-7.0,-5.0,-7.0,-9.0,-6.0,-4.0,-2.0,-3.0,-2.0,-4.0,-5.0,-6.0,-6.0,-11.0,-20.0,-15.0,-12.0,-12.0,-14.0,-15.0,14.0,10.0,6.0,-15.0,-69.0,-63.0,-55.0,-58.0,-61.0,-59.0,-55.0,-50.0,-45.0,-41.0,-39.0,-36.0,-39.0,-42.0,-41.0,-36.0,-31.0,-31.0,-31.0,-30.0,-27.0,-24.0,-25.0,-28.0,-29.0,-28.0,-27.0,-25.0,-22.0,-19.0,-17.0,-16.0,-17.0,-12.0,-17.0,-18.0,-17.0,-22.0,-24.0,-24.0,-21.0,-21.0,-25.0,-25.0,-20.0,-17.0,-16.0,-14.0,-15.0,-13.0,-12.0,-11.0,-7.0,-5.0,-10.0,-10.0,-9.0,-1.0,5.0,-9.0,-21.0,-18.0,-16.0,-20.0,-15.0,-10.0,-14.0,-15.0,-14.0,-12.0,-11.0,-15.0,-13.0,-11.0,-8.0,-8.0,-7.0,-7.0,-6.0,-4.0,-3.0,-4.0,-4.0,-3.0,-1.0,-3.0,-5.0,-3.0,3.0,5.0,4.0,3.0,3.0,4.0,5.0,5.0,6.0,5.0,11.0,15.0,21.0,12.0,7.0,4.0,5.0,-5.0,-5.0,2.0,1.0,2.0],"kp":[4.0,4.0,4.0,2.7,2.7,2.7,2.7,2.7,2.7,2.3,2.3,2.3,4.3,4.3,4.3,3.7,3.7,3.7,1.3,1.3,1.3,2.7,2.7,2.7,2.3,2.3,2.3,2.0,2.0,2.0,1.7,1.7,1.7,2.0,2.0,2.0,1.0,1.0,1.0,1.0,1.0,1.0,3.3,3.3,3.3,3.7,3.7,3.7,3.7,3.7,3.7,3.3,3.3,3.3,3.3,3.3,3.3,2.0,2.0,2.0,2.0,2.0,2.0,2.3,2.3,2.3,1.3,1.3,1.3,1.0,1.0,1.0,3.0,3.0,3.0,4.7,4.7,4.7,3.7,3.7,3.7,4.7,4.7,4.7,2.7,2.7,2.7,4.0,4.0,4.0,3.3,3.3,3.3,4.0,4.0,4.0,4.7,4.7,4.7,4.0,4.0,4.0,9.0,9.0,9.0,8.0,8.0,8.0,7.7,7.7,7.7,7.7,7.7,7.7,8.7,8.7,8.7,8.7,8.7,8.7,8.7,8.7,8.7,7.3,7.3,7.3,5.3,5.3,5.3,4.7,4.7,4.7,5.0,5.0,5.0,7.0,7.0,7.0,9.0,9.0,9.0,9.0,9.0,9.0,8.3,8.3,8.3,7.7,7.7,7.7,7.3,7.3,7.3,6.7,6.7,6.7,7.3,7.3,7.3,4.7,4.7,4.7,4.0,4.0,4.0,4.3,4.3,4.3,5.0,5.0,5.0,4.7,4.7,4.7,4.0,4.0,4.0,2.7,2.7,2.7,3.0,3.0,3.0,3.3,3.3,3.3,3.3,3.3,3.3,4.0,4.0,4.0,3.3,3.3,3.3,3.7,3.7,3.7,3.3,3.3,3.3,3.0,3.0,3.0,2.7,2.7,2.7,3.3,3.3,3.3,4.3,4.3,4.3,2.7,2.7,2.7,3.3,3.3,3.3,3.0,3.0,3.0,2.7,2.7,2.7,2.7,2.7,2.7,2.0,2.0,2.0,2.3,2.3,2.3,2.7,2.7,2.7,3.3,3.3,3.3,3.0,3.0,3.0,3.0,3.0,3.0,6.3,6.3,6.3,7.0,7.0,7.0,2.7,2.7,2.7,2.0,2.0,2.0,3.3,3.3,3.3,2.7,2.7,2.7,1.7,1.7,1.7,0.0,0.0,0.0,1.3,1.3,1.3,1.0,1.0,1.0,0.7,0.7,0.7,1.3,1.3,1.3,2.3,2.3,2.3,3.3,3.3,3.3,2.7,2.7,2.7,1.7,1.7,1.7,1.0,1.0,1.0,0.7,0.7,0.7,1.7,1.7,1.7,2.3,2.3,2.3,5.7,5.7,5.7,4.3,4.3,4.3,3.3,3.3,3.3,2.7,2.7,2.7,1.7,1.7,1.7,2.3,2.3,2.3,1.0,1.0,1.0,1.7,1.7,1.7,1.3,1.3,1.3,1.3,1.3,1.3,1.3,1.3,1.3,1.0,1.0,1.0,0.7,0.7,0.7,1.7,1.7,1.7,2.7,2.7,2.7,3.3,3.3,3.3,2.3,2.3,2.3,2.0,2.0,2.0],"patlamalar":[{"t":"2003-10-25 02:06","aki":8.118e-06,"sinif":"C8.1","bolge":"merkez"},{"t":"2003-10-25 03:00","aki":4.945e-06,"sinif":"C4.9","bolge":"merkez"},{"t":"2003-10-25 03:41","aki":7.327e-06,"sinif":"C7.3","bolge":"merkez"},{"t":"2003-10-25 04:46","aki":2.316e-05,"sinif":"M2.3","bolge":"doğu kenarı"},{"t":"2003-10-25 05:53","aki":3.283e-05,"sinif":"M3.3","bolge":"merkez"},{"t":"2003-10-25 06:02","aki":3.283e-05,"sinif":"M3.3","bolge":"merkez"},{"t":"2003-10-25 09:47","aki":6.437e-06,"sinif":"C6.4","bolge":"merkez"},{"t":"2003-10-25 10:35","aki":2.916e-05,"sinif":"M2.9","bolge":"merkez"},{"t":"2003-10-25 11:28","aki":6.431e-06,"sinif":"C6.4","bolge":"merkez"},{"t":"2003-10-25 12:22","aki":5.799e-06,"sinif":"C5.8","bolge":"bilinmiyor"},{"t":"2003-10-25 12:53","aki":6.344e-06,"sinif":"C6.3","bolge":"bilinmiyor"},{"t":"2003-10-25 14:52","aki":7.961e-06,"sinif":"C8.0","bolge":"merkez"},{"t":"2003-10-25 18:04","aki":4.526e-06,"sinif":"C4.5","bolge":"merkez"},{"t":"2003-10-25 19:33","aki":6.023e-06,"sinif":"C6.0","bolge":"merkez"},{"t":"2003-10-25 20:43","aki":6.306e-06,"sinif":"C6.3","bolge":"merkez"},{"t":"2003-10-25 22:31","aki":1.479e-05,"sinif":"M1.5","bolge":"merkez"},{"t":"2003-10-26 00:50","aki":6.059e-06,"sinif":"C6.1","bolge":"merkez"},{"t":"2003-10-26 01:20","aki":7.04e-06,"sinif":"C7.0","bolge":"bilinmiyor"},{"t":"2003-10-26 01:36","aki":6.628e-06,"sinif":"C6.6","bolge":"bilinmiyor"},{"t":"2003-10-26 04:55","aki":6.29e-06,"sinif":"C6.3","bolge":"bilinmiyor"},{"t":"2003-10-26 06:03","aki":1.067e-05,"sinif":"M1.1","bolge":"bilinmiyor"},{"t":"2003-10-26 06:20","aki":0.0002124,"sinif":"X2.1","bolge":"bilinmiyor"},{"t":"2003-10-26 06:54","aki":0.0002424,"sinif":"X2.4","bolge":"merkez"},{"t":"2003-10-26 14:20","aki":1.942e-05,"sinif":"M1.9","bolge":"batı kenarı"},{"t":"2003-10-26 16:22","aki":5.895e-06,"sinif":"C5.9","bolge":"bilinmiyor"},{"t":"2003-10-26 18:15","aki":0.000237,"sinif":"X2.4","bolge":"batı kenarı"},{"t":"2003-10-26 21:40","aki":0.0001437,"sinif":"X1.4","bolge":"batı kenarı"},{"t":"2003-10-27 00:20","aki":1.134e-05,"sinif":"M1.1","bolge":"bilinmiyor"},{"t":"2003-10-27 01:38","aki":1.175e-05,"sinif":"M1.2","bolge":"merkez"},{"t":"2003-10-27 02:49","aki":1.014e-05,"sinif":"M1.0","bolge":"bilinmiyor"},{"t":"2003-10-27 04:39","aki":2.31e-05,"sinif":"M2.3","bolge":"batı kenarı"},{"t":"2003-10-27 06:18","aki":1.694e-05,"sinif":"M1.7","bolge":"merkez"},{"t":"2003-10-27 08:15","aki":4.664e-05,"sinif":"M4.7","bolge":"bilinmiyor"},{"t":"2003-10-27 08:33","aki":5.212e-05,"sinif":"M5.2","bolge":"batı kenarı"},{"t":"2003-10-27 09:27","aki":9.474e-05,"sinif":"M9.5","bolge":"merkez"},{"t":"2003-10-27 12:43","aki":0.0001265,"sinif":"X1.3","bolge":"merkez"},{"t":"2003-10-27 16:20","aki":1.174e-05,"sinif":"M1.2","bolge":"bilinmiyor"},{"t":"2003-10-27 17:47","aki":7.462e-06,"sinif":"C7.5","bolge":"bilinmiyor"},{"t":"2003-10-27 18:45","aki":1.415e-05,"sinif":"M1.4","bolge":"merkez"},{"t":"2003-10-27 19:57","aki":1.693e-05,"sinif":"M1.7","bolge":"batı kenarı"},{"t":"2003-10-27 21:51","aki":3.58e-05,"sinif":"M3.6","bolge":"merkez"},{"t":"2003-10-27 23:17","aki":7.667e-06,"sinif":"C7.7","bolge":"merkez"},{"t":"2003-10-27 23:52","aki":1.276e-05,"sinif":"M1.3","bolge":"merkez"},{"t":"2003-10-28 00:45","aki":1.006e-05,"sinif":"M1.0","bolge":"merkez"},{"t":"2003-10-28 00:59","aki":1.259e-05,"sinif":"M1.3","bolge":"batı kenarı"},{"t":"2003-10-28 01:33","aki":1.403e-05,"sinif":"M1.4","bolge":"merkez"},{"t":"2003-10-28 03:18","aki":5.935e-06,"sinif":"C5.9","bolge":"bilinmiyor"},{"t":"2003-10-28 03:32","aki":7.017e-06,"sinif":"C7.0","bolge":"bilinmiyor"},{"t":"2003-10-28 05:11","aki":1.443e-05,"sinif":"M1.4","bolge":"batı kenarı"},{"t":"2003-10-28 06:46","aki":6.324e-06,"sinif":"C6.3","bolge":"bilinmiyor"},{"t":"2003-10-28 07:56","aki":1.153e-05,"sinif":"M1.2","bolge":"bilinmiyor"},{"t":"2003-10-28 08:39","aki":1.639e-05,"sinif":"M1.6","bolge":"merkez"},{"t":"2003-10-28 09:58","aki":2.611e-05,"sinif":"M2.6","bolge":"bilinmiyor"},{"t":"2003-10-28 10:10","aki":4.247e-05,"sinif":"M4.2","bolge":"bilinmiyor"},{"t":"2003-10-28 10:48","aki":0.0001507,"sinif":"X1.5","bolge":"bilinmiyor"},{"t":"2003-10-28 11:10","aki":0.003219,"sinif":"≥X32.2","bolge":"merkez"},{"t":"2003-10-28 15:00","aki":6.084e-05,"sinif":"M6.1","bolge":"bilinmiyor"},{"t":"2003-10-29 00:41","aki":1.591e-05,"sinif":"M1.6","bolge":"bilinmiyor"},{"t":"2003-10-29 00:49","aki":1.573e-05,"sinif":"M1.6","bolge":"bilinmiyor"},{"t":"2003-10-29 01:03","aki":1.664e-05,"sinif":"M1.7","bolge":"bilinmiyor"},{"t":"2003-10-29 01:51","aki":2.112e-05,"sinif":"M2.1","bolge":"merkez"},{"t":"2003-10-29 04:17","aki":1.168e-05,"sinif":"M1.2","bolge":"merkez"},{"t":"2003-10-29 05:13","aki":6.596e-05,"sinif":"M6.6","bolge":"merkez"},{"t":"2003-10-29 13:38","aki":1.171e-05,"sinif":"M1.2","bolge":"bilinmiyor"},{"t":"2003-10-29 14:22","aki":1.731e-05,"sinif":"M1.7","bolge":"merkez"},{"t":"2003-10-29 16:57","aki":1.531e-05,"sinif":"M1.5","bolge":"merkez"},{"t":"2003-10-29 18:13","aki":1.468e-05,"sinif":"M1.5","bolge":"merkez"},{"t":"2003-10-29 19:46","aki":8.222e-06,"sinif":"C8.2","bolge":"bilinmiyor"},{"t":"2003-10-29 20:16","aki":1.544e-05,"sinif":"M1.5","bolge":"bilinmiyor"},{"t":"2003-10-29 20:49","aki":0.001879,"sinif":"X18.8","bolge":"merkez"},{"t":"2003-10-30 02:07","aki":3.106e-05,"sinif":"M3.1","bolge":"merkez"},{"t":"2003-10-30 08:37","aki":1.453e-05,"sinif":"M1.5","bolge":"batı kenarı"},{"t":"2003-10-30 12:15","aki":1.04e-05,"sinif":"M1.0","bolge":"bilinmiyor"},{"t":"2003-10-30 12:26","aki":1.428e-05,"sinif":"M1.4","bolge":"merkez"},{"t":"2003-10-30 12:51","aki":1.376e-05,"sinif":"M1.4","bolge":"merkez"},{"t":"2003-10-30 15:28","aki":2.831e-05,"sinif":"M2.8","bolge":"merkez"},{"t":"2003-10-30 16:18","aki":1.072e-05,"sinif":"M1.1","bolge":"merkez"},{"t":"2003-10-30 18:36","aki":1.096e-05,"sinif":"M1.1","bolge":"merkez"},{"t":"2003-10-30 19:21","aki":1.054e-05,"sinif":"M1.1","bolge":"merkez"},{"t":"2003-10-31 01:53","aki":1.03e-05,"sinif":"M1.0","bolge":"merkez"},{"t":"2003-10-31 02:43","aki":9.431e-06,"sinif":"C9.4","bolge":"batı kenarı"},{"t":"2003-10-31 04:33","aki":3.916e-05,"sinif":"M3.9","bolge":"merkez"},{"t":"2003-10-31 06:16","aki":2.103e-05,"sinif":"M2.1","bolge":"merkez"},{"t":"2003-10-31 07:49","aki":1.119e-05,"sinif":"M1.1","bolge":"bilinmiyor"},{"t":"2003-10-31 11:59","aki":9.53e-06,"sinif":"C9.5","bolge":"bilinmiyor"},{"t":"2003-10-31 12:31","aki":1.601e-05,"sinif":"M1.6","bolge":"merkez"},{"t":"2003-10-31 16:53","aki":1.001e-05,"sinif":"M1.0","bolge":"bilinmiyor"},{"t":"2003-10-31 17:06","aki":1.005e-05,"sinif":"M1.0","bolge":"merkez"},{"t":"2003-10-31 20:39","aki":9.543e-06,"sinif":"C9.5","bolge":"batı kenarı"},{"t":"2003-10-31 21:11","aki":1.784e-05,"sinif":"M1.8","bolge":"batı kenarı"},{"t":"2003-11-01 03:41","aki":4.354e-06,"sinif":"C4.4","bolge":"bilinmiyor"},{"t":"2003-11-01 04:22","aki":6.916e-06,"sinif":"C6.9","bolge":"batı kenarı"},{"t":"2003-11-01 04:40","aki":5.39e-06,"sinif":"C5.4","bolge":"merkez"},{"t":"2003-11-01 04:57","aki":1.047e-05,"sinif":"M1.0","bolge":"batı kenarı"},{"t":"2003-11-01 05:22","aki":4.721e-06,"sinif":"C4.7","bolge":"batı kenarı"},{"t":"2003-11-01 05:30","aki":6.886e-06,"sinif":"C6.9","bolge":"batı kenarı"},{"t":"2003-11-01 08:11","aki":4.985e-06,"sinif":"C5.0","bolge":"bilinmiyor"},{"t":"2003-11-01 08:22","aki":8.235e-06,"sinif":"C8.2","bolge":"batı kenarı"},{"t":"2003-11-01 08:52","aki":2.482e-05,"sinif":"M2.5","bolge":"merkez"},{"t":"2003-11-01 11:45","aki":1.813e-05,"sinif":"M1.8","bolge":"merkez"},{"t":"2003-11-01 17:51","aki":2.073e-05,"sinif":"M2.1","bolge":"batı kenarı"},{"t":"2003-11-01 22:38","aki":6.129e-05,"sinif":"M6.1","bolge":"batı kenarı"},{"t":"2003-11-02 02:43","aki":7.564e-06,"sinif":"C7.6","bolge":"merkez"},{"t":"2003-11-02 04:36","aki":6.221e-06,"sinif":"C6.2","bolge":"bilinmiyor"},{"t":"2003-11-02 07:35","aki":1.784e-05,"sinif":"M1.8","bolge":"bilinmiyor"},{"t":"2003-11-02 07:54","aki":1.951e-05,"sinif":"M2.0","bolge":"merkez"},{"t":"2003-11-02 11:30","aki":5.125e-06,"sinif":"C5.1","bolge":"bilinmiyor"},{"t":"2003-11-02 12:47","aki":3.423e-05,"sinif":"M3.4","bolge":"merkez"},{"t":"2003-11-02 14:44","aki":1.027e-05,"sinif":"M1.0","bolge":"bilinmiyor"},{"t":"2003-11-02 17:25","aki":0.001565,"sinif":"X15.6","bolge":"batı kenarı"},{"t":"2003-11-03 01:29","aki":0.000508,"sinif":"X5.1","bolge":"batı kenarı"},{"t":"2003-11-03 09:55","aki":0.0007344,"sinif":"X7.3","bolge":"batı kenarı"},{"t":"2003-11-03 15:32","aki":7.372e-05,"sinif":"M7.4","bolge":"batı kenarı"},{"t":"2003-11-03 19:54","aki":7.942e-06,"sinif":"C7.9","bolge":"merkez"},{"t":"2003-11-03 20:37","aki":1.011e-05,"sinif":"M1.0","bolge":"merkez"},{"t":"2003-11-03 22:38","aki":8.333e-06,"sinif":"C8.3","bolge":"merkez"},{"t":"2003-11-04 04:11","aki":8.784e-06,"sinif":"C8.8","bolge":"merkez"},{"t":"2003-11-04 04:32","aki":1.335e-05,"sinif":"M1.3","bolge":"bilinmiyor"},{"t":"2003-11-04 05:56","aki":4.928e-05,"sinif":"M4.9","bolge":"merkez"},{"t":"2003-11-04 08:38","aki":7.697e-06,"sinif":"C7.7","bolge":"bilinmiyor"},{"t":"2003-11-04 09:43","aki":5.316e-06,"sinif":"C5.3","bolge":"merkez"},{"t":"2003-11-04 10:22","aki":5.77e-05,"sinif":"M5.8","bolge":"merkez"},{"t":"2003-11-04 11:19","aki":1.071e-05,"sinif":"M1.1","bolge":"merkez"},{"t":"2003-11-04 13:49","aki":2.119e-05,"sinif":"M2.1","bolge":"merkez"},{"t":"2003-11-04 14:52","aki":1.578e-05,"sinif":"M1.6","bolge":"bilinmiyor"},{"t":"2003-11-04 18:17","aki":1.454e-05,"sinif":"M1.5","bolge":"bilinmiyor"},{"t":"2003-11-04 19:52","aki":0.003254,"sinif":"≥X32.5","bolge":"batı kenarı"},{"t":"2003-11-05 02:07","aki":1.379e-05,"sinif":"M1.4","bolge":"bilinmiyor"},{"t":"2003-11-05 02:41","aki":3.075e-05,"sinif":"M3.1","bolge":"batı kenarı"},{"t":"2003-11-05 05:42","aki":6.879e-06,"sinif":"C6.9","bolge":"bilinmiyor"},{"t":"2003-11-05 07:59","aki":8.805e-06,"sinif":"C8.8","bolge":"merkez"},{"t":"2003-11-05 10:52","aki":9.944e-05,"sinif":"M9.9","bolge":"batı kenarı"},{"t":"2003-11-05 14:47","aki":3.505e-06,"sinif":"C3.5","bolge":"bilinmiyor"},{"t":"2003-11-06 02:16","aki":1.404e-06,"sinif":"C1.4","bolge":"bilinmiyor"},{"t":"2003-11-07 02:52","aki":1.481e-06,"sinif":"C1.5","bolge":"bilinmiyor"},{"t":"2003-11-07 03:18","aki":1.567e-06,"sinif":"C1.6","bolge":"merkez"}]},"2024":{"zaman":["2024-05-05 00:00","2024-05-05 01:00","2024-05-05 02:00","2024-05-05 03:00","2024-05-05 04:00","2024-05-05 05:00","2024-05-05 06:00","2024-05-05 07:00","2024-05-05 08:00","2024-05-05 09:00","2024-05-05 10:00","2024-05-05 11:00","2024-05-05 12:00","2024-05-05 13:00","2024-05-05 14:00","2024-05-05 15:00","2024-05-05 16:00","2024-05-05 17:00","2024-05-05 18:00","2024-05-05 19:00","2024-05-05 20:00","2024-05-05 21:00","2024-05-05 22:00","2024-05-05 23:00","2024-05-06 00:00","2024-05-06 01:00","2024-05-06 02:00","2024-05-06 03:00","2024-05-06 04:00","2024-05-06 05:00","2024-05-06 06:00","2024-05-06 07:00","2024-05-06 08:00","2024-05-06 09:00","2024-05-06 10:00","2024-05-06 11:00","2024-05-06 12:00","2024-05-06 13:00","2024-05-06 14:00","2024-05-06 15:00","2024-05-06 16:00","2024-05-06 17:00","2024-05-06 18:00","2024-05-06 19:00","2024-05-06 20:00","2024-05-06 21:00","2024-05-06 22:00","2024-05-06 23:00","2024-05-07 00:00","2024-05-07 01:00","2024-05-07 02:00","2024-05-07 03:00","2024-05-07 04:00","2024-05-07 05:00","2024-05-07 06:00","2024-05-07 07:00","2024-05-07 08:00","2024-05-07 09:00","2024-05-07 10:00","2024-05-07 11:00","2024-05-07 12:00","2024-05-07 13:00","2024-05-07 14:00","2024-05-07 15:00","2024-05-07 16:00","2024-05-07 17:00","2024-05-07 18:00","2024-05-07 19:00","2024-05-07 20:00","2024-05-07 21:00","2024-05-07 22:00","2024-05-07 23:00","2024-05-08 00:00","2024-05-08 01:00","2024-05-08 02:00","2024-05-08 03:00","2024-05-08 04:00","2024-05-08 05:00","2024-05-08 06:00","2024-05-08 07:00","2024-05-08 08:00","2024-05-08 09:00","2024-05-08 10:00","2024-05-08 11:00","2024-05-08 12:00","2024-05-08 13:00","2024-05-08 14:00","2024-05-08 15:00","2024-05-08 16:00","2024-05-08 17:00","2024-05-08 18:00","2024-05-08 19:00","2024-05-08 20:00","2024-05-08 21:00","2024-05-08 22:00","2024-05-08 23:00","2024-05-09 00:00","2024-05-09 01:00","2024-05-09 02:00","2024-05-09 03:00","2024-05-09 04:00","2024-05-09 05:00","2024-05-09 06:00","2024-05-09 07:00","2024-05-09 08:00","2024-05-09 09:00","2024-05-09 10:00","2024-05-09 11:00","2024-05-09 12:00","2024-05-09 13:00","2024-05-09 14:00","2024-05-09 15:00","2024-05-09 16:00","2024-05-09 17:00","2024-05-09 18:00","2024-05-09 19:00","2024-05-09 20:00","2024-05-09 21:00","2024-05-09 22:00","2024-05-09 23:00","2024-05-10 00:00","2024-05-10 01:00","2024-05-10 02:00","2024-05-10 03:00","2024-05-10 04:00","2024-05-10 05:00","2024-05-10 06:00","2024-05-10 07:00","2024-05-10 08:00","2024-05-10 09:00","2024-05-10 10:00","2024-05-10 11:00","2024-05-10 12:00","2024-05-10 13:00","2024-05-10 14:00","2024-05-10 15:00","2024-05-10 16:00","2024-05-10 17:00","2024-05-10 18:00","2024-05-10 19:00","2024-05-10 20:00","2024-05-10 21:00","2024-05-10 22:00","2024-05-10 23:00","2024-05-11 00:00","2024-05-11 01:00","2024-05-11 02:00","2024-05-11 03:00","2024-05-11 04:00","2024-05-11 05:00","2024-05-11 06:00","2024-05-11 07:00","2024-05-11 08:00","2024-05-11 09:00","2024-05-11 10:00","2024-05-11 11:00","2024-05-11 12:00","2024-05-11 13:00","2024-05-11 14:00","2024-05-11 15:00","2024-05-11 16:00","2024-05-11 17:00","2024-05-11 18:00","2024-05-11 19:00","2024-05-11 20:00","2024-05-11 21:00","2024-05-11 22:00","2024-05-11 23:00","2024-05-12 00:00","2024-05-12 01:00","2024-05-12 02:00","2024-05-12 03:00","2024-05-12 04:00","2024-05-12 05:00","2024-05-12 06:00","2024-05-12 07:00","2024-05-12 08:00","2024-05-12 09:00","2024-05-12 10:00","2024-05-12 11:00","2024-05-12 12:00","2024-05-12 13:00","2024-05-12 14:00","2024-05-12 15:00","2024-05-12 16:00","2024-05-12 17:00","2024-05-12 18:00","2024-05-12 19:00","2024-05-12 20:00","2024-05-12 21:00","2024-05-12 22:00","2024-05-12 23:00","2024-05-13 00:00","2024-05-13 01:00","2024-05-13 02:00","2024-05-13 03:00","2024-05-13 04:00","2024-05-13 05:00","2024-05-13 06:00","2024-05-13 07:00","2024-05-13 08:00","2024-05-13 09:00","2024-05-13 10:00","2024-05-13 11:00","2024-05-13 12:00","2024-05-13 13:00","2024-05-13 14:00","2024-05-13 15:00","2024-05-13 16:00","2024-05-13 17:00","2024-05-13 18:00","2024-05-13 19:00","2024-05-13 20:00","2024-05-13 21:00","2024-05-13 22:00","2024-05-13 23:00","2024-05-14 00:00","2024-05-14 01:00","2024-05-14 02:00","2024-05-14 03:00","2024-05-14 04:00","2024-05-14 05:00","2024-05-14 06:00","2024-05-14 07:00","2024-05-14 08:00","2024-05-14 09:00","2024-05-14 10:00","2024-05-14 11:00","2024-05-14 12:00","2024-05-14 13:00","2024-05-14 14:00","2024-05-14 15:00","2024-05-14 16:00","2024-05-14 17:00","2024-05-14 18:00","2024-05-14 19:00","2024-05-14 20:00","2024-05-14 21:00","2024-05-14 22:00","2024-05-14 23:00","2024-05-15 00:00","2024-05-15 01:00","2024-05-15 02:00","2024-05-15 03:00","2024-05-15 04:00","2024-05-15 05:00","2024-05-15 06:00","2024-05-15 07:00","2024-05-15 08:00","2024-05-15 09:00","2024-05-15 10:00","2024-05-15 11:00","2024-05-15 12:00","2024-05-15 13:00","2024-05-15 14:00","2024-05-15 15:00","2024-05-15 16:00","2024-05-15 17:00","2024-05-15 18:00","2024-05-15 19:00","2024-05-15 20:00","2024-05-15 21:00","2024-05-15 22:00","2024-05-15 23:00","2024-05-16 00:00","2024-05-16 01:00","2024-05-16 02:00","2024-05-16 03:00","2024-05-16 04:00","2024-05-16 05:00","2024-05-16 06:00","2024-05-16 07:00","2024-05-16 08:00","2024-05-16 09:00","2024-05-16 10:00","2024-05-16 11:00","2024-05-16 12:00","2024-05-16 13:00","2024-05-16 14:00","2024-05-16 15:00","2024-05-16 16:00","2024-05-16 17:00","2024-05-16 18:00","2024-05-16 19:00","2024-05-16 20:00","2024-05-16 21:00","2024-05-16 22:00","2024-05-16 23:00"],"dst":[4.0,2.0,3.0,0.0,-5.0,-7.0,-5.0,2.0,7.0,6.0,8.0,13.0,18.0,19.0,22.0,22.0,18.0,15.0,14.0,10.0,-1.0,-18.0,-33.0,-39.0,-33.0,-43.0,-35.0,-34.0,-33.0,-27.0,-17.0,-17.0,-9.0,-6.0,-3.0,-4.0,-1.0,1.0,-3.0,1.0,-4.0,-9.0,-12.0,-13.0,-13.0,-10.0,-8.0,-5.0,-6.0,-6.0,-4.0,-7.0,-7.0,-3.0,2.0,6.0,4.0,1.0,-1.0,-4.0,-6.0,-7.0,-8.0,-8.0,-10.0,-15.0,-12.0,-8.0,-2.0,1.0,5.0,4.0,3.0,5.0,7.0,5.0,6.0,9.0,9.0,9.0,8.0,9.0,7.0,7.0,6.0,4.0,6.0,5.0,5.0,3.0,3.0,5.0,7.0,11.0,15.0,14.0,15.0,17.0,18.0,15.0,15.0,14.0,14.0,13.0,14.0,15.0,15.0,17.0,18.0,21.0,21.0,18.0,18.0,20.0,22.0,22.0,21.0,20.0,20.0,17.0,12.0,10.0,12.0,21.0,16.0,7.0,9.0,16.0,13.0,15.0,13.0,3.0,-1.0,1.0,10.0,23.0,25.0,66.0,-33.0,-131.0,-157.0,-277.0,-339.0,-308.0,-313.0,-390.0,-406.0,-395.0,-389.0,-358.0,-320.0,-374.0,-364.0,-297.0,-318.0,-268.0,-258.0,-279.0,-281.0,-265.0,-270.0,-248.0,-203.0,-198.0,-190.0,-169.0,-157.0,-167.0,-150.0,-142.0,-135.0,-138.0,-138.0,-143.0,-132.0,-132.0,-131.0,-114.0,-104.0,-108.0,-108.0,-104.0,-102.0,-96.0,-97.0,-93.0,-87.0,-82.0,-75.0,-77.0,-86.0,-81.0,-74.0,-76.0,-83.0,-88.0,-93.0,-86.0,-84.0,-67.0,-63.0,-59.0,-57.0,-61.0,-59.0,-63.0,-57.0,-51.0,-54.0,-55.0,-55.0,-51.0,-48.0,-44.0,-43.0,-46.0,-45.0,-48.0,-49.0,-51.0,-46.0,-42.0,-41.0,-43.0,-46.0,-49.0,-51.0,-53.0,-54.0,-48.0,-45.0,-44.0,-42.0,-42.0,-45.0,-44.0,-41.0,-39.0,-38.0,-41.0,-42.0,-40.0,-39.0,-39.0,-32.0,-30.0,-33.0,-35.0,-33.0,-33.0,-36.0,-44.0,-46.0,-44.0,-41.0,-40.0,-40.0,-38.0,-32.0,-32.0,-36.0,-42.0,-44.0,-49.0,-49.0,-51.0,-48.0,-46.0,-39.0,-29.0,-37.0,-32.0,-38.0,-74.0,-82.0,-73.0,-63.0,-73.0,-71.0,-73.0,-69.0,-68.0,-64.0,-58.0,-54.0,-52.0,-51.0,-49.0],"kp":[1.7,1.7,1.7,1.3,1.3,1.3,2.0,2.0,2.0,1.7,1.7,1.7,1.0,1.0,1.0,1.3,1.3,1.3,3.0,3.0,3.0,4.3,4.3,4.3,5.3,5.3,5.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,2.3,4.0,4.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,1.3,1.3,1.3,1.3,1.3,1.3,1.3,1.3,1.3,1.0,1.0,1.0,1.3,1.3,1.3,2.0,2.0,2.0,2.7,2.7,2.7,1.3,1.3,1.3,1.3,1.3,1.3,1.0,1.0,1.0,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,1.7,2.0,2.0,2.0,0.7,0.7,0.7,1.0,1.0,1.0,0.7,0.7,0.7,1.3,1.3,1.3,0.7,0.7,0.7,1.3,1.3,1.3,1.0,1.0,1.0,1.0,1.0,1.0,2.3,2.3,2.3,2.0,2.0,2.0,2.7,2.7,2.7,2.7,2.7,2.7,2.3,2.3,2.3,2.0,2.0,2.0,3.7,3.7,3.7,7.7,7.7,7.7,8.7,8.7,8.7,8.7,8.7,8.7,9.0,9.0,9.0,8.3,8.3,8.3,8.3,8.3,8.3,9.0,9.0,9.0,8.7,8.7,8.7,8.3,8.3,8.3,7.7,7.7,7.7,7.7,7.7,7.7,6.3,6.3,6.3,7.0,7.0,7.0,3.7,3.7,3.7,4.3,4.3,4.3,2.0,2.0,2.0,3.0,3.0,3.0,4.0,4.0,4.0,6.3,6.3,6.3,5.3,5.3,5.3,6.0,6.0,6.0,3.3,3.3,3.3,2.7,2.7,2.7,3.3,3.3,3.3,2.7,2.7,2.7,2.3,2.3,2.3,2.3,2.3,2.3,1.3,1.3,1.3,1.3,1.3,1.3,1.3,1.3,1.3,2.3,2.3,2.3,2.3,2.3,2.3,1.7,1.7,1.7,2.0,2.0,2.0,0.7,0.7,0.7,1.3,1.3,1.3,2.0,2.0,2.0,2.3,2.3,2.3,2.7,2.7,2.7,2.0,2.0,2.0,2.0,2.0,2.0,3.0,3.0,3.0,2.3,2.3,2.3,2.7,2.7,2.7,3.0,3.0,3.0,6.0,6.0,6.0,5.0,5.0,5.0,4.3,4.3,4.3,3.0,3.0,3.0,2.3,2.3,2.3,1.0,1.0,1.0],"patlamalar":[{"t":"2024-05-05 01:27","aki":8.424e-05,"sinif":"M8.4","bolge":"merkez"},{"t":"2024-05-05 03:17","aki":8.838e-06,"sinif":"C8.8","bolge":"merkez"},{"t":"2024-05-05 04:25","aki":8.424e-06,"sinif":"C8.4","bolge":"merkez"},{"t":"2024-05-05 05:42","aki":5.601e-06,"sinif":"C5.6","bolge":"merkez"},{"t":"2024-05-05 06:01","aki":0.0001302,"sinif":"X1.3","bolge":"merkez"},{"t":"2024-05-05 08:19","aki":1.3e-05,"sinif":"M1.3","bolge":"merkez"},{"t":"2024-05-05 09:12","aki":8.439e-06,"sinif":"C8.4","bolge":"merkez"},{"t":"2024-05-05 09:38","aki":2.362e-05,"sinif":"M2.4","bolge":"merkez"},{"t":"2024-05-05 10:00","aki":7.468e-05,"sinif":"M7.5","bolge":"merkez"},{"t":"2024-05-05 11:54","aki":0.0001273,"sinif":"X1.3","bolge":"merkez"},{"t":"2024-05-05 14:16","aki":7.571e-06,"sinif":"C7.6","bolge":"merkez"},{"t":"2024-05-05 14:47","aki":1.321e-05,"sinif":"M1.3","bolge":"merkez"},{"t":"2024-05-05 15:38","aki":2.255e-05,"sinif":"M2.3","bolge":"merkez"},{"t":"2024-05-05 17:01","aki":1.362e-05,"sinif":"M1.4","bolge":"merkez"},{"t":"2024-05-05 18:04","aki":6.474e-06,"sinif":"C6.5","bolge":"merkez"},{"t":"2024-05-05 18:19","aki":8.741e-06,"sinif":"C8.7","bolge":"merkez"},{"t":"2024-05-05 18:40","aki":1.047e-05,"sinif":"M1.0","bolge":"merkez"},{"t":"2024-05-05 19:52","aki":1.365e-05,"sinif":"M1.4","bolge":"merkez"},{"t":"2024-05-05 22:22","aki":2.097e-06,"sinif":"C2.1","bolge":"merkez"},{"t":"2024-05-05 22:30","aki":6.207e-06,"sinif":"C6.2","bolge":"merkez"},{"t":"2024-05-05 23:43","aki":4.131e-06,"sinif":"C4.1","bolge":"merkez"},{"t":"2024-05-06 00:37","aki":3.982e-06,"sinif":"C4.0","bolge":"merkez"},{"t":"2024-05-06 01:06","aki":1.618e-05,"sinif":"M1.6","bolge":"merkez"},{"t":"2024-05-06 03:51","aki":5.851e-06,"sinif":"C5.9","bolge":"merkez"},{"t":"2024-05-06 04:22","aki":8.849e-06,"sinif":"C8.8","bolge":"merkez"},{"t":"2024-05-06 05:28","aki":1.319e-05,"sinif":"M1.3","bolge":"merkez"},{"t":"2024-05-06 06:35","aki":0.0004463,"sinif":"X4.5","bolge":"merkez"},{"t":"2024-05-06 09:59","aki":1.551e-05,"sinif":"M1.6","bolge":"merkez"},{"t":"2024-05-06 11:00","aki":6.575e-06,"sinif":"C6.6","bolge":"merkez"},{"t":"2024-05-06 12:56","aki":9.37e-06,"sinif":"C9.4","bolge":"merkez"},{"t":"2024-05-06 14:30","aki":4.439e-06,"sinif":"C4.4","bolge":"merkez"},{"t":"2024-05-06 15:34","aki":6.276e-06,"sinif":"C6.3","bolge":"merkez"},{"t":"2024-05-06 17:09","aki":4.394e-06,"sinif":"C4.4","bolge":"merkez"},{"t":"2024-05-06 17:39","aki":2.707e-06,"sinif":"C2.7","bolge":"merkez"},{"t":"2024-05-06 18:22","aki":3.749e-06,"sinif":"C3.7","bolge":"merkez"},{"t":"2024-05-06 18:42","aki":2.996e-06,"sinif":"C3.0","bolge":"merkez"},{"t":"2024-05-06 19:18","aki":9.475e-06,"sinif":"C9.5","bolge":"merkez"},{"t":"2024-05-06 20:22","aki":2.669e-06,"sinif":"C2.7","bolge":"merkez"},{"t":"2024-05-06 20:31","aki":3.459e-06,"sinif":"C3.5","bolge":"merkez"},{"t":"2024-05-06 21:20","aki":3.297e-06,"sinif":"C3.3","bolge":"merkez"},{"t":"2024-05-06 21:48","aki":1.285e-05,"sinif":"M1.3","bolge":"merkez"},{"t":"2024-05-06 22:27","aki":4.339e-05,"sinif":"M4.3","bolge":"merkez"},{"t":"2024-05-07 00:58","aki":2.665e-05,"sinif":"M2.7","bolge":"merkez"},{"t":"2024-05-07 05:46","aki":5.74e-06,"sinif":"C5.7","bolge":"merkez"},{"t":"2024-05-07 06:16","aki":5.178e-05,"sinif":"M5.2","bolge":"merkez"},{"t":"2024-05-07 08:23","aki":1.336e-05,"sinif":"M1.3","bolge":"merkez"},{"t":"2024-05-07 10:42","aki":9.589e-06,"sinif":"C9.6","bolge":"merkez"},{"t":"2024-05-07 11:50","aki":2.467e-05,"sinif":"M2.5","bolge":"merkez"},{"t":"2024-05-07 12:54","aki":1.592e-05,"sinif":"M1.6","bolge":"merkez"},{"t":"2024-05-07 13:25","aki":1.05e-05,"sinif":"M1.0","bolge":"merkez"},{"t":"2024-05-07 13:35","aki":1.052e-05,"sinif":"M1.1","bolge":"merkez"},{"t":"2024-05-07 16:30","aki":8.293e-05,"sinif":"M8.3","bolge":"merkez"},{"t":"2024-05-07 17:38","aki":7.215e-06,"sinif":"C7.2","bolge":"bilinmiyor"},{"t":"2024-05-07 18:56","aki":8.466e-06,"sinif":"C8.5","bolge":"bilinmiyor"},{"t":"2024-05-07 20:22","aki":2.147e-05,"sinif":"M2.1","bolge":"merkez"},{"t":"2024-05-07 21:26","aki":3.339e-05,"sinif":"M3.3","bolge":"merkez"},{"t":"2024-05-07 21:53","aki":3.276e-05,"sinif":"M3.3","bolge":"merkez"},{"t":"2024-05-08 00:42","aki":8.49e-06,"sinif":"C8.5","bolge":"merkez"},{"t":"2024-05-08 00:51","aki":9.396e-06,"sinif":"C9.4","bolge":"merkez"},{"t":"2024-05-08 01:41","aki":0.0001065,"sinif":"X1.1","bolge":"merkez"},{"t":"2024-05-08 02:27","aki":3.434e-05,"sinif":"M3.4","bolge":"merkez"},{"t":"2024-05-08 03:27","aki":1.899e-05,"sinif":"M1.9","bolge":"merkez"},{"t":"2024-05-08 03:42","aki":1.975e-05,"sinif":"M2.0","bolge":"bilinmiyor"},{"t":"2024-05-08 04:30","aki":3.556e-05,"sinif":"M3.6","bolge":"bilinmiyor"},{"t":"2024-05-08 05:09","aki":0.0001025,"sinif":"X1.0","bolge":"merkez"},{"t":"2024-05-08 06:53","aki":7.174e-05,"sinif":"M7.2","bolge":"bilinmiyor"},{"t":"2024-05-08 07:41","aki":4.514e-05,"sinif":"M4.5","bolge":"batı kenarı"},{"t":"2024-05-08 09:37","aki":1.887e-05,"sinif":"M1.9","bolge":"merkez"},{"t":"2024-05-08 09:48","aki":2.122e-05,"sinif":"M2.1","bolge":"merkez"},{"t":"2024-05-08 11:22","aki":4.133e-05,"sinif":"M4.1","bolge":"merkez"},{"t":"2024-05-08 12:04","aki":8.686e-05,"sinif":"M8.7","bolge":"bilinmiyor"},{"t":"2024-05-08 15:59","aki":6.661e-06,"sinif":"C6.7","bolge":"merkez"},{"t":"2024-05-08 16:22","aki":6.639e-06,"sinif":"C6.6","bolge":"merkez"},{"t":"2024-05-08 17:53","aki":7.919e-05,"sinif":"M7.9","bolge":"merkez"},{"t":"2024-05-08 18:36","aki":2.987e-05,"sinif":"M3.0","bolge":"merkez"},{"t":"2024-05-08 19:21","aki":2.062e-05,"sinif":"M2.1","bolge":"merkez"},{"t":"2024-05-08 20:34","aki":1.781e-05,"sinif":"M1.8","bolge":"merkez"},{"t":"2024-05-08 21:40","aki":0.0001004,"sinif":"X1.0","bolge":"merkez"},{"t":"2024-05-08 22:27","aki":9.874e-05,"sinif":"M9.9","bolge":"merkez"},{"t":"2024-05-09 03:17","aki":4.034e-05,"sinif":"M4.0","bolge":"merkez"},{"t":"2024-05-09 03:32","aki":4.573e-05,"sinif":"M4.6","bolge":"merkez"},{"t":"2024-05-09 04:49","aki":1.743e-05,"sinif":"M1.7","bolge":"merkez"},{"t":"2024-05-09 06:13","aki":2.342e-05,"sinif":"M2.3","bolge":"merkez"},{"t":"2024-05-09 06:27","aki":2.489e-05,"sinif":"M2.5","bolge":"bilinmiyor"},{"t":"2024-05-09 08:40","aki":2.114e-05,"sinif":"M2.1","bolge":"bilinmiyor"},{"t":"2024-05-09 09:13","aki":0.0002222,"sinif":"X2.2","bolge":"merkez"},{"t":"2024-05-09 11:56","aki":3.115e-05,"sinif":"M3.1","bolge":"merkez"},{"t":"2024-05-09 12:12","aki":2.999e-05,"sinif":"M3.0","bolge":"merkez"},{"t":"2024-05-09 13:23","aki":3.771e-05,"sinif":"M3.8","bolge":"merkez"},{"t":"2024-05-09 17:44","aki":0.0001106,"sinif":"X1.1","bolge":"merkez"},{"t":"2024-05-09 21:21","aki":1.047e-05,"sinif":"M1.0","bolge":"batı kenarı"},{"t":"2024-05-09 22:15","aki":1.001e-05,"sinif":"M1.0","bolge":"merkez"},{"t":"2024-05-09 22:41","aki":2.697e-05,"sinif":"M2.7","bolge":"merkez"},{"t":"2024-05-09 23:08","aki":1.261e-05,"sinif":"M1.3","bolge":"merkez"},{"t":"2024-05-09 23:51","aki":1.596e-05,"sinif":"M1.6","bolge":"merkez"},{"t":"2024-05-10 00:13","aki":1.389e-05,"sinif":"M1.4","bolge":"merkez"},{"t":"2024-05-10 02:09","aki":9.842e-06,"sinif":"C9.8","bolge":"merkez"},{"t":"2024-05-10 03:10","aki":8.029e-06,"sinif":"C8.0","bolge":"merkez"},{"t":"2024-05-10 03:29","aki":1.451e-05,"sinif":"M1.5","bolge":"merkez"},{"t":"2024-05-10 06:24","aki":1.376e-05,"sinif":"M1.4","bolge":"merkez"},{"t":"2024-05-10 06:54","aki":0.0003929,"sinif":"X3.9","bolge":"merkez"},{"t":"2024-05-10 10:14","aki":2.295e-05,"sinif":"M2.3","bolge":"merkez"},{"t":"2024-05-10 14:11","aki":5.969e-05,"sinif":"M6.0","bolge":"merkez"},{"t":"2024-05-10 15:51","aki":7.35e-06,"sinif":"C7.3","bolge":"bilinmiyor"},{"t":"2024-05-10 16:08","aki":6.925e-06,"sinif":"C6.9","bolge":"batı kenarı"},{"t":"2024-05-10 18:25","aki":9.141e-06,"sinif":"C9.1","bolge":"merkez"},{"t":"2024-05-10 18:32","aki":1.159e-05,"sinif":"M1.2","bolge":"merkez"},{"t":"2024-05-10 18:48","aki":1.8e-05,"sinif":"M1.8","bolge":"batı kenarı"},{"t":"2024-05-10 19:05","aki":2.022e-05,"sinif":"M2.0","bolge":"merkez"},{"t":"2024-05-10 19:53","aki":1.181e-05,"sinif":"M1.2","bolge":"merkez"},{"t":"2024-05-10 20:03","aki":1.949e-05,"sinif":"M1.9","bolge":"merkez"},{"t":"2024-05-10 21:08","aki":3.835e-05,"sinif":"M3.8","bolge":"merkez"},{"t":"2024-05-11 01:23","aki":0.0005821,"sinif":"X5.8","bolge":"merkez"},{"t":"2024-05-11 10:18","aki":3.113e-05,"sinif":"M3.1","bolge":"merkez"},{"t":"2024-05-11 10:56","aki":1.646e-05,"sinif":"M1.6","bolge":"merkez"},{"t":"2024-05-11 11:44","aki":0.0001515,"sinif":"X1.5","bolge":"merkez"},{"t":"2024-05-11 13:49","aki":1.798e-05,"sinif":"M1.8","bolge":"merkez"},{"t":"2024-05-11 15:25","aki":8.87e-05,"sinif":"M8.9","bolge":"batı kenarı"},{"t":"2024-05-11 19:47","aki":7.197e-06,"sinif":"C7.2","bolge":"merkez"},{"t":"2024-05-11 20:41","aki":1.236e-05,"sinif":"M1.2","bolge":"merkez"},{"t":"2024-05-11 21:07","aki":9.414e-06,"sinif":"C9.4","bolge":"merkez"},{"t":"2024-05-11 21:58","aki":7.889e-06,"sinif":"C7.9","bolge":"merkez"},{"t":"2024-05-11 23:29","aki":6.63e-06,"sinif":"C6.6","bolge":"merkez"},{"t":"2024-05-12 00:28","aki":6.493e-06,"sinif":"C6.5","bolge":"merkez"},{"t":"2024-05-12 00:45","aki":3.239e-05,"sinif":"M3.2","bolge":"merkez"},{"t":"2024-05-12 05:52","aki":2.421e-05,"sinif":"M2.4","bolge":"merkez"},{"t":"2024-05-12 10:22","aki":9.265e-06,"sinif":"C9.3","bolge":"merkez"},{"t":"2024-05-12 12:41","aki":1.674e-05,"sinif":"M1.7","bolge":"doğu kenarı"},{"t":"2024-05-12 13:47","aki":1.015e-05,"sinif":"M1.0","bolge":"doğu kenarı"},{"t":"2024-05-12 13:56","aki":1.559e-05,"sinif":"M1.6","bolge":"batı kenarı"},{"t":"2024-05-12 15:26","aki":7.011e-06,"sinif":"C7.0","bolge":"merkez"},{"t":"2024-05-12 15:44","aki":7.362e-06,"sinif":"C7.4","bolge":"merkez"},{"t":"2024-05-12 16:26","aki":0.0001009,"sinif":"X1.0","bolge":"batı kenarı"},{"t":"2024-05-12 20:32","aki":4.887e-05,"sinif":"M4.9","bolge":"merkez"},{"t":"2024-05-12 22:06","aki":1.156e-05,"sinif":"M1.2","bolge":"merkez"},{"t":"2024-05-12 22:18","aki":1.127e-05,"sinif":"M1.1","bolge":"merkez"},{"t":"2024-05-12 23:10","aki":1.001e-05,"sinif":"M1.0","bolge":"merkez"},{"t":"2024-05-12 23:39","aki":9.546e-06,"sinif":"C9.5","bolge":"batı kenarı"},{"t":"2024-05-13 00:32","aki":6.496e-06,"sinif":"C6.5","bolge":"merkez"},{"t":"2024-05-13 01:09","aki":9.463e-06,"sinif":"C9.5","bolge":"merkez"},{"t":"2024-05-13 01:33","aki":1.257e-05,"sinif":"M1.3","bolge":"merkez"},{"t":"2024-05-13 02:46","aki":5.898e-06,"sinif":"C5.9","bolge":"merkez"},{"t":"2024-05-13 04:03","aki":5.116e-06,"sinif":"C5.1","bolge":"merkez"},{"t":"2024-05-13 05:47","aki":5.315e-06,"sinif":"C5.3","bolge":"merkez"},{"t":"2024-05-13 05:57","aki":5.354e-06,"sinif":"C5.4","bolge":"merkez"},{"t":"2024-05-13 07:35","aki":6.409e-06,"sinif":"C6.4","bolge":"merkez"},{"t":"2024-05-13 08:20","aki":1.296e-05,"sinif":"M1.3","bolge":"merkez"},{"t":"2024-05-13 08:29","aki":1.464e-05,"sinif":"M1.5","bolge":"merkez"},{"t":"2024-05-13 09:33","aki":4.953e-05,"sinif":"M5.0","bolge":"bilinmiyor"},{"t":"2024-05-13 09:44","aki":6.655e-05,"sinif":"M6.7","bolge":"batı kenarı"},{"t":"2024-05-13 13:11","aki":3.717e-05,"sinif":"M3.7","bolge":"merkez"},{"t":"2024-05-13 17:47","aki":1.078e-05,"sinif":"M1.1","bolge":"merkez"},{"t":"2024-05-13 21:59","aki":1.599e-05,"sinif":"M1.6","bolge":"merkez"},{"t":"2024-05-14 01:48","aki":2.587e-05,"sinif":"M2.6","bolge":"bilinmiyor"},{"t":"2024-05-14 02:09","aki":0.0001697,"sinif":"X1.7","bolge":"merkez"},{"t":"2024-05-14 12:55","aki":0.0001231,"sinif":"X1.2","bolge":"merkez"},{"t":"2024-05-14 15:28","aki":9.68e-06,"sinif":"C9.7","bolge":"merkez"},{"t":"2024-05-14 16:51","aki":0.0008688,"sinif":"X8.7","bolge":"merkez"},{"t":"2024-05-14 17:38","aki":4.473e-05,"sinif":"M4.5","bolge":"merkez"},{"t":"2024-05-14 23:14","aki":7.234e-06,"sinif":"C7.2","bolge":"merkez"},{"t":"2024-05-15 04:25","aki":5.519e-06,"sinif":"C5.5","bolge":"merkez"},{"t":"2024-05-15 04:55","aki":7.818e-06,"sinif":"C7.8","bolge":"bilinmiyor"},{"t":"2024-05-15 06:25","aki":5.762e-06,"sinif":"C5.8","bolge":"merkez"},{"t":"2024-05-15 07:20","aki":5.829e-06,"sinif":"C5.8","bolge":"merkez"},{"t":"2024-05-15 07:42","aki":9.948e-06,"sinif":"C9.9","bolge":"merkez"},{"t":"2024-05-15 08:16","aki":9.919e-06,"sinif":"C9.9","bolge":"merkez"},{"t":"2024-05-15 08:37","aki":0.0003438,"sinif":"X3.4","bolge":"merkez"},{"t":"2024-05-15 14:06","aki":2.902e-05,"sinif":"M2.9","bolge":"merkez"},{"t":"2024-05-15 14:17","aki":3.288e-05,"sinif":"M3.3","bolge":"merkez"},{"t":"2024-05-15 14:38","aki":0.0002948,"sinif":"X2.9","bolge":"merkez"}]}},"meta":{"uretim":"2026-11-05 18:12 UTC","toplam_patlama":67466,"sinif_sayilari":{"C":39692,"B":21484,"M":5882,"X":400,"A":8},"donem":"2000-01-01 – 2025-12-31"}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+const V = JSON.parse(document.getElementById('veriJson').textContent);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const R = {};
+['--metin','--soluk','--silik','--cizgi','--gunes','--aurora','--dst','--cA','--cB','--cC','--cM','--cX','--panel'].forEach(k => R[k.slice(2)] = css(k));
+const SINIF_RENK = {A: R.cA, B: R.cB, C: R.cC, M: R.cM, X: R.cX};
+const tr = (v, d = 0) => v == null ? '–' : Number(v).toLocaleString('tr-TR', {minimumFractionDigits: d, maximumFractionDigits: d});
+const AZALT = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Tablo okuyucu: {sutunlar, satirlar} -> nesne listesi */
+const tablo = t => t.satirlar.map(r => Object.fromEntries(t.sutunlar.map((s, i) => [s, r[i]])));
+const T = {
+  dongu: tablo(V.dongu_s4), asama: tablo(V.dongu_asamalar), sen: tablo(V.senaryolar), kal: tablo(V.kalibrasyon),
+  yil: tablo(V.yillik), dfirt: tablo(V.dongu_firtina), ol: tablo(V.olasilik)
+};
+const yilBul = y => T.yil.find(r => r['yıl'] === y) || {};
+
+/* ---------------- SVG grafik yardımcıları ---------------- */
+const NS = 'http://www.w3.org/2000/svg';
+function E(tag, a, p) { const e = document.createElementNS(NS, tag); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+function olcek(d0, d1, r0, r1, log) {
+  if (log) { const a = Math.log10(d0), b = Math.log10(d1); return v => r0 + (Math.log10(Math.max(v, d0 * 1e-3)) - a) / (b - a) * (r1 - r0); }
+  return v => r0 + (v - d0) / (d1 - d0) * (r1 - r0);
+}
+function guzelAdim(a, b, n) {
+  const ham = (b - a) / n, us = Math.pow(10, Math.floor(Math.log10(ham))), k = ham / us;
+  const adim = (k < 1.5 ? 1 : k < 3 ? 2 : k < 7 ? 5 : 10) * us;
+  const out = []; for (let v = Math.ceil(a / adim) * adim; v <= b + 1e-9; v += adim) out.push(+v.toFixed(10)); return out;
+}
+/* o = {yuk, x:{min,max,ticks,fmt}, y:{min,max,log,ticks,fmt,baslik}, y2:{...}, ciz(svg, X, Y, Y2, alan), ipucu(xDegeri) -> html} */
+function grafik(kapId, o) {
+  const kap = document.getElementById(kapId); if (!kap) return;
+  const ciz = () => {
+    kap.querySelectorAll('svg,.ipucu').forEach(n => n.remove());
+    const W = Math.max(300, kap.clientWidth), H = o.yuk ? o.yuk(W) : Math.round(W * 0.5);
+    const m = {l: o.sol ?? (o.y.baslik ? 58 : 46), r: o.y2 ? 54 : 14, t: 14, b: 30};
+    const svg = E('svg', {viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: 'img', 'aria-label': o.aria || ''}, kap);
+    const X = olcek(o.x.min, o.x.max, m.l, W - m.r, o.x.log);
+    const Y = olcek(o.y.min, o.y.max, H - m.b, m.t, o.y.log);
+    const Y2 = o.y2 ? olcek(o.y2.min, o.y2.max, H - m.b, m.t, o.y2.log) : null;
+    const izgara = E('g', {}, svg);
+    (o.y.ticks || guzelAdim(o.y.min, o.y.max, 5)).forEach(v => {
+      E('line', {x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: R.cizgi, 'stroke-width': 1}, izgara);
+      E('text', {x: m.l - 7, y: Y(v) + 4, 'text-anchor': 'end'}, izgara).textContent = o.y.fmt ? o.y.fmt(v) : tr(v);
+    });
+    if (o.y2) (o.y2.ticks || guzelAdim(o.y2.min, o.y2.max, 5)).forEach(v => {
+      E('text', {x: W - m.r + 7, y: Y2(v) + 4, 'text-anchor': 'start'}, izgara).textContent = o.y2.fmt ? o.y2.fmt(v) : tr(v);
+    });
+    const xt = o.x.ticks || guzelAdim(o.x.min, o.x.max, Math.max(3, Math.floor(W / 90)));
+    xt.forEach(v => { E('text', {x: X(v), y: H - m.b + 18, 'text-anchor': 'middle'}, izgara).textContent = o.x.fmt ? o.x.fmt(v) : tr(v); });
+    E('line', {x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: R.silik}, izgara);
+    if (o.y.baslik) { const t = E('text', {x: 12, y: (H - m.b + m.t) / 2, 'text-anchor': 'middle', transform: `rotate(-90 12 ${(H - m.b + m.t) / 2})`}, izgara); t.textContent = o.y.baslik; }
+    if (o.y2 && o.y2.baslik) { const xx = W - 8; const t = E('text', {x: xx, y: (H - m.b + m.t) / 2, 'text-anchor': 'middle', transform: `rotate(90 ${xx} ${(H - m.b + m.t) / 2})`}, izgara); t.textContent = o.y2.baslik; }
+    o.ciz(svg, X, Y, Y2, {W, H, m});
+    if (o.ipucu) {
+      const cizgi = E('line', {y1: m.t, y2: H - m.b, stroke: R.soluk, 'stroke-dasharray': '3 3', opacity: 0}, svg);
+      const kutu = document.createElement('div'); kutu.className = 'ipucu'; kutu.hidden = true; kap.appendChild(kutu);
+      const ters = px => o.x.min + (px - m.l) / (W - m.r - m.l) * (o.x.max - o.x.min);
+      svg.addEventListener('pointermove', e => {
+        const r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * W / r.width;
+        if (px < m.l || px > W - m.r) { kutu.hidden = true; cizgi.setAttribute('opacity', 0); return; }
+        const res = o.ipucu(ters(px)); if (!res) return;
+        const xp = X(res.x); cizgi.setAttribute('x1', xp); cizgi.setAttribute('x2', xp); cizgi.setAttribute('opacity', .7);
+        kutu.innerHTML = res.html; kutu.hidden = false;
+        const sol = xp * r.width / W; kutu.style.top = '6px';
+        kutu.style.left = (sol > r.width * 0.6 ? sol - kutu.offsetWidth - 12 : sol + 12) + 'px';
+      });
+      svg.addEventListener('pointerleave', () => { kutu.hidden = true; cizgi.setAttribute('opacity', 0); });
+    }
+  };
+  ciz();
+  let zaman; new ResizeObserver(() => { clearTimeout(zaman); zaman = setTimeout(ciz, 120); }).observe(kap);
+  return ciz;
+}
+function yol(nokta, X, Y) {
+  let d = '', ac = false;
+  nokta.forEach(([x, y]) => { if (y == null || !isFinite(y)) { ac = false; return; } d += (ac ? 'L' : 'M') + X(x).toFixed(1) + ',' + Y(y).toFixed(1); ac = true; });
+  return d;
+}
+function bant(alt, ust, X, Y) {
+  const a = alt.filter(p => p[1] != null), u = ust.filter(p => p[1] != null);
+  if (!a.length) return '';
+  return 'M' + a.map(p => X(p[0]).toFixed(1) + ',' + Y(p[1]).toFixed(1)).join('L') + 'L' + u.reverse().map(p => X(p[0]).toFixed(1) + ',' + Y(p[1]).toFixed(1)).join('L') + 'Z';
+}
+
+/* ---------------- Veri kaynakları ---------------- */
+(function () {
+  const s = V.meta.sinif_sayilari;
+  const k = [
+    ['Güneş lekesi', '1749–2026', 'SILSO aylık seri. Tahmin modelleri için üç yüzyıl.'],
+    ['Patlama', tr(V.meta.toplam_patlama), `NOAA NCEI bilimsel kalite, 12 GOES uydusu. M: ${tr(s.M)}, X: ${tr(s.X)}.`],
+    ['Saatlik Dst ve Kp', '227.928', 'NASA OMNI2, 2000–2025 her saat. Dünya tarafının ölçüsü.'],
+    ['Kalibrasyon', '12 uydu', 'GOES 8–19 ortak gözlemleri, bootstrap güven aralıkları.']
+  ];
+  document.getElementById('kaynaklar').innerHTML = k.map(([b, n, p]) => `<div class="kaynak"><span class="etiket">${b}</span><span class="sayi">${n}</span><p>${p}</p></div>`).join('');
+})();
+
+/* ---------------- 03 · Ölçek oranı ---------------- */
+grafik('gOlcek', {
+  yuk: W => Math.round(W * 0.56), aria: 'NCEI ve HEK akı oranı yıllara göre',
+  x: {min: 1999.5, max: 2025.5, fmt: v => String(v)},
+  y: {min: 0.9, max: 1.7, ticks: [1.0, 1.2, 1.4, 1.6], fmt: v => tr(v, 1)},
+  ciz(svg, X, Y) {
+    const o = V.olcek_orani;
+    E('path', {d: bant(o.yil.map((y, i) => [y, o.q25[i]]), o.yil.map((y, i) => [y, o.q75[i]]), X, Y), fill: R.gunes, opacity: .22}, svg);
+    [[1 / 0.7, '1/0,7 = 1,43', 15], [1, '1,00', -6]].forEach(([v, t, dy]) => {
+      E('line', {x1: X(1999.5), x2: X(2025.5), y1: Y(v), y2: Y(v), stroke: R.soluk, 'stroke-dasharray': '5 4'}, svg);
+      E('text', {x: X(1999.5) + 4, y: Y(v) + dy}, svg).textContent = t;
+    });
+    E('path', {d: yol(o.yil.map((y, i) => [y, o.medyan[i]]), X, Y), stroke: R.gunes, 'stroke-width': 2.5, fill: 'none'}, svg);
+    o.yil.forEach((y, i) => E('circle', {cx: X(y), cy: Y(o.medyan[i]), r: 3, fill: R.gunes}, svg));
+    E('text', {x: X(2020.2), y: Y(1.25), fill: R.metin}, svg).textContent = '2020: operasyonel';
+    E('text', {x: X(2020.2), y: Y(1.25) + 14, fill: R.metin}, svg).textContent = 'liste GOES-16';
+  },
+  ipucu(x) { const o = V.olcek_orani; const i = o.yil.indexOf(Math.round(x)); if (i < 0) return null; return {x: o.yil[i], html: `<b>${o.yil[i]}</b><br>Medyan oran: ${tr(o.medyan[i], 3)}<br>Eşleşen patlama: ${tr(o.n[i])}`}; }
+});
+
+/* ---------------- 03 · Uydu zaman çizelgesi ---------------- */
+(function () {
+  const kapsam = [[8, '1995-01-03', '2003-06-16'], [9, '1996-04-03', '1998-07-28'], [10, '1998-07-01', '2009-12-01'], [11, '2006-06-03', '2008-01-07'], [12, '2003-01-10', '2007-03-31'],
+    [13, '2013-06-07', '2017-12-14'], [14, '2009-09-19', '2019-10-01'], [15, '2010-04-08', '2020-01-10'], [16, '2017-02-09', '2025-04-07'], [17, '2018-06-01', '2023-01-10'], [18, '2022-06-17', '2025-12-31'], [19, '2024-09-20', '2025-12-31']];
+  const kat = Object.fromEntries(T.kal.map(r => [r.uydu, r.faktor]));
+  const a10 = kat[14] / 1.091;
+  const s4 = u => [8, 9, 10, 11, 12].includes(u) ? (kat[u] ?? 1) * a10 : kat[u];
+  const yilOf = s => { const d = new Date(s + 'T00:00:00Z'); return d.getUTCFullYear() + (d - Date.UTC(d.getUTCFullYear(), 0, 1)) / 31557600000; };
+  grafik('gUydu', {
+    yuk: () => 12 * 26 + 44, sol: 72, aria: 'GOES uydularının veri kapsamı',
+    x: {min: 1999.5, max: 2026, fmt: v => String(v)},
+    y: {min: 0, max: 12, ticks: []},
+    ciz(svg, X, Y, _, {m}) {
+      const bas = Math.max(1999.5, yilOf('2009-09-19')), son = yilOf('2009-12-01');
+      E('rect', {x: X(bas), y: m.t, width: Math.max(3, X(son) - X(bas)), height: Y(0) - m.t, fill: R.gunes, opacity: .28}, svg);
+      E('line', {x1: X(2000), x2: X(2000), y1: m.t, y2: Y(0), stroke: R.cizgi}, svg);
+      kapsam.forEach(([u, b, s], i) => {
+        const y = Y(12 - i - 0.5), x0 = X(Math.max(1999.5, yilOf(b))), x1 = X(Math.min(2026, yilOf(s)));
+        const yeni = u >= 13;
+        E('rect', {x: x0, y: y - 8, width: Math.max(2, x1 - x0), height: 16, rx: 3, fill: yeni ? R.aurora : R.cB}, svg);
+        E('text', {x: m.l - 6, y: y + 4, 'text-anchor': 'end', fill: R.metin}, svg).textContent = 'GOES-' + u;
+        const f = s4(u); if (f != null && x1 - x0 > 46) E('text', {x: x0 + 6, y: y + 4, fill: '#02070d', 'font-weight': 600, 'font-size': 11.5}, svg).textContent = tr(f, 3);
+      });
+    }
+  });
+})();
+
+/* ---------------- 03 · Düzeltme aşamaları ---------------- */
+(function () {
+  const a = T.asama, d = T.dongu;
+  const oran = (k, i, j) => a[i][k] / a[j][k];
+  const satir = [
+    ['Ham (HEK)', oran('HEK /1000SN', 2, 1), oran('HEK /1000SN', 2, 0)],
+    ['Bilimsel kalite (NCEI)', oran('NCEI /1000SN', 2, 1), oran('NCEI /1000SN', 2, 0)],
+    ['+ uydu kalibrasyonu', oran('NCEI+kal /1000SN', 2, 1), oran('NCEI+kal /1000SN', 2, 0)],
+    ['+ 2009 köprüsü (S4, nihai)', d[2]['M+X /1000SN'] / d[1]['M+X /1000SN'], d[2]['M+X /1000SN'] / d[0]['M+X /1000SN']]
+  ];
+  grafik('gAsama', {
+    yuk: () => satir.length * 54 + 50, aria: 'Düzeltme aşamalarına göre döngü oranları',
+    x: {min: 0, max: 2.6, ticks: [0, 0.5, 1, 1.5, 2, 2.5], fmt: v => tr(v, 1)},
+    y: {min: 0, max: satir.length, ticks: []},
+    ciz(svg, X, Y, _, {m, W}) {
+      E('line', {x1: X(1), x2: X(1), y1: m.t, y2: Y(0), stroke: R.soluk, 'stroke-dasharray': '4 4'}, svg);
+      satir.forEach(([ad, r24, r23], i) => {
+        const yc = Y(satir.length - i - 0.5);
+        E('rect', {x: X(0), y: yc - 15, width: X(r24) - X(0), height: 12, rx: 2, fill: R.gunes}, svg);
+        E('rect', {x: X(0), y: yc + 2, width: X(r23) - X(0), height: 12, rx: 2, fill: R.cB}, svg);
+        E('text', {x: X(r24) + 6, y: yc - 5, fill: R.metin}, svg).textContent = tr(r24, 2);
+        E('text', {x: X(r23) + 6, y: yc + 12, fill: R.metin}, svg).textContent = tr(r23, 2);
+        E('text', {x: m.l + 4, y: yc - 21, fill: R.soluk}, svg).textContent = ad;
+      });
+    }
+  });
+})();
+
+/* ---------------- 04 · Aylık seri ---------------- */
+let aylikHam = false;
+const aylikCiz = grafik('gAylik', {
+  yuk: W => Math.round(Math.max(260, W * 0.4)), aria: 'Aylık patlama ve leke sayısı',
+  x: {min: 2000, max: 2026, fmt: v => String(v)},
+  y: {min: 0, max: 160, baslik: 'Patlama / ay'},
+  y2: {min: 0, max: 200, baslik: 'Leke sayısı'},
+  ciz(svg, X, Y, Y2) {
+    const a = V.aylik, w = Math.max(1, X(2000 + 1 / 12) - X(2000) - 0.6);
+    const mx = aylikHam ? a.mx_hek : a.mx;
+    a.tarih.forEach((t, i) => {
+      const x = 2000 + i / 12;
+      if (mx[i]) E('rect', {x: X(x), y: Y(mx[i]), width: w, height: Y(0) - Y(mx[i]), fill: aylikHam ? R.soluk : R.cB}, svg);
+      if (!aylikHam && a.x[i]) E('rect', {x: X(x), y: Y(a.x[i]), width: w, height: Y(0) - Y(a.x[i]), fill: R.cX}, svg);
+    });
+    E('path', {d: yol(a.tarih.map((t, i) => [2000 + i / 12 + 1 / 24, a.sn_duz[i]]), X, Y2), stroke: R.gunes, 'stroke-width': 2.5, fill: 'none'}, svg);
+    [['D23', 2000.2], ['D24', 2008.95], ['D25', 2019.95]].forEach(([t, x]) => {
+      E('line', {x1: X(x), x2: X(x), y1: Y(160), y2: Y(0), stroke: R.cizgi, 'stroke-dasharray': '2 4'}, svg);
+      E('text', {x: X(x) + 5, y: Y(150), fill: R.metin}, svg).textContent = t;
+    });
+  },
+  ipucu(x) {
+    const a = V.aylik, i = Math.floor((x - 2000) * 12); if (i < 0 || i >= a.tarih.length) return null;
+    return {x: 2000 + i / 12 + 1 / 24, html: `<b>${a.tarih[i]}</b><br>M+X: ${a.mx[i]} (ham liste: ${a.mx_hek[i]})<br>X: ${a.x[i]}<br>Leke (düzl.): ${tr(a.sn_duz[i], 1)}`};
+  }
+});
+const ayDugme = (ham) => { aylikHam = ham; document.getElementById('ayNihai').classList.toggle('secili', !ham); document.getElementById('ayHam').classList.toggle('secili', ham); aylikCiz(); };
+document.getElementById('ayNihai').onclick = () => ayDugme(false);
+document.getElementById('ayHam').onclick = () => ayDugme(true);
+
+/* ---------------- 04 · Döngü verimliliği ---------------- */
+(function () {
+  const d = T.dongu, sen = T.sen;
+  const d23 = sen.filter(s => !s.Senaryo.startsWith('S3')).map(s => s['D23 /1000SN']);
+  const lo = Math.min(...d23), hi = Math.max(...d23);
+  grafik('gDongu', {
+    yuk: W => Math.round(Math.max(240, W * 0.62)), aria: 'Döngü başına leke başına patlama',
+    x: {min: 0, max: 3, ticks: []},
+    y: {min: 0, max: 380, baslik: 'M+X / 1000 leke'},
+    ciz(svg, X, Y, _, {H}) {
+      d.forEach((r, i) => {
+        const xc = X(i + 0.5), w = Math.min(90, X(1) - X(0) - 30), v = r['M+X /1000SN'];
+        const renk = i === 1 ? R.soluk : R.gunes;
+        E('rect', {x: xc - w / 2, y: Y(v), width: w, height: Y(0) - Y(v), rx: 3, fill: renk, opacity: i === 1 ? .7 : .95}, svg);
+        E('text', {x: xc, y: Y(v) - 8, 'text-anchor': 'middle', fill: R.metin, 'font-size': 13}, svg).textContent = tr(v, 1);
+        E('text', {x: xc, y: H - 12, 'text-anchor': 'middle', fill: R.metin}, svg).textContent = 'Döngü ' + Math.round(r['Döngü']);
+        if (i === 0) {
+          E('line', {x1: xc + w / 2 + 12, x2: xc + w / 2 + 12, y1: Y(lo), y2: Y(hi), stroke: R.metin, 'stroke-width': 2}, svg);
+          [lo, hi].forEach(v2 => E('line', {x1: xc + w / 2 + 7, x2: xc + w / 2 + 17, y1: Y(v2), y2: Y(v2), stroke: R.metin, 'stroke-width': 2}, svg));
+        }
+      });
+    }
+  });
+  const r = d.map(x => x['M+X /1000SN']), rx = d.map(x => x['X /1000SN']);
+  document.getElementById('gunesMetin').innerHTML = `
+    <div class="bulgu"><span class="buyuk-sayi">%${tr((r[2] / r[1] - 1) * 100, 0)}</span><p>Döngü 25, Döngü 24'e göre leke başına bu kadar fazla M ve X sınıfı patlama üretti. Oran ${tr(r[2] / r[1], 2)}; kalibrasyonun tüm varyasyonlarında ve yalnızca M sınıfıyla yapılan kalibrasyonda aynı kaldı.</p></div>
+    <div class="bulgu"><span class="buyuk-sayi">${tr(r[1], 0)}</span><p>Döngü 24'ün 1000 leke başına M+X sayısı. Köprü senaryosu ne olursa olsun üç döngünün en düşüğü (Döngü 23: ${tr(lo, 0)}–${tr(hi, 0)}).</p></div>
+    <p>Döngü 23 ile 25 benzer: veriye dayalı köprüyle oran ${tr(r[2] / r[0], 2)}, literatür varsayımıyla ${tr(sen[1]['D25/D23'], 2)}. X sınıfında Döngü 25 ve 24 leke başına neredeyse aynı (${tr(rx[2], 2)} ve ${tr(rx[1], 2)}); Döngü 25'in fazlalığı M sınıfından geliyor.</p>
+    <p>Patlamalar leke sayısıyla eş zamanlı ilerliyor: 13 ay düzleştirilmiş serilerde en yüksek korelasyon gecikmesiz (r = ${tr(Math.max(...V.gecikme['M+X']), 2)}).</p>`;
+})();
+
+/* ---------------- 05 · Fırtına olasılığı ---------------- */
+(function () {
+  const sec = T.ol.filter(r => r['Fırtına'] === 'Dst ≤ -100');
+  const ad = g => g.replace('≥X1 · ', 'X · ');
+  grafik('gOlasilik', {
+    yuk: () => sec.length * 40 + 44, sol: 112, aria: 'Patlama sonrası şiddetli fırtına olasılığı',
+    x: {min: 0, max: 30, ticks: [0, 10, 20, 30], fmt: v => '%' + v},
+    y: {min: 0, max: sec.length, ticks: []},
+    ciz(svg, X, Y, _, {m}) {
+      sec.forEach((r, i) => {
+        const yc = Y(sec.length - i - 0.5), ayrac = i === 3;
+        if (ayrac) E('line', {x1: 4, x2: X(30), y1: Y(sec.length - i) , y2: Y(sec.length - i), stroke: R.cizgi}, svg);
+        E('rect', {x: X(0), y: yc - 12, width: X(r['Patlama sonrası %']) - X(0), height: 11, rx: 2, fill: R.aurora}, svg);
+        E('rect', {x: X(0), y: yc + 1, width: X(r['Rastgele %']) - X(0), height: 8, rx: 2, fill: R.silik}, svg);
+        E('text', {x: m.l - 6, y: yc + 2, 'text-anchor': 'end', fill: R.metin}, svg).textContent = ad(r.Grup);
+        E('text', {x: X(r['Patlama sonrası %']) + 6, y: yc - 3, fill: R.metin}, svg).textContent = `${tr(r['Kat'], 2)}×`;
+      });
+    }
+  });
+  const x = T.ol.find(r => r.Grup === '≥X1' && r['Fırtına'] === 'Dst ≤ -100');
+  const x50 = T.ol.find(r => r.Grup === '≥X1' && r['Fırtına'] === 'Dst ≤ -50');
+  const m = T.ol.find(r => r.Grup === 'M1–M5' && r['Fırtına'] === 'Dst ≤ -100');
+  const m5 = T.ol.find(r => r.Grup === 'M5–X1' && r['Fırtına'] === 'Dst ≤ -100');
+  const g = V.gecikme, en = k => g.ay[g[k].indexOf(Math.max(...g[k]))];
+  document.getElementById('dunyaMetin').innerHTML = `
+    <div class="bulgu dunya"><span class="buyuk-sayi">${tr(x['Kat'], 1)}×</span><p>X sınıfı bir patlamadan sonraki 4 günde şiddetli fırtına olasılığı (%${tr(x['Patlama sonrası %'], 1)}), rastgele bir zamana göre (%${tr(x['Rastgele %'], 1)}) bu kadar yüksek.</p></div>
+    <p><strong>Doz–yanıt ilişkisi:</strong> kat, patlama büyüdükçe düzenli artıyor: M1–M5 ${tr(m['Kat'], 2)}×, M5–X1 ${tr(m5['Kat'], 2)}×, X ${tr(x['Kat'], 2)}×.</p>
+    <p>Yine de X patlamalarının yaklaşık %${tr(100 - x['Patlama sonrası %'], 0)}'sinden sonra şiddetli fırtına çıkmıyor; orta fırtına bile yalnızca %${tr(x50['Patlama sonrası %'], 0)}'sinde görülüyor. Patlamanın büyüklüğü fırtınayı tek başına belirlemiyor.</p>
+    <p>Diskin doğu kenarındaki X patlamaları daha zayıf etkili görünüyor (${tr(T.ol.find(r => r.Grup === '≥X1 · doğu kenarı' && r['Fırtına'] === 'Dst ≤ -100')['Kat'], 2)}×, merkez ${tr(T.ol.find(r => r.Grup === '≥X1 · merkez' && r['Fırtına'] === 'Dst ≤ -100')['Kat'], 2)}×). Kenarlarda olay sayısı az olduğu için bu bir ipucu.</p>
+    <p>Fırtınalar leke sayısını geriden izliyor: orta fırtınalar ${en('Dst≤−50 gün')}, şiddetli fırtınalar ${en('Dst≤−100 gün')} ay gecikmeli. Fırtınalar döngünün iniş evresinde yoğunlaşıyor.</p>`;
+})();
+
+/* ---------------- 05 · Üst üste bindirilmiş olay analizi ---------------- */
+let seaSinif = '≥X1';
+const seaCiz = grafik('gSea', {
+  yuk: W => Math.round(Math.max(240, W * 0.36)), aria: 'Patlama öncesi ve sonrası Dst',
+  x: {min: -2, max: 5, ticks: [-2, -1, 0, 1, 2, 3, 4, 5], fmt: v => (v > 0 ? '+' : '') + v + ' g'},
+  y: {min: -40, max: 0, ticks: [-40, -30, -20, -10, 0], baslik: 'Dst (nT)'},
+  ciz(svg, X, Y) {
+    const s = V.sea[seaSinif], g = s.saat.map(h => h / 24);
+    E('path', {d: bant(g.map((x, i) => [x, Math.max(-40, s.q1[i])]), g.map((x, i) => [x, Math.min(0, s.q3[i])]), X, Y), fill: R.dst, opacity: .16}, svg);
+    E('path', {d: bant(g.map((x, i) => [x, s.rast_alt[i]]), g.map((x, i) => [x, s.rast_ust[i]]), X, Y), fill: R.soluk, opacity: .3}, svg);
+    E('line', {x1: X(0), x2: X(0), y1: Y(0), y2: Y(-40), stroke: R.metin, 'stroke-width': 1}, svg);
+    E('text', {x: X(0) + 6, y: Y(-37), fill: R.metin}, svg).textContent = 'Patlama anı';
+    E('path', {d: yol(g.map((x, i) => [x, s.medyan[i]]), X, Y), stroke: R.dst, 'stroke-width': 2.5, fill: 'none'}, svg);
+    E('text', {x: X(5) - 4, y: Y(-3), 'text-anchor': 'end', fill: R.metin}, svg).textContent = `${seaSinif} · ${tr(s.n)} bağımsız olay`;
+  },
+  ipucu(x) { const s = V.sea[seaSinif]; const g = s.saat.map(h => h / 24); let i = 0; g.forEach((v, j) => { if (Math.abs(v - x) < Math.abs(g[i] - x)) i = j; });
+    return {x: g[i], html: `<b>${s.saat[i] > 0 ? '+' : ''}${s.saat[i]} saat</b><br>Medyan Dst: ${tr(s.medyan[i])} nT<br>Rastgele aralık: ${tr(s.rast_alt[i])} … ${tr(s.rast_ust[i])}`}; }
+});
+document.getElementById('seaSekme').innerHTML = Object.keys(V.sea).map(k => `<button class="dugme${k === seaSinif ? ' secili' : ''}" type="button" data-s="${k}">${k}</button>`).join('');
+document.querySelectorAll('#seaSekme button').forEach(b => b.onclick = () => { seaSinif = b.dataset.s; document.querySelectorAll('#seaSekme button').forEach(x => x.classList.toggle('secili', x === b)); seaCiz(); });
+
+/* ---------------- 05 · Yıllık fırtına ---------------- */
+grafik('gYillik', {
+  yuk: W => Math.round(Math.max(240, W * 0.62)), aria: 'Yıllık fırtına günleri',
+  x: {min: 1999.4, max: 2025.6, ticks: [2000, 2005, 2010, 2015, 2020, 2025], fmt: String},
+  y: {min: 0, max: 100, baslik: 'Fırtına günü / yıl'},
+  y2: {min: 0, max: 200},
+  ciz(svg, X, Y, Y2) {
+    const w = (X(1) - X(0)) * 0.72;
+    T.yil.forEach(r => {
+      const y = r['yıl'], s = r['Dst≤−100 gün'], o = r['Dst≤−50 gün'];
+      E('rect', {x: X(y) - w / 2, y: Y(o), width: w, height: Y(0) - Y(o), fill: R.dst, opacity: .55}, svg);
+      E('rect', {x: X(y) - w / 2, y: Y(s), width: w, height: Y(0) - Y(s), fill: R.cX}, svg);
+    });
+    E('path', {d: yol(T.yil.map(r => [r['yıl'], r.SN]), X, Y2), stroke: R.gunes, 'stroke-width': 2.5, fill: 'none'}, svg);
+  },
+  ipucu(x) { const r = yilBul(Math.round(x)); if (!r['yıl']) return null; return {x: r['yıl'], html: `<b>${r['yıl']}</b><br>Orta+şiddetli: ${r['Dst≤−50 gün']} gün<br>Şiddetli: ${r['Dst≤−100 gün']} gün<br>Leke: ${tr(r.SN, 1)}`}; }
+});
+
+/* ---------------- 05 · Gecikme ---------------- */
+grafik('gGecikme', {
+  yuk: W => Math.round(Math.max(240, W * 0.62)), aria: 'Leke sayısı ile gecikmeli korelasyon',
+  x: {min: -48, max: 48, ticks: [-48, -24, 0, 24, 48], fmt: v => (v > 0 ? '+' : '') + v + ' ay'},
+  y: {min: -0.8, max: 1, ticks: [-0.5, 0, 0.5, 1], fmt: v => tr(v, 1), baslik: 'Korelasyon'},
+  ciz(svg, X, Y) {
+    const g = V.gecikme;
+    E('line', {x1: X(0), x2: X(0), y1: Y(1), y2: Y(-0.8), stroke: R.silik}, svg);
+    [['M+X', R.cB], ['Dst≤−50 gün', R.dst], ['Dst≤−100 gün', R.cX]].forEach(([k, c]) => {
+      E('path', {d: yol(g.ay.map((a, i) => [a, g[k][i]]), X, Y), stroke: c, 'stroke-width': 2.3, fill: 'none'}, svg);
+      const i = g[k].indexOf(Math.max(...g[k]));
+      E('circle', {cx: X(g.ay[i]), cy: Y(g[k][i]), r: 4, fill: c}, svg);
+    });
+  },
+  ipucu(x) { const g = V.gecikme, i = g.ay.indexOf(Math.round(x)); if (i < 0) return null;
+    return {x: g.ay[i], html: `<b>${g.ay[i] > 0 ? '+' : ''}${g.ay[i]} ay</b><br>M+X: ${tr(g['M+X'][i], 3)}<br>Orta fırtına: ${tr(g['Dst≤−50 gün'][i], 3)}<br>Şiddetli: ${tr(g['Dst≤−100 gün'][i], 3)}`}; }
+});
+
+/* ---------------- 06 · Vaka ---------------- */
+let vakaYil = '2003';
+const zaman = s => Date.parse(s.replace(' ', 'T') + ':00Z') / 36e5;
+const vakaCiz = grafik('gVaka', {
+  yuk: W => Math.round(Math.max(280, W * 0.42)), aria: 'Vaka çalışması',
+  get x() { const v = V.vaka[vakaYil]; return {min: zaman(v.zaman[0]), max: zaman(v.zaman[v.zaman.length - 1]), ticks: v.zaman.filter((t, i) => t.endsWith('00:00') && (i / 24) % 2 === 0).map(zaman), fmt: h => new Date(h * 36e5).toLocaleDateString('tr-TR', {day: 'numeric', month: 'short', timeZone: 'UTC'})}; },
+  y: {min: 1e-6, max: 1e-2, log: true, ticks: [1e-6, 1e-5, 1e-4, 1e-3, 1e-2], fmt: v => ({1e-6: 'C', 1e-5: 'M', 1e-4: 'X', 1e-3: 'X10', 1e-2: 'X100'})[v], baslik: 'Patlama sınıfı'},
+  y2: {min: -450, max: 50, ticks: [-400, -300, -200, -100, 0], baslik: 'Dst (nT)'},
+  ciz(svg, X, Y, Y2) {
+    const v = V.vaka[vakaYil];
+    E('line', {x1: X(zaman(v.zaman[0])), x2: X(zaman(v.zaman[v.zaman.length - 1])), y1: Y2(-100), y2: Y2(-100), stroke: R.dst, 'stroke-dasharray': '3 4', opacity: .6}, svg);
+    v.patlamalar.forEach(p => {
+      const h = p.sinif.replace('≥', '')[0];
+      E('line', {x1: X(zaman(p.t)), x2: X(zaman(p.t)), y1: Y(1e-6), y2: Y(p.aki), stroke: SINIF_RENK[h] || R.soluk, 'stroke-width': h === 'X' ? 2 : 1.2, opacity: .9}, svg);
+    });
+    v.patlamalar.slice().sort((a, b) => b.aki - a.aki).slice(0, 3).forEach(p => E('text', {x: X(zaman(p.t)) + 4, y: Y(p.aki) - 3, fill: R.metin}, svg).textContent = p.sinif);
+    E('path', {d: yol(v.zaman.map((t, i) => [zaman(t), v.dst[i]]), X, Y2), stroke: R.dst, 'stroke-width': 2.2, fill: 'none'}, svg);
+  },
+  ipucu(x) { const v = V.vaka[vakaYil]; const z = v.zaman.map(zaman); let i = Math.round(x - z[0]); if (i < 0 || i >= z.length) return null;
+    return {x: z[i], html: `<b>${v.zaman[i]} UT</b><br>Dst: ${tr(v.dst[i])} nT<br>Kp: ${tr(v.kp[i], 1)}`}; }
+});
+function vakaSec(y) {
+  vakaYil = y; document.getElementById('vaka2003').classList.toggle('secili', y === '2003'); document.getElementById('vaka2024').classList.toggle('secili', y === '2024');
+  const v = V.vaka[y]; const minI = v.dst.indexOf(Math.min(...v.dst.filter(d => d != null)));
+  const mx = v.patlamalar.filter(p => /^≥?[MX]/.test(p.sinif)).length, xx = v.patlamalar.filter(p => /^≥?X/.test(p.sinif)).length;
+  document.getElementById('vakaNot').textContent = `${v.zaman[minI]} UT'de en düşük Dst ${tr(v.dst[minI])} nT, en yüksek Kp ${tr(Math.max(...v.kp.filter(k => k != null)), 1)}. Pencerede ${mx} M+X, ${xx} X patlaması.` + (y === '2003' ? ' 4 Kasım\'daki kayıtlı en büyük patlama Güneş\'in batı kenarından çıktı; ardından Dst yalnızca hafifçe düştü.' : '');
+  vakaCiz();
+}
+document.getElementById('vaka2003').onclick = () => vakaSec('2003');
+document.getElementById('vaka2024').onclick = () => vakaSec('2024');
+vakaSec('2003');
+
+/* ---------------- 06 · Tablolar ---------------- */
+(function () {
+  const rozet = b => b ? `<span class="rozet" style="color:${b === 'merkez' ? R.aurora : b === 'bilinmiyor' ? R.silik : R.gunes}">${b}</span>` : '–';
+  const ff = V.en_buyuk_firtinalar;
+  document.getElementById('tFirtina').innerHTML = '<thead><tr><th>Gün</th><th class="sag">Dst</th><th>Kaynak patlama</th><th>Konum</th></tr></thead><tbody>' +
+    ff.map((f, i) => `<tr class="${i === 0 ? 'vurgu' : ''}"><td class="veri">${f.gun}</td><td class="sag veri">${f.dst}</td><td class="veri">${f.kaynak_sinif || '–'}</td><td>${rozet(f.kaynak_bolge)}</td></tr>`).join('') + '</tbody>';
+  const pp = V.en_buyuk_patlamalar.slice(0, 10);
+  document.getElementById('tPatlama').innerHTML = '<thead><tr><th>Zaman</th><th>Sınıf</th><th>Konum</th><th class="sag">Sonraki Dst</th></tr></thead><tbody>' +
+    pp.map(p => `<tr class="${p.t.startsWith('2003-11-04') ? 'vurgu' : ''}"><td class="veri">${p.t.slice(0, 10)}</td><td class="veri">${p.sinif}${p.hudson ? ` <span style="color:var(--silik)">(H23: X${tr(p.hudson / 1e-4, 0)})</span>` : ''}</td><td>${rozet(p.bolge)}</td><td class="sag veri">${tr(p.dst)}</td></tr>`).join('') + '</tbody>';
+})();
+
+/* ---------------- 07 · Sonuç ---------------- */
+(function () {
+  const d = T.dongu.map(x => x['M+X /1000SN']);
+  const x = T.ol.find(r => r.Grup === '≥X1' && r['Fırtına'] === 'Dst ≤ -100');
+  const ff = V.en_buyuk_firtinalar[0];
+  const k = [
+    ['Veri', 'Homojenleştirme sonucu değiştiriyor', `Ham listeyle Döngü 25 / 24 oranı ${tr(T.asama[2]['HEK /1000SN'] / T.asama[1]['HEK /1000SN'], 2)}, düzeltilmiş listeyle ${tr(d[2] / d[1], 2)}. Ölçek farkı ve uydu kalibrasyonu literatürle uyumlu.`, R.gunes],
+    ['Güneş', 'Döngü 24 leke başına en az patlama üretti', `1000 leke başına M+X: ${tr(d[0], 0)} / ${tr(d[1], 0)} / ${tr(d[2], 0)}. Döngü 25, 24'e göre %${tr((d[2] / d[1] - 1) * 100, 0)} daha verimli; 23 ile 25 benzer.`, R.gunes],
+    ['Dünya', 'Büyük patlama, fırtına olasılığını artırıyor', `X sonrası şiddetli fırtına olasılığı rastgeleye göre ${tr(x['Kat'], 1)} kat; etki patlama büyüdükçe artıyor ve 2–3 gün sonra görülüyor.`, R.aurora],
+    ['Dünya', 'Ama fırtınanın büyüklüğünü patlama belirlemiyor', `En güçlü fırtınanın (${ff.gun}, Dst ${ff.dst} nT) öncesindeki en büyük patlama ${ff.kaynak_sinif}. Kayıtlı en büyük patlamanın ardından Dst yalnızca ${tr(V.en_buyuk_patlamalar.find(p => p.t.startsWith('2003-11-04'))?.dst)} nT.`, R.aurora]
+  ];
+  document.getElementById('sonuclar').innerHTML = k.map(([e, b, p, c]) => `<div class="kutu" style="border-top:3px solid ${c}"><span class="etiket">${e}</span><h3>${b}</h3><p style="color:var(--soluk);font-size:.9rem">${p}</p></div>`).join('');
+  document.getElementById('altBilgi').textContent = `Tunahan İnci · Lisans tezi · Veri dosyası üretimi: ${V.meta.uretim} · Dönem: ${V.meta.donem}`;
+})();
+
+/* ---------------- Sahne: yıl kontrolü ---------------- */
+const yillarX = {};
+V.x_patlamalar.forEach(p => { const y = +p.t.slice(0, 4); (yillarX[y] = yillarX[y] || []).push(p); });
+let seciliYil = 2003, tumYillar = false;
+const sahne = {guncelle: () => {}};
+function yilOzet() {
+  const r = yilBul(seciliYil), xs = tumYillar ? V.x_patlamalar : (yillarX[seciliYil] || []);
+  const en = xs.slice().sort((a, b) => b.aki - a.aki)[0];
+  const a = V.aylik, mx = tumYillar ? a.mx.reduce((s, v) => s + v, 0) : a.mx.filter((v, i) => a.tarih[i].startsWith(String(seciliYil))).reduce((s, v) => s + v, 0);
+  document.getElementById('yilYazi').textContent = tumYillar ? '2000–25' : seciliYil;
+  document.getElementById('yilOzet').innerHTML = tumYillar
+    ? `<span>X patlaması <b>${xs.length}</b></span><span>M+X <b>${tr(mx)}</b></span><span>En büyük <b>${en ? en.sinif : '–'}</b> (${en ? en.t.slice(0, 10) : ''})</span>`
+    : `<span>Ortalama leke <b>${tr(r.SN, 1)}</b></span><span>M+X <b>${tr(mx)}</b></span><span>X <b>${xs.length}</b></span><span>Şiddetli fırtına günü <b>${r['Dst≤−100 gün'] ?? '–'}</b></span>` +
+      (en ? `<span class="buyuk">En büyük patlama <b>${en.sinif}</b> · ${en.t.slice(5, 10)} · ${en.bolge}${en.dst != null ? ` · sonraki Dst <b>${en.dst}</b> nT` : ''}</span>` : '');
+  sahne.guncelle(xs, en, tumYillar ? 0.45 : Math.min(1, (r['Dst≤−100 gün'] || 0) / 18 + (r['Dst≤−50 gün'] || 0) / 160));
+}
+const kaydir = document.getElementById('yilKaydir');
+kaydir.oninput = () => { seciliYil = +kaydir.value; tumYillar = false; document.getElementById('tumu').classList.remove('secili'); yilOzet(); };
+document.getElementById('tumu').onclick = e => { tumYillar = !tumYillar; e.currentTarget.classList.toggle('secili', tumYillar); yilOzet(); };
+let oynatici = null;
+document.getElementById('oynat').onclick = e => {
+  if (oynatici) { clearInterval(oynatici); oynatici = null; e.currentTarget.textContent = 'Oynat'; return; }
+  e.currentTarget.textContent = 'Durdur'; tumYillar = false; document.getElementById('tumu').classList.remove('secili');
+  if (seciliYil >= 2025) seciliYil = 1999;
+  oynatici = setInterval(() => { seciliYil++; kaydir.value = seciliYil; yilOzet(); if (seciliYil >= 2025) { clearInterval(oynatici); oynatici = null; document.getElementById('oynat').textContent = 'Oynat'; } }, 1400);
+};
+
+/* ---------------- 3B sahne ---------------- */
+function tuval(w, h, f) { const c = document.createElement('canvas'); c.width = w; c.height = h; f(c.getContext('2d'), w, h); return c; }
+function rastgele(seed) { let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+function gunesDokusu() {
+  return tuval(1024, 512, (g, w, h) => {
+    const r = rastgele(7);
+    const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#ff9a2e'); gr.addColorStop(.5, '#ffb547'); gr.addColorStop(1, '#ff9a2e');
+    g.fillStyle = gr; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 9000; i++) { const x = r() * w, y = r() * h, s = 1 + r() * 3.5; g.fillStyle = r() < .5 ? 'rgba(255,230,160,.18)' : 'rgba(170,70,10,.16)'; g.beginPath(); g.arc(x, y, s, 0, 7); g.fill(); }
+    for (let i = 0; i < 60; i++) { const x = r() * w, y = r() * h, s = 10 + r() * 28; const rg = g.createRadialGradient(x, y, 0, x, y, s); rg.addColorStop(0, 'rgba(255,240,190,.35)'); rg.addColorStop(1, 'rgba(255,240,190,0)'); g.fillStyle = rg; g.fillRect(x - s, y - s, 2 * s, 2 * s); }
+    for (let i = 0; i < 14; i++) {
+      const enlem = (8 + r() * 24) * (r() < .5 ? -1 : 1), x = r() * w, y = h / 2 - enlem / 90 * h / 2, s = 3 + r() * 7;
+      for (let j = 0; j < 1 + Math.floor(r() * 3); j++) {
+        const xx = x + (r() - .5) * 26, yy = y + (r() - .5) * 8, ss = s * (.5 + r());
+        g.fillStyle = 'rgba(120,40,5,.55)'; g.beginPath(); g.ellipse(xx, yy, ss * 1.8, ss * 1.3, 0, 0, 7); g.fill();
+        g.fillStyle = 'rgba(40,10,0,.85)'; g.beginPath(); g.ellipse(xx, yy, ss * .8, ss * .6, 0, 0, 7); g.fill();
+      }
+    }
+  });
+}
+function dunyaDokusu() {
+  return tuval(512, 256, (g, w, h) => {
+    const r = rastgele(3); g.fillStyle = '#123a6b'; g.fillRect(0, 0, w, h);
+    for (let i = 0; i < 26; i++) { const x = r() * w, y = h * .15 + r() * h * .7, n = 18 + r() * 40;
+      for (let j = 0; j < n; j++) { g.fillStyle = r() < .7 ? '#2f6b45' : '#7d6d48'; g.beginPath(); g.arc(x + (r() - .5) * 70, y + (r() - .5) * 34, 3 + r() * 9, 0, 7); g.fill(); } }
+    g.fillStyle = '#e8eef5'; g.fillRect(0, 0, w, 14); g.fillRect(0, h - 14, w, 14);
+    for (let i = 0; i < 120; i++) { g.fillStyle = 'rgba(255,255,255,.22)'; g.beginPath(); g.ellipse(r() * w, r() * h, 10 + r() * 30, 3 + r() * 5, 0, 0, 7); g.fill(); }
+  });
+}
+function parlama(renk, ic = .9) {
+  return tuval(256, 256, (g) => { const rg = g.createRadialGradient(128, 128, 0, 128, 128, 128); rg.addColorStop(0, `rgba(${renk},${ic})`); rg.addColorStop(.25, `rgba(${renk},${ic * .5})`); rg.addColorStop(1, `rgba(${renk},0)`); g.fillStyle = rg; g.fillRect(0, 0, 256, 256); });
+}
+function hale() {
+  return tuval(512, 512, (g) => { const rg = g.createRadialGradient(256, 256, 0, 256, 256, 256);
+    rg.addColorStop(0, 'rgba(255,170,60,0)'); rg.addColorStop(.5, 'rgba(255,170,60,0)'); rg.addColorStop(.555, 'rgba(255,190,90,.55)'); rg.addColorStop(.66, 'rgba(255,150,50,.18)'); rg.addColorStop(1, 'rgba(255,120,40,0)');
+    g.fillStyle = rg; g.fillRect(0, 0, 512, 512); });
+}
+
+function kur3B() {
+  const kap = document.getElementById('sahne');
+  if (!window.THREE) return kur2B(kap);
+  let rnd;
+  try { rnd = new THREE.WebGLRenderer({antialias: true}); } catch (e) { return kur2B(kap); }
+  rnd.setPixelRatio(Math.min(devicePixelRatio, 2)); rnd.setClearColor(0x04060d, 1); kap.appendChild(rnd.domElement);
+  const sc = new THREE.Scene(), cam = new THREE.PerspectiveCamera(36, 1, 0.1, 3000);
+  const GUNES_R = 10, DUNYA = new THREE.Vector3(-42, -9, 0), HEDEF = new THREE.Vector3(-17, 0, 0);
+
+  { const n = 2600, p = new Float32Array(n * 3), r = rastgele(11);
+    for (let i = 0; i < n; i++) { const u = r() * 2 - 1, t = r() * 6.283, d = 700 + r() * 500, s = Math.sqrt(1 - u * u); p[3 * i] = d * s * Math.cos(t); p[3 * i + 1] = d * u; p[3 * i + 2] = d * s * Math.sin(t); }
+    const gg = new THREE.BufferGeometry(); gg.setAttribute('position', new THREE.BufferAttribute(p, 3));
+    sc.add(new THREE.Points(gg, new THREE.PointsMaterial({color: 0xcfd8ff, size: 1.4, sizeAttenuation: false, transparent: true, opacity: .75}))); }
+
+  const doku = new THREE.CanvasTexture(gunesDokusu());
+  const gunesMat = new THREE.ShaderMaterial({
+    uniforms: {harita: {value: doku}},
+    vertexShader: 'varying vec2 vUv; varying vec3 vN; void main(){ vUv = uv; vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'uniform sampler2D harita; varying vec2 vUv; varying vec3 vN; void main(){ vec3 c = texture2D(harita, vUv).rgb; float mu = max(vN.z, 0.0); float ld = 0.35 + 0.65 * pow(mu, 0.5); gl_FragColor = vec4(c * ld * 1.12, 1.0); }'
+  });
+  const gunes = new THREE.Mesh(new THREE.SphereGeometry(GUNES_R, 96, 96), gunesMat); sc.add(gunes);
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(hale()), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true}));
+  halo.scale.set(GUNES_R * 3.6, GUNES_R * 3.6, 1); sc.add(halo);
+  const korona = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(parlama('255,150,60', .35)), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true}));
+  korona.scale.set(GUNES_R * 7, GUNES_R * 7, 1); sc.add(korona);
+
+  sc.add(new THREE.AmbientLight(0x334466, 0.35));
+  const isik = new THREE.PointLight(0xfff1dd, 1.6, 0, 0); sc.add(isik);
+  const dunya = new THREE.Mesh(new THREE.SphereGeometry(2.4, 48, 48), new THREE.MeshLambertMaterial({map: new THREE.CanvasTexture(dunyaDokusu())}));
+  dunya.position.copy(DUNYA); dunya.rotation.z = 0.41; sc.add(dunya);
+  const atmo = new THREE.Sprite(new THREE.SpriteMaterial({map: new THREE.CanvasTexture(parlama('120,170,255', .5)), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true}));
+  atmo.scale.set(9, 9, 1); atmo.position.copy(DUNYA); sc.add(atmo);
+  const aurora = [1, -1].map(s => { const m = new THREE.Mesh(new THREE.TorusGeometry(1.25, 0.12, 10, 72), new THREE.MeshBasicMaterial({color: 0x5fd4c4, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false}));
+    m.position.copy(DUNYA).add(new THREE.Vector3(0, s * 2.05, 0)); m.rotation.x = Math.PI / 2; sc.add(m); return m; });
+
+  // Dünya'ya bakan yarıküre. Dünya'dan bakınca batı (hpc_x > 0) sağda, kuzey (hpc_y > 0) yukarıda
+  const d = DUNYA.clone().normalize(), yukari = new THREE.Vector3(0, 1, 0), sag = new THREE.Vector3().crossVectors(d.clone().negate(), yukari).normalize();
+  const diskNoktasi = (x, y) => { let u = x / 960, v = y / 960; const k = Math.hypot(u, v); if (k > .985) { u *= .985 / k; v *= .985 / k; }
+    return d.clone().multiplyScalar(Math.sqrt(Math.max(0, 1 - u * u - v * v))).add(sag.clone().multiplyScalar(u)).add(yukari.clone().multiplyScalar(v)); };
+  const isaretGrubu = new THREE.Group(); sc.add(isaretGrubu);
+  const isaretDoku = new THREE.CanvasTexture(parlama('255,235,200', 1));
+
+  const N = 420, cmeP = new Float32Array(N * 3), cmeHiz = []; const cmeG = new THREE.BufferGeometry(); cmeG.setAttribute('position', new THREE.BufferAttribute(cmeP, 3));
+  const cmeMat = new THREE.PointsMaterial({color: 0xffc27a, size: 2.2, sizeAttenuation: false, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false});
+  sc.add(new THREE.Points(cmeG, cmeMat));
+  let cme = null;
+
+  sahne.guncelle = (xs, en, auroraGuc) => {
+    while (isaretGrubu.children.length) { const c = isaretGrubu.children.pop(); c.material.dispose(); }
+    xs.filter(p => p.x != null && !(p.x === 0 && p.y === 0)).forEach(p => {
+      const n = diskNoktasi(p.x, p.y), m = new THREE.Sprite(new THREE.SpriteMaterial({map: isaretDoku, color: p === en ? 0xffffff : 0xff7a50, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: .95}));
+      const s = 0.9 + 1.4 * Math.log10(Math.max(1, p.aki / 1e-4)) + (p === en ? 1 : 0);
+      m.scale.set(s, s, 1); m.position.copy(n.multiplyScalar(GUNES_R * 1.01)); isaretGrubu.add(m);
+    });
+    aurora.forEach(a => a.material.opacity = 0.15 + 0.8 * auroraGuc);
+    if (en && en.x != null && !AZALT) {
+      const n = diskNoktasi(en.x, en.y), bas = n.clone().multiplyScalar(GUNES_R * 1.02), r = rastgele(Math.floor(en.aki * 1e7) + 5);
+      cmeHiz.length = 0;
+      for (let i = 0; i < N; i++) { const v = n.clone().add(new THREE.Vector3(r() - .5, r() - .5, r() - .5).multiplyScalar(.9)).normalize().multiplyScalar(.5 + r() * .7); cmeHiz.push(v); cmeP.set([bas.x, bas.y, bas.z], 3 * i); }
+      cme = {bas, t0: performance.now()}; cmeG.attributes.position.needsUpdate = true;
+    }
+  };
+
+  let teta = -0.3, fi = 1.2, yari = 92, surukle = null, otomatik = true;
+  const kamera = () => { cam.position.set(HEDEF.x + yari * Math.sin(fi) * Math.sin(teta), HEDEF.y + yari * Math.cos(fi), HEDEF.z + yari * Math.sin(fi) * Math.cos(teta)); cam.lookAt(HEDEF); };
+  rnd.domElement.addEventListener('pointerdown', e => { surukle = [e.clientX, e.clientY, teta, fi]; otomatik = false; rnd.domElement.setPointerCapture(e.pointerId); });
+  rnd.domElement.addEventListener('pointermove', e => { if (!surukle) return; teta = surukle[2] - (e.clientX - surukle[0]) * 0.006; fi = Math.min(2.6, Math.max(0.35, surukle[3] - (e.clientY - surukle[1]) * 0.005)); });
+  rnd.domElement.addEventListener('pointerup', () => surukle = null);
+
+  const etiketler = [['Güneş', new THREE.Vector3(0, -GUNES_R - 3, 0)], ['Dünya', DUNYA.clone().add(new THREE.Vector3(0, -4.6, 0))]].map(([t, p]) => {
+    const e = document.createElement('div'); e.className = 'etiket3b'; e.textContent = t; kap.appendChild(e); return [e, p]; });
+
+  const boyut = () => { const w = kap.clientWidth, h = kap.clientHeight; rnd.setSize(w, h, false); cam.aspect = w / h;
+    yari = w < 640 ? 118 : w < 1000 ? 100 : 88; HEDEF.set(w < 640 ? -6 : -17, w < 640 ? -12 : 0, 0); cam.updateProjectionMatrix(); };
+  new ResizeObserver(boyut).observe(kap); boyut();
+
+  let gorunur = true; new IntersectionObserver(es => gorunur = es[0].isIntersecting).observe(kap);
+  const v3 = new THREE.Vector3();
+  const dongu = (now) => {
+    requestAnimationFrame(dongu);
+    if (!gorunur) return;
+    if (!AZALT) { gunes.rotation.y += 0.0007; dunya.rotation.y += 0.004; korona.material.rotation += 0.0004; if (otomatik) teta = -0.3 + Math.sin(now / 9000) * 0.2; }
+    if (cme) {
+      const t = (now - cme.t0) / 1000;
+      for (let i = 0; i < N; i++) { const v = cmeHiz[i]; cmeP[3 * i] = cme.bas.x + v.x * t * 22; cmeP[3 * i + 1] = cme.bas.y + v.y * t * 22; cmeP[3 * i + 2] = cme.bas.z + v.z * t * 22; }
+      cmeG.attributes.position.needsUpdate = true; cmeMat.opacity = Math.max(0, 0.95 - t / 3.2); if (t > 3.3) cme = null;
+    }
+    kamera(); rnd.render(sc, cam);
+    const w = kap.clientWidth, h = kap.clientHeight;
+    etiketler.forEach(([e, p]) => { v3.copy(p).project(cam); e.style.left = ((v3.x + 1) / 2 * w) + 'px'; e.style.top = ((1 - v3.y) / 2 * h) + 'px'; e.hidden = v3.z > 1; });
+  };
+  requestAnimationFrame(dongu);
+}
+
+function kur2B(kap) {
+  const c = document.createElement('canvas'); kap.appendChild(c); const g = c.getContext('2d'); let xs = [], en = null, guc = 0;
+  const ciz = () => {
+    const w = kap.clientWidth, h = kap.clientHeight, dpr = Math.min(devicePixelRatio, 2); c.width = w * dpr; c.height = h * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.fillStyle = '#04060d'; g.fillRect(0, 0, w, h); const r = rastgele(5);
+    for (let i = 0; i < 400; i++) { g.fillStyle = `rgba(207,216,255,${r() * .7})`; g.fillRect(r() * w, r() * h, 1.2, 1.2); }
+    const R0 = Math.min(w * .2, h * .3), cx = w * (w < 640 ? .5 : .66), cy = h * (w < 640 ? .52 : .45);
+    let rg = g.createRadialGradient(cx, cy, R0 * .9, cx, cy, R0 * 2); rg.addColorStop(0, 'rgba(255,170,60,.45)'); rg.addColorStop(1, 'rgba(255,120,40,0)'); g.fillStyle = rg; g.fillRect(0, 0, w, h);
+    rg = g.createRadialGradient(cx, cy, 0, cx, cy, R0); rg.addColorStop(0, '#ffd27a'); rg.addColorStop(.75, '#ffa23a'); rg.addColorStop(1, '#c4561a'); g.fillStyle = rg; g.beginPath(); g.arc(cx, cy, R0, 0, 7); g.fill();
+    xs.filter(p => p.x != null).forEach(p => { const x = cx + p.x / 960 * R0, y = cy - p.y / 960 * R0, s = 3 + 3 * Math.log10(Math.max(1, p.aki / 1e-4)) + (p === en ? 3 : 0);
+      rg = g.createRadialGradient(x, y, 0, x, y, s * 2); rg.addColorStop(0, p === en ? '#fff' : '#ffd0b0'); rg.addColorStop(1, 'rgba(255,122,80,0)'); g.fillStyle = rg; g.beginPath(); g.arc(x, y, s * 2, 0, 7); g.fill(); });
+    if (w >= 640) { const ex = w * .2, ey = h * .66; g.fillStyle = '#2a63a8'; g.beginPath(); g.arc(ex, ey, 9, 0, 7); g.fill(); g.strokeStyle = `rgba(95,212,196,${.2 + .8 * guc})`; g.lineWidth = 2; g.beginPath(); g.ellipse(ex, ey - 9, 7, 2, 0, 0, 7); g.stroke(); g.beginPath(); g.ellipse(ex, ey + 9, 7, 2, 0, 0, 7); g.stroke(); }
+  };
+  sahne.guncelle = (a, b, c2) => { xs = a; en = b; guc = c2; ciz(); };
+  new ResizeObserver(ciz).observe(kap);
+}
+
+kur3B();
+yilOzet();
+
+/* ---------------- Menü ve sunum modu ---------------- */
+const bolumler = ['giris', ...Array.from(document.querySelectorAll('section.bolum')).map(s => s.id)];
+const menuLink = Object.fromEntries(Array.from(document.querySelectorAll('#menu a')).map(a => [a.getAttribute('href').slice(1), a]));
+const gozcu = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && menuLink[e.target.id]) { Object.values(menuLink).forEach(a => a.classList.remove('aktif')); menuLink[e.target.id].classList.add('aktif'); } }), {rootMargin: '-45% 0px -50% 0px'});
+document.querySelectorAll('section.bolum').forEach(s => gozcu.observe(s));
+
+const sayac = document.getElementById('sayac');
+const simdiki = () => { let en = 0; bolumler.forEach((id, i) => { const el = document.getElementById(id); if (el.getBoundingClientRect().top < innerHeight * .4) en = i; }); return en; };
+const git = i => { const id = bolumler[Math.max(0, Math.min(bolumler.length - 1, i))]; document.getElementById(id).scrollIntoView({behavior: AZALT ? 'auto' : 'smooth'}); };
+document.getElementById('sunumDugme').onclick = e => {
+  const ac = document.body.classList.toggle('sunum'); e.currentTarget.classList.toggle('secili', ac); sayac.hidden = !ac;
+  e.currentTarget.textContent = ac ? 'Sunumdan çık' : 'Sunum modu';
+  if (ac) { try { document.documentElement.requestFullscreen?.().catch(() => {}); } catch (_) {} }
+  else if (document.fullscreenElement) { document.exitFullscreen?.().catch(() => {}); }
+};
+addEventListener('keydown', e => {
+  if (!document.body.classList.contains('sunum') || e.target.tagName === 'INPUT') return;
+  if (['ArrowDown', 'PageDown', 'ArrowRight', ' '].includes(e.key)) { e.preventDefault(); git(simdiki() + 1); }
+  if (['ArrowUp', 'PageUp', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); git(simdiki() - 1); }
+  if (e.key === 'Escape') document.getElementById('sunumDugme').click();
+});
+addEventListener('scroll', () => { if (!sayac.hidden) sayac.textContent = `${simdiki() + 1} / ${bolumler.length} · ← → ile geç`; }, {passive: true});
+</script>
+
+</body>
+</html>

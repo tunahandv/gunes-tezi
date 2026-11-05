@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="author" content="Tunahan İnci">
+<title>Güneş Aktivitesi Tezi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: tek sütunlu proje defteri; üstte X-ışını sınıf cetveli, yapışkan bölüm menüsü, altta kararlar günlüğü */
+:root{
+  --bg:#0b1020; --surface:#121a30; --line:#24304f; --fg:#e6e9f2; --muted:#98a2bd;
+  --accent:#f5a524; --accent-ink:#1b1204; --good:#4cc38a; --warn:#f5a524; --info:#6ea8fe; --risk:#f0705a;
+  --cA:#3b5bdb; --cB:#3fa0c9; --cC:#4cc38a; --cM:#f5a524; --cX:#f0705a;
+  --f-display:"Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){
+  --bg:#f6f7fb; --surface:#ffffff; --line:#d9deea; --fg:#141a2b; --muted:#5a6480;
+  --accent:#b86e00; --accent-ink:#ffffff; --good:#1f8a5a; --warn:#a86300; --info:#2f5fc4; --risk:#c4432c;
+  --cA:#3451c4; --cB:#2a83aa; --cC:#1f8a5a; --cM:#c27a00; --cX:#c4432c;
+  color-scheme:light; } }
+:root[data-theme="light"]{
+  --bg:#f6f7fb; --surface:#ffffff; --line:#d9deea; --fg:#141a2b; --muted:#5a6480;
+  --accent:#b86e00; --accent-ink:#ffffff; --good:#1f8a5a; --warn:#a86300; --info:#2f5fc4; --risk:#c4432c;
+  --cA:#3451c4; --cB:#2a83aa; --cC:#1f8a5a; --cM:#c27a00; --cX:#c4432c;
+  color-scheme:light; }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.6;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:900px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;line-height:1.2;margin:0}
+h1{font-size:clamp(1.6rem,4.2vw,2.35rem);font-weight:700;letter-spacing:.005em}
+h2{font-size:1.45rem;font-weight:600;margin-bottom:6px}
+h3{font-size:1.08rem;font-weight:600}
+p{margin:0}
+a{color:var(--accent)}
+.mono{font-family:var(--f-mono);font-size:.82em}
+.eyebrow{font-family:var(--f-mono);font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--muted);max-width:65ch}
+
+/* Hero */
+header.hero{padding-block:40px 28px;display:grid;gap:14px;border-bottom:1px solid var(--line)}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--muted);font-size:.9rem}
+.meta b{color:var(--fg);font-weight:600}
+.scale{margin-top:10px}
+.scale-bar{display:grid;grid-template-columns:repeat(5,1fr);height:12px;border-radius:2px;overflow:hidden}
+.scale-bar span:nth-child(1){background:var(--cA)} .scale-bar span:nth-child(2){background:var(--cB)}
+.scale-bar span:nth-child(3){background:var(--cC)} .scale-bar span:nth-child(4){background:var(--cM)}
+.scale-bar span:nth-child(5){background:var(--cX)}
+.scale-labels{display:grid;grid-template-columns:repeat(5,1fr);margin-top:6px;font-family:var(--f-mono);font-size:.72rem;color:var(--muted)}
+.scale-labels div{display:flex;flex-direction:column}
+.scale-labels strong{font-family:var(--f-display);font-size:1rem;color:var(--fg)}
+.scale-cap{font-size:.78rem;color:var(--muted);margin-top:4px}
+
+/* Nav */
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)))}
+nav.toc ul{list-style:none;margin:0;padding:10px max(16px,env(safe-area-inset-left,0px));display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav.toc a{display:block;white-space:nowrap;text-decoration:none;color:var(--muted);font-size:.88rem;padding:4px 10px;border-radius:999px}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--fg);background:var(--surface);outline:none}
+nav.toc a:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+
+section{padding-top:44px;display:grid;gap:16px;scroll-margin-top:60px}
+.sec-head{display:grid;gap:6px}
+
+/* Timeline */
+.tl{overflow-x:auto}
+.tl svg{display:block;width:100%;min-width:560px;height:auto}
+.tl text{font-family:var(--f-mono);font-size:11px;fill:var(--muted)}
+.tl .lbl{font-family:var(--f-display);font-size:13px;fill:var(--fg);font-weight:600}
+
+/* RQ list */
+.rq{display:grid;gap:12px}
+.rq article{display:grid;grid-template-columns:64px 1fr;gap:4px 16px;padding:14px 0;border-top:1px solid var(--line)}
+.rq .tag{font-family:var(--f-display);font-weight:700;color:var(--accent);font-size:1.05rem}
+.rq .body{min-width:0;display:grid;gap:6px}
+.rq .hyp{font-size:.92rem;color:var(--muted)}
+.rq .hyp b{color:var(--fg);font-weight:600}
+
+/* Tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.92rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-mono);font-weight:500;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--surface)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600;white-space:nowrap}
+
+/* Strategy blocks */
+.strat{display:grid;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px 18px 16px;display:grid;gap:10px}
+.card-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.card ul{margin:0;padding-left:1.15em;display:grid;gap:6px}
+.card li{max-width:70ch}
+.why{font-size:.9rem;color:var(--muted);border-left:2px solid var(--accent);padding-left:10px}
+.pill{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.p-high{color:var(--risk)} .p-mid{color:var(--warn)} .p-low{color:var(--info)}
+.p-done{color:var(--good)} .p-next{color:var(--warn)} .p-wait{color:var(--muted)}
+
+/* Options (özgün katkı) */
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.opt{border:1px solid var(--line);border-radius:8px;padding:14px;display:grid;gap:8px;align-content:start}
+.opt h3{font-size:1rem}
+.opt p{font-size:.92rem;color:var(--muted)}
+.opt .k{font-family:var(--f-mono);font-size:.72rem;color:var(--accent);letter-spacing:.08em}
+
+/* Log */
+.log{display:grid;gap:0}
+.entry{display:grid;grid-template-columns:110px 1fr;gap:4px 16px;padding:12px 0;border-top:1px solid var(--line)}
+.entry time{font-family:var(--f-mono);font-size:.82rem;color:var(--muted);padding-top:2px}
+.entry .t{min-width:0;display:grid;gap:4px}
+.entry .src{font-size:.82rem;color:var(--muted)}
+
+/* Roadmap */
+.road{display:grid;gap:0;counter-reset:ph}
+.ph{display:grid;grid-template-columns:44px 1fr auto;gap:4px 14px;align-items:start;padding:12px 0;border-top:1px solid var(--line)}
+.ph .n{font-family:var(--f-display);font-weight:700;color:var(--muted);font-size:1.05rem}
+.ph .t{min-width:0}
+.ph .t p{font-size:.9rem;color:var(--muted)}
+
+.qs{display:grid;gap:10px;padding-left:1.2em;margin:0}
+.qs li{max-width:70ch}
+.note{font-size:.85rem;color:var(--muted)}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:.82rem;color:var(--muted)}
+
+@media (max-width:560px){
+  body{font-size:16px}
+  .rq article{grid-template-columns:1fr}
+  .entry{grid-template-columns:1fr}
+  .ph{grid-template-columns:34px 1fr}
+  .ph .pill{grid-column:2;justify-self:start}
+  .scale-labels{font-size:.62rem}
+}
+@media (prefers-reduced-motion:no-preference){ html{scroll-behavior:smooth} }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">Lisans tezi · Proje defteri</span>
+    <h1>Güneş Döngüleri 23–25 Boyunca Güneş Patlamaları, Güneş Lekeleri ve Jeomanyetik Etkilerin Zaman Serisi Analizi</h1>
+    <p class="lede">GOES X-ışını, SILSO güneş lekesi ve OMNI2 jeomanyetik verileriyle 2000–2025 döneminde güneş aktivitesinin nasıl değiştiğinin ve bu aktivitenin Dünya'daki uzay havası olaylarına nasıl yansıdığının incelenmesi. Bu sayfa tezin tüm kararlarını, yöntemini ve ilerlemesini tek yerde tutar.</p>
+    <div class="meta">
+      <span>Hazırlayan: <b>Tunahan İnci</b></span>
+      <span>Başlangıç: <b>5 Kasım 2026</b></span>
+      <span>Son güncelleme: <b>5 Kasım 2026</b></span>
+      <span>Aşama: <b>Faz 2 tamamlandı · Faz 3–4'e geçiliyor</b></span>
+      <span>Ortam: <b>Google Colab</b></span>
+    </div>
+    <div class="scale" aria-label="GOES X-ışını flare sınıf cetveli">
+      <div class="scale-bar"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="scale-labels">
+        <div><strong>A</strong>10⁻⁸</div><div><strong>B</strong>10⁻⁷</div><div><strong>C</strong>10⁻⁶</div><div><strong>M</strong>10⁻⁵</div><div><strong>X</strong>≥10⁻⁴</div>
+      </div>
+      <p class="scale-cap">GOES 0.1–0.8 nm kanalında pik akı (W/m²). Her sınıf bir öncekinin 10 katı.</p>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Bölümler">
+    <ul>
+      <li><a href="#kapsam">Kapsam</a></li>
+      <li><a href="#sorular">Sorular</a></li>
+      <li><a href="#katki">Özgün katkı</a></li>
+      <li><a href="#veri">Veri</a></li>
+      <li><a href="#defterler">Defterler</a></li>
+      <li><a href="#bulgular">İlk bulgular</a></li>
+      <li><a href="#s5">Dünya'ya etki</a></li>
+      <li><a href="#sunum">Hoca sunumu</a></li>
+      <li><a href="#basari">Başarı stratejisi</a></li>
+      <li><a href="#yol">Yol haritası</a></li>
+      <li><a href="#kararlar">Kararlar</a></li>
+      <li><a href="#acik">Açık sorular</a></li>
+    </ul>
+  </nav>
+
+  <section id="kapsam">
+    <div class="sec-head">
+      <span class="eyebrow">Kapsam</span>
+      <h2>Analiz penceresi ve güneş döngüleri</h2>
+      <p class="lede">2000–2025 aralığı Döngü 23'ün maksimum ve iniş evresini, Döngü 24'ün tamamını ve Döngü 25'in yükseliş ile maksimum evresini kapsar. Yani "iki tam döngü" değil, iki buçuk döngünün parçaları.</p>
+    </div>
+    <div class="tl">
+      <svg viewBox="0 0 760 130" role="img" aria-label="1996-2026 arası güneş döngüleri zaman çizelgesi">
+        <!-- 1996 -> x=20, 2026 -> x=740 ; 24 px/yıl -->
+        <rect x="116" y="28" width="600" height="58" fill="var(--accent)" opacity="0.12"/>
+        <text x="120" y="22">Analiz penceresi 2000–2025</text>
+        <rect x="20" y="44" width="288" height="26" fill="var(--cB)" opacity="0.85"/>
+        <rect x="308" y="44" width="264" height="26" fill="var(--cC)" opacity="0.85"/>
+        <rect x="572" y="44" width="168" height="26" fill="var(--cM)" opacity="0.85"/>
+        <text class="lbl" x="28" y="62" style="fill:var(--bg)">Döngü 23</text>
+        <text class="lbl" x="316" y="62" style="fill:var(--bg)">Döngü 24</text>
+        <text class="lbl" x="580" y="62" style="fill:var(--bg)">Döngü 25</text>
+        <line x1="160" y1="40" x2="160" y2="74" stroke="var(--fg)" stroke-width="1.5"/>
+        <line x1="458" y1="40" x2="458" y2="74" stroke="var(--fg)" stroke-width="1.5"/>
+        <line x1="710" y1="40" x2="710" y2="74" stroke="var(--fg)" stroke-width="1.5"/>
+        <text x="112" y="88">maks 2001-11 · 180,3</text>
+        <text x="410" y="88">maks 2014-04 · 116,4</text>
+        <text x="610" y="88">maks 2024-10 · 160,9</text>
+        <g>
+          <line x1="20" y1="104" x2="740" y2="104" stroke="var(--line)"/>
+          <text x="10" y="122">1996</text><text x="116" y="122">2000</text><text x="236" y="122">2005</text>
+          <text x="356" y="122">2010</text><text x="476" y="122">2015</text><text x="596" y="122">2020</text><text x="704" y="122">2025</text>
+        </g>
+      </svg>
+    </div>
+    <p class="note">Maksimum tarihleri ve değerleri 01 defterinde SILSO 13 aylık düzleştirilmiş leke sayısından hesaplandı. Döngü sınırları (minimumlar) henüz yaklaşık.</p>
+  </section>
+
+  <section id="sorular">
+    <div class="sec-head">
+      <span class="eyebrow">Araştırma soruları ve hipotezler</span>
+      <h2>Tezin cevaplayacağı beş soru</h2>
+      <p class="lede">Her sorunun test edilebilir bir hipotezi var. S1–S4 güneşin kendisini, S5 Dünya'ya etkisini inceler. Bulgular bölümü bu beş başlığa göre yazılacak.</p>
+    </div>
+    <div class="rq">
+      <article><span class="tag">S1</span><div class="body">
+        <h3>Döngüler arası karşılaştırma</h3>
+        <p>Döngü 23, 24 ve 25'te flare sayısı, C/M/X sınıf dağılımı ve toplam X-ışını enerjisi nasıl değişiyor?</p>
+        <p class="hyp"><b>H1:</b> Döngü 24'teki M ve X sınıfı flare sayısı, Döngü 23 ve 25'in karşılık gelen evrelerine göre anlamlı ölçüde düşüktür.</p>
+      </div></article>
+      <article><span class="tag">S2</span><div class="body">
+        <h3>İlişki ve zaman gecikmesi</h3>
+        <p>Güneş lekesi sayısı ile flare aktivitesi arasındaki ilişki ne kadar güçlü ve aralarında gecikme var mı?</p>
+        <p class="hyp"><b>H2:</b> Aylık flare indeksi leke sayısıyla güçlü pozitif ilişkilidir, büyük flarelerin yoğunluğu ise leke maksimumundan sonraya kayar.</p>
+      </div></article>
+      <article><span class="tag">S3</span><div class="body">
+        <h3>Şiddet dağılımı</h3>
+        <p>Flare pik akıları güç yasasına uyuyor mu, üs değeri döngüden döngüye değişiyor mu?</p>
+        <p class="hyp"><b>H3:</b> Pik akı dağılımı güç yasasına uyar ve üs değeri döngüler arasında istatistiksel olarak farksızdır.</p>
+      </div></article>
+      <article><span class="tag">S4</span><div class="body">
+        <h3>Modelleme ve tahmin</h3>
+        <p>SARIMA, Prophet ve LSTM, aylık leke sayısı ve flare indeksi tahmininde basit referans modellere göre ne kadar başarılı?</p>
+        <p class="hyp"><b>H4:</b> Az veri nedeniyle klasik modeller LSTM ile benzer ya da daha iyi sonuç verir.</p>
+      </div></article>
+      <article><span class="tag">S5</span><div class="body">
+        <h3>Dünya'ya etki</h3>
+        <p>Güneş aktivitesi Dünya'daki jeomanyetik fırtınalara ne kadar ve ne kadar gecikmeyle yansıyor? Büyük patlamaların yüzde kaçını 1–3 gün içinde bir fırtına izliyor?</p>
+        <p class="hyp"><b>H5:</b> M ve X sınıfı patlamalardan sonraki 1–3 günde ortalama Dst anlamlı biçimde düşer, ancak patlama şiddeti fırtına şiddetini tek başına açıklamaz, çünkü fırtınayı asıl belirleyen koronal kütle atımlarıdır (CME).</p>
+        <p class="note">Yöntem: üst üste bindirilmiş olay analizi (superposed epoch), yıllık fırtına sayısı ile leke sayısının döngü bazında karşılaştırılması, Mayıs 2024 ve Ekim 2003 fırtınaları vaka çalışması.</p>
+      </div></article>
+    </div>
+  </section>
+
+  <section id="katki">
+    <div class="sec-head">
+      <span class="eyebrow">Tartışılıyor</span>
+      <h2>Özgün katkı seçenekleri</h2>
+      <p class="lede">Jürinin ilk sorusu "bu çalışmanın yeniliği ne?" olacak. Bir tanesini ana katkı olarak seçmeliyiz. Diğerleri destekleyici kalabilir.</p>
+    </div>
+    <div class="opts">
+      <div class="opt"><span class="k">SEÇENEK A</span><h3>Döngü 25 dahil güncel karşılaştırma</h3><p>2024 maksimumunu kapsayan, üç döngüyü aynı yöntemle karşılaştıran bir analiz. Literatürde henüz az çalışılmış, verisi en taze kısım.</p></div>
+      <div class="opt"><span class="k">SEÇENEK B</span><h3>Leke başına flare verimliliği</h3><p>Aynı leke sayısında hangi döngü daha çok ve daha şiddetli flare üretiyor? Basit ama açıklayıcı yeni bir gösterge tanımlar.</p></div>
+      <div class="opt"><span class="k">SEÇENEK C</span><h3>Kendi flare algılama algoritması</h3><p>Ham GOES akısından flareleri kendin bulup NOAA kataloğuyla karşılaştırırsın. Teknik açıdan en güçlü, zaman maliyeti en yüksek seçenek.</p></div>
+      <div class="opt"><span class="k">SEÇENEK D</span><h3>Güneş–Dünya bağlantısı döngüden döngüye</h3><p>Aynı güneş aktivitesi düzeyinde hangi döngü Dünya'da daha çok fırtına üretti? Güneş tarafı ile Dünya tarafını tek bir soruda birleştirir.</p></div>
+    </div>
+    <p class="note">Güncel öneri: A ana katkı, B ve D onun içinde iki yeni gösterge olarak. C zaman kalırsa ek bölüm.</p>
+  </section>
+
+  <section id="veri">
+    <div class="sec-head">
+      <span class="eyebrow">Veri kaynakları</span>
+      <h2>Kullanılacak veri setleri</h2>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Veri</th><th>Kaynak</th><th>Çözünürlük</th><th>Dikkat</th></tr></thead>
+      <tbody>
+        <tr><td>X-ışını akısı</td><td>NOAA NCEI, GOES XRS bilimsel kalite verisi</td><td>1 dk</td><td>Uydu geçişleri, boşluklar, eski uydulardaki ölçek düzeltmesi</td></tr>
+        <tr><td>Flare olay listesi</td><td>NOAA GOES flare kataloğu</td><td>Olay bazlı</td><td>Maksimumda yüksek arka plan küçük flareleri gizler</td></tr>
+        <tr><td>Güneş lekesi sayısı</td><td>SILSO, Belçika Kraliyet Gözlemevi (Sürüm 2.0)</td><td>Günlük, aylık</td><td>Yer tabanlı gözlem, 2015'te tüm seri yeniden kalibre edildi</td></tr>
+        <tr><td>Uzun leke serisi</td><td>SILSO aylık seri, 1749'dan bugüne</td><td>Aylık</td><td>Tahmin modelleri için gerekli</td></tr>
+        <tr><td>Jeomanyetik indeksler</td><td>NASA SPDF OMNI2: Dst, Kp, ap, F10.7, güneş rüzgârı hızı, Bz</td><td>Saatlik</td><td>Dünya tarafının ana verisi. Eksik değer kodları sütuna göre farklı</td></tr>
+        <tr><td>CME kataloğu</td><td>SOHO/LASCO CDAW kataloğu</td><td>Olay bazlı</td><td>İsteğe bağlı. H5'i güçlendirmek için</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">Fırtına eşikleri: Kp ≥ 5 → NOAA G1 ve üstü. Dst ≤ −50 nT orta, ≤ −100 nT şiddetli, ≤ −250 nT süper fırtına.</p>
+  </section>
+
+  <section id="defterler">
+    <div class="sec-head">
+      <span class="eyebrow">Colab defterleri</span>
+      <h2>Kod ve çıktılar</h2>
+      <p class="lede">Tüm analiz sıralı Colab defterleriyle yapılır. Veriler Google Drive'da <span class="mono">gunes_tezi/</span> klasöründe tutulur, ham veri elle düzenlenmez.</p>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Defter</th><th>Ne yapar</th><th>Çıktılar</th><th>Durum</th></tr></thead>
+      <tbody>
+        <tr><td>01_veri_cekme</td><td>SILSO leke sayıları, 2000–2025 OMNI2 saatlik veri, HEK flare listesi indirilir ve temizlenir. NCEI bilimsel kalite flare dosyaları taranır. İlk bakış grafiği çizilir.</td><td><span class="mono">sn_*.parquet, omni2_*.parquet, flare_hek.parquet, 01_ilk_bakis.png, indirme_kaydi.json</span></td><td><span class="pill p-done">Tamamlandı</span></td></tr>
+        <tr><td>02_flare_homojen_A</td><td>HEK listesinde kaynak ve çift sayım teşhisi. NCEI bilimsel kalite flare özetlerinin (GOES 8–19, görev boyu dosyalar) indirilmesi ve dosya yapısının incelenmesi.</td><td><span class="mono">data/raw/ncei/flsum/*.nc</span></td><td><span class="pill p-done">Tamamlandı</span></td></tr>
+        <tr><td>02_flare_homojen_B</td><td>NCEI dosyalarının okunması, uyduların birleştirilmesi, tek homojen flare listesi, HEK ile karşılaştırma.</td><td><span class="mono">flare_ncei.parquet, flare_hek_temiz.parquet, 02_olcek_farki.png, 02_oncesi_sonrasi.png, 02_dongu_ozeti.csv</span></td><td><span class="pill p-done">Tamamlandı (sürüm 1.1)</span></td></tr>
+        <tr><td>03_capraz_kalibrasyon</td><td>Uydu çiftlerinden her uydunun GOES-16'ya göre ölçüm katsayısı (ağırlıklı en küçük kareler + bootstrap). Eski–yeni uydu köprüsü, büyüklük ve zaman kontrolleri. Düzeltilmiş döngü tablosu.</td><td><span class="mono">03_kalibrasyon_katsayilari.csv, flare_ncei_kalibre.parquet, 03_oran_zaman.png, 03_dongu_ozeti_kalibre.csv</span></td><td><span class="pill p-done">Tamamlandı</span></td></tr>
+        <tr><td>04_kopru_tarama</td><td>GOES 8–15'in 1 dakikalık akı verisi kapsamını tarar, eski ve yeni uydular arasında daha güçlü bir köprü için çakışan dönemleri arar. İndirme yapmaz.</td><td><span class="mono">avg1m_kapsam.json</span></td><td><span class="pill p-done">Tamamlandı</span></td></tr>
+        <tr><td>05_kopru_senaryolar</td><td>Yalnızca M sınıfıyla kalibrasyon duyarlılığı. GOES-10 ve GOES-14'ün 2009 çakışmasında dakika dakika köprü. Döngü 23 için dört senaryo.</td><td><span class="mono">05_kopru_1dk.png, 05_dongu23_senaryolar.csv</span></td><td><span class="pill p-done">Tamamlandı</span></td></tr>
+        <tr><td>06_dunyaya_etki</td><td>S4 ile nihai flare listesi ve kesin döngü tablosu. S5: üst üste bindirilmiş olay analizi (Dst, Kp), konum etkisi, fırtına olasılığı, yıllık fırtınalar. S2 ön çalışma: gecikme analizi. 2003 ve 2024 vaka çalışmaları.</td><td><span class="mono">flare_final.parquet, 06_*.png, 06_*.csv</span></td><td><span class="pill p-done">Tamamlandı</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="bulgular">
+    <div class="sec-head">
+      <span class="eyebrow">01 defteri · 05.11.2026</span>
+      <h2>İlk bulgular</h2>
+      <p class="lede">Veriler eksiksiz indi. İlk grafik, döngüleri karşılaştırmadan önce flare listesinin homojenleştirilmesi gerektiğini gösterdi. 02 defteri bu düzeltmeyi yaptı ve ölçtü.</p>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Döngü</th><th>M+X HEK (öncesi)</th><th>M+X NCEI (sonrası)</th><th>X NCEI</th><th>Σ aylık SN</th><th>M+X / 1000 SN öncesi</th><th>M+X / 1000 SN sonrası</th></tr></thead>
+      <tbody>
+        <tr><td>23 (2000–2008/11)</td><td class="mono">1.257</td><td class="mono">2.179</td><td class="mono">158</td><td class="mono">9.109</td><td class="mono">138</td><td class="mono">239</td></tr>
+        <tr><td>24 (2008/12–2019/11)</td><td class="mono">801</td><td class="mono">1.298</td><td class="mono">78</td><td class="mono">6.529</td><td class="mono">123</td><td class="mono">199</td></tr>
+        <tr><td>25 (2019/12–2025)</td><td class="mono">1.847</td><td class="mono">1.909</td><td class="mono">91</td><td class="mono">6.297</td><td class="mono">293</td><td class="mono">303</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">02B sürüm 1.0 sonuçları. Doymuş patlamalar bu sürümde eksikti, sürüm 1.1 ile X sayıları (özellikle Döngü 23) biraz artacak. Döngü 23'ün yükseliş evresi pencerede yok.</p>
+    <div class="tbl"><table>
+      <thead><tr><th>Veri</th><th>Kayıt</th><th>Dönem</th><th>Not</th></tr></thead>
+      <tbody>
+        <tr><td>SILSO günlük</td><td class="mono">76.275 gün</td><td>1818 – 2026-10</td><td>Eksik %4,3, hepsi 1800'lerin başında. 2000–2025 eksiksiz.</td></tr>
+        <tr><td>SILSO aylık</td><td class="mono">1749 – 2026-10</td><td>3 yüzyıl</td><td>Tahmin modelleri için.</td></tr>
+        <tr><td>OMNI2 saatlik</td><td class="mono">227.928 saat</td><td>2000 – 2025</td><td>Zaman sütununda eksik yok.</td></tr>
+        <tr><td>HEK flare</td><td class="mono">47.718 olay</td><td>2000 – 2025</td><td>A 105 · B 15.455 · C 28.251 · M 3.661 · X 246</td></tr>
+      </tbody>
+    </table></div>
+    <div class="strat">
+      <div class="card">
+        <div class="card-top"><h3>Ölçek farkı veriyle doğrulandı</h3><span class="pill p-done">Sonuç</span></div>
+        <ul>
+          <li>NCEI / HEK pik akı oranı 2000–2019 arasında her yıl 1,43–1,48 (beklenen 1/0.7 = 1,43), 2020 ortasından sonra 1,01–1,02. NOAA operasyonel listesinin GOES-16'ya geçişi verimizden 2020 civarı olarak tespit edildi.</li>
+          <li>2017–2019'da oran yaklaşık 1,55: temsilci uydu GOES-16, operasyonel liste ise hâlâ GOES-15. Bu, iki uydu arasındaki ~%8'lik kalibrasyon farkıyla tutarlı.</li>
+          <li>Düzeltme Döngü 23 ile 25 arasındaki farkı büyük ölçüde kapattı: leke başına M+X oranında Döngü 25 / Döngü 23 oranı 2,1'den 1,27'ye indi.</li>
+          <li>Bu grafik (02_olcek_farki.png) tezin metodoloji bölümünün ana şekli olacak.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Düzeltmeden sonra bile Döngü 25 leke başına daha çok patlama üretiyor</h3><span class="pill p-high">Olası özgün bulgu</span></div>
+        <ul>
+          <li>1000 leke başına M+X: Döngü 23 → 239, Döngü 24 → 199, Döngü 25 → 303.</li>
+          <li>Uydular arası ~%8'lik kalibrasyon farkı bu ~%27'lik farkı tek başına açıklamaya yetmiyor. GOES-R serisinin daha hassas dedektörü ve Döngü 23'ün eksik yükseliş evresi kontrol edilmeli.</li>
+          <li>Kontroller sonrası fark kalırsa Özgün Katkı B (leke başına flare verimliliği) tezin ana bulgusu olabilir.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Çapraz kalibrasyon: yeni grup sağlam, eski grubun köprüsü zayıf</h3><span class="pill p-mid">Kısmen sonuç</span></div>
+        <ul>
+          <li>GOES-16'ya göre katsayılar: GOES-13 0,995 · GOES-14 0,859 · GOES-15 0,936 · GOES-17 1,017 · GOES-18 0,995 · GOES-19 1,004. Bootstrap aralıkları ±%0,3, tüm çift artıkları %1,3'ün altında. Model tutarlı.</li>
+          <li>Eski grup kendi içinde (GOES-10'a göre): GOES-8 0,988 · GOES-11 0,911 · GOES-12 0,971.</li>
+          <li>Zaman kayması küçük. En büyüğü GOES-15/GOES-13 oranının 2016–2017'de 0,945'ten 0,915'e düşmesi (~%3, olası dedektör yaşlanması).</li>
+          <li>Büyüklüğe bağlılık: GOES-R çiftleri ve GOES-15/16 doğrusal (C ile M arası fark %1–2). GOES-13 doğrusal değil: 13/15 oranı C 0,946 → M 0,883 → X 0,834. Eski grupta %3–5 hafif eğilim. Temsilci uydular (GOES-15, GOES-R) doğrusal olduğu için Döngü 24–25 karşılaştırması etkilenmiyor.</li>
+          <li>Eski grubu GOES-16'ya bağlayan tek köprü: Eylül 2009'da GOES-10 ile GOES-14'ün 5 günlük çakışmasındaki 11 B sınıfı patlama. GOES-14 o sırada fırlatılış sonrası test döneminde ve yeni grubun en farklı ölçen uydusu. Bu köprüye göre eski uydular %22–25 düşük ölçüyor.</li>
+        </ul>
+        <ul>
+          <li>04 taraması: 1 dakikalık veride de eski ve yeni grup arasında tek çakışma GOES-10 ve GOES-14, 2009-09-19 ile 2009-12-01 arası (ortalama leke sayısı 4,8, güneş minimumu). Daha güçlü bir köprü yok.</li>
+          <li>Dış doğrulama: Hudson ve ark. (2023) GOES-16 / GOES-15 oranını 243 patlamadan 1,10 ± 0,04 buluyor. Bizim sonucumuz 1,08 (C) ve 1,08 (M), aralığın içinde.</li>
+        </ul>
+        <p class="why">Sınır: tek bir zayıf köprü, Döngü 23 hakkındaki sonucu tersine çevirebiliyor. Daha güçlü bir köprü bulunmadan Döngü 23 karşılaştırması aralık olarak raporlanacak.</p>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Döngü 25, Döngü 24'ten leke başına %40 daha fazla büyük patlama üretti</h3><span class="pill p-done">Sağlam bulgu</span></div>
+        <ul>
+          <li>1000 leke başına M+X, tam homojen GOES-16 ölçeğinde: Döngü 24 → 215,8, Döngü 25 → 302,7. Oran 1,40.</li>
+          <li>Düzeltme aşamalarında Döngü 25 / Döngü 24 oranı: HEK 2,39 → NCEI 1,53 → NCEI + kalibrasyon 1,40. İki döngü de aynı kalibre uydu ağıyla ölçüldüğü için köprü belirsizliğinden etkilenmiyor.</li>
+          <li>Büyüklüğe bağlılık kontrolünden geçti: Döngü 24'ü temsil eden GOES-15 ile GOES-16 arasındaki oran C ve M sınıfında aynı (1,082 ve 1,080).</li>
+          <li>Döngü 25 / Döngü 23 ise köprüye bağlı: köprüsüz 1,25, köprülü 0,92. Şimdilik "belirsiz".</li>
+          <li>Yapılacak duyarlılık analizi: kalibrasyonu yalnızca M sınıfı çiftlerle yeniden çözüp oranın değişmediğini göstermek.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Döngü 23 senaryoları ve toplamsal sabit fark</h3><span class="pill p-mid">Aralık olarak sonuç</span></div>
+        <ul>
+          <li>Yalnızca M sınıfıyla kalibrasyon: Döngü 25 / 24 = 1,403 (ana çözümle aynı). Dört senaryonun hepsinde de 1,403.</li>
+          <li>Dakika köprüsü (GOES-10 ve GOES-14, yalnızca 2009-09-19 → 09-30 ve 12-01 günleri): oran akıya bağlı, toplamsal sabit fark (offset) var. Theil–Sen doğrusal uyum (n = 176 dakika, ≥B1): GOES-14 = 1,091 × GOES-10 + 2,46×10⁻⁸ (eğim %95: 1,082–1,100). M düzeyinde beklenen oran 1,094.</li>
+          <li>Sabit farkı arındıran iki bağımsız yöntem uyuşuyor: arka planı çıkarılmış patlama köprüsü 1,107, dakika eğimi 1,091. Ham dakika oranı (1,199) sabit fark yüzünden yanlı.</li>
+          <li>Döngü 25 / 23: S0 bağlantısız 1,25 · S1 literatür varsayımı 1,15 · S2 patlama köprüsü 0,92 · S4 sabit fark düzeltilmiş dakika köprüsü ≈ 0,93 (GOES-10 katsayısı ≈ 0,787, ara değerle) · S3 ham dakika köprüsü 0,84 (yanlı, kullanılmayacak).</li>
+          <li>Düzeltme: önceki sürümde S2'ye "aşağı yönlü yanlı" denmişti. Doğrusal uyum bunu desteklemedi, yalnızca S3 yanlı.</li>
+        </ul>
+        <p class="why">Tezde: Döngü 23 ve 25 leke başına benzer verimlilikte (veriye dayalı 0,93, literatür varsayımı 1,15). İkisi de Döngü 24'ten belirgin biçimde yüksek. Sınırlılık: köprü 12 gün ve 176 dakikaya dayanıyor, GOES-14 o sırada fırlatılış sonrası test döneminde.</p>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Döngü 24, leke başına en az patlama üreten döngü</h3><span class="pill p-done">Sağlam bulgu</span></div>
+        <ul>
+          <li>1000 leke başına M+X: Döngü 24 = 215,8. Döngü 23 tüm senaryolarda 242–362, Döngü 25 = 302,7.</li>
+          <li>Hikaye: Döngü 24 yalnızca az lekeli değildi, leke başına da az patlama üretti. Döngü 25 normale döndü. Literatürde tartışılan "zayıf Döngü 24" konusuna yeni bir veri.</li>
+        </ul>
+      </div>
+      <div class="card" hidden>
+        <div class="card-top"><h3>Döngü 25, leke sayısına göre "fazla" patlama gösteriyor</h3><span class="pill p-high">İnceleniyor</span></div>
+        <ul>
+          <li>Döngü 25'in leke maksimumu (160,9) Döngü 23'ten (180,3) düşük. Buna rağmen HEK listesinde Döngü 25'in aylık M+X sayısı Döngü 23'ün yaklaşık iki katına çıkıyor, 2024'te ayda 140'ı aşan bir tepe var.</li>
+          <li>İki aday sebep vardı: GOES 8–15 döneminin 0.7 ölçek çarpanı ve HEK'teki çift kayıtlar. 02A teşhisi çift kayıt sebebini eledi: kayıtların %99,8'i tek kaynaktan (SWPC), yalnızca 3 olası tekrar var. Geriye ölçek farkı kalıyor, 02B bunu yıl yıl ölçecek.</li>
+          <li>Bu bulgu tezin veri homojenleştirme bölümünün ana örneği olacak: düzeltme öncesi ve sonrası grafik yan yana.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>En güçlü patlamalar ve şüpheli kayıt</h3><span class="pill p-mid">Doğrulanacak</span></div>
+        <ul>
+          <li>Listenin başında beklenen olaylar var: 2003-11-04 X28 (Cadılar Bayramı fırtınaları dönemi, AR 10486), 2001-04-02 X20, 2003-10-28 X17, 2005-09-07 X17.</li>
+          <li>2003-11-04 patlamasında GOES dedektörü doymuştu. Gerçek şiddeti X28'den yüksek, bu tezde ayrıca belirtilmeli.</li>
+          <li>Literatürle karşılaştırma (Hudson ve ark. 2023, yeni ölçek): 2003-11-04 ≈ X43, 2001-04-02 ≈ X29,6, 2003-10-28 ≈ X25,7, 2005-09-07 ≈ X24,6. Bizim alt sınırlarımız (≥X24,9, ≥X26,3, ≥X24,6, ≥X24,4) bunlarla tutarlı. Analizde doymuş olaylar için bu yayımlanmış tepe değerleri kullanılabilir.</li>
+          <li>NCEI dosyalarında doymuş patlamalar ayrı bir durumla (EVENT_PEAK_SATURATED) işaretli. Sürüm 1.1 ile 4 doymuş patlama eklendi: 2001-04-02 ≥X26.3, 2003-11-04 ≥X24.9, 2003-10-28 ≥X24.6, 2005-09-07 ≥X24.4. Akıları yalnızca alt sınır. 2003-11-04 literatürde ~X40 olarak tahmin ediliyor ama listemizde ikinci sırada görünüyor, bu dört olayın sıralamasına güvenilemez.</li>
+          <li>2024-05-08 21:40 tarihli X9.0 kaydı hatalı çıktı: aynı dakikada aynı patlama AR 13664 ile X1.0 olarak da kayıtlı. X9.0 kaydı temiz HEK listesinden çıkarıldı.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Dünya tarafı beklenen yapıyı gösteriyor</h3><span class="pill p-done">Tutarlı</span></div>
+        <ul>
+          <li>Aylık en düşük Dst grafiğinde en derin fırtınalar 2001, 2003 sonu ve 2004 sonunda (−400 nT civarı). Döngü 24'te fırtınalar belirgin biçimde zayıf. Döngü 25'te Mayıs 2024 ve Ekim 2024 öne çıkıyor.</li>
+          <li>En büyük fırtınaların döngü maksimumundan sonraki iniş evresinde yoğunlaşması H2 ve H5 için ilk ipucu.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="s5">
+    <div class="sec-head">
+      <span class="eyebrow">06 defteri · 05.11.2026</span>
+      <h2>Nihai döngü tablosu ve Dünya'ya etki (S5)</h2>
+      <p class="lede">S4 kalibrasyonuyla 67.466 patlama GOES-16 ölçeğinde. Patlamaların Dünya'daki fırtınalarla ilişkisi, şiddet ve konuma göre ölçüldü.</p>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Döngü</th><th>M+X</th><th>X</th><th>Σ aylık SN</th><th>M+X / 1000 SN</th><th>X / 1000 SN</th></tr></thead>
+      <tbody>
+        <tr><td>23 (2000–2008/11)</td><td class="mono">2.966</td><td class="mono">216</td><td class="mono">9.109</td><td class="mono">325,6</td><td class="mono">23,71</td></tr>
+        <tr><td>24 (2008/12–2019/11)</td><td class="mono">1.409</td><td class="mono">93</td><td class="mono">6.529</td><td class="mono">215,8</td><td class="mono">14,24</td></tr>
+        <tr><td>25 (2019/12–2025)</td><td class="mono">1.906</td><td class="mono">91</td><td class="mono">6.297</td><td class="mono">302,7</td><td class="mono">14,45</td></tr>
+      </tbody>
+    </table></div>
+    <p class="note">D25/D23 = 0,930 · D25/D24 = 1,403 · D23/D24 = 1,509. X sınıfında Döngü 25 ile 24 leke başına aynı (14,45 ve 14,24); Döngü 25'in fazlalığı M sınıfından geliyor.</p>
+    <div class="strat">
+      <div class="card">
+        <div class="card-top"><h3>Patlama ne kadar büyükse fırtına olasılığı o kadar artıyor</h3><span class="pill p-done">Sağlam bulgu</span></div>
+        <ul>
+          <li>Patlamadan 12–96 saat sonra şiddetli fırtına (Dst ≤ −100) olasılığı, aynı dönemlerden rastgele zamanlara göre: M1–M5 1,43 kat · M5–X1 1,69 kat · ≥X1 2,60 kat. Doğrusal bir doz–yanıt ilişkisi.</li>
+          <li>≥X1 sonrası olasılıklar: orta fırtına %48,7 (rastgele %29,3), şiddetli fırtına %22,7 (rastgele %8,7). 400 X patlaması, kümelenme ayıklamasıyla 238 bağımsız olay.</li>
+          <li>Ama X patlamalarının %77'sinden sonra şiddetli fırtına çıkmıyor. Patlama şiddeti fırtınayı tek başına belirlemiyor (H5'i destekliyor).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Üst üste bindirilmiş olay analizi: etki 2–3 gün sonra</h3><span class="pill p-done">Sonuç</span></div>
+        <ul>
+          <li>≥X1: medyan Dst ikinci günden itibaren rastgele bandın altına iniyor, 3. gün civarında yaklaşık −20 nT'ye ulaşıyor. Kp medyanı ~62. saatte 2,5'e çıkıyor (rastgele üst sınır 2,0).</li>
+          <li>M5–X1'de etki zayıf, M1–M5'te rastgele bant içinde. 2–3 günlük gecikme CME'lerin Güneş–Dünya yolculuk süresiyle uyumlu.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Konum etkisi: doğu kenarı daha zayıf, örneklem küçük</h3><span class="pill p-mid">İpucu</span></div>
+        <ul>
+          <li>X sınıfı konumları: merkez 262, batı kenarı 67, doğu kenarı 61, bilinmiyor 10.</li>
+          <li>Şiddetli fırtına katı: merkez 2,74 · batı 2,75 · doğu 2,09. Fizikle uyumlu ama kenarlarda olay sayısı 33 ve 36, anlamlılık testi gerekli.</li>
+          <li>Konuma göre medyan Dst eğrileri küçük örneklem nedeniyle gürültülü. Batı kenarı eğrisi olaydan önce de düşük, başka bir fırtınayla çakışma işareti.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Fırtınalar leke sayısını ~1 yıl geriden izliyor</h3><span class="pill p-done">Sonuç</span></div>
+        <ul>
+          <li>M+X patlamaları leke sayısıyla eş zamanlı (en iyi gecikme 0 ay, r = 0,942).</li>
+          <li>Orta fırtına günleri 13 ay gecikmeli (r 0,775 → 0,910), şiddetli fırtınalar 10 ay gecikmeli (0,827 → 0,879). Fırtınalar döngünün iniş evresinde yoğunlaşıyor: 2003 (90 gün), 2015 (72 gün).</li>
+          <li>Orta fırtınaların daha gecikmeli olması, iniş evresindeki koronal deliklerden gelen hızlı güneş rüzgarı akımlarıyla uyumlu. Anlamlılık testi (blok bootstrap) S2 defterinde yapılacak.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Vaka çalışmaları: en büyük patlama en büyük fırtınayı üretmedi</h3><span class="pill p-done">Sunumun ana örneği</span></div>
+        <ul>
+          <li>Ekim–Kasım 2003: 90 M+X, 12 X patlaması. En düşük Dst −383 nT (2003-10-30 22:00), Kp 9.</li>
+          <li>Kayıtlı en büyük patlama 2003-11-04 (S4 ölçeğinde ≥X32,5, Hudson ve ark. ≈X43) batı kenarından çıktı ve ardından yalnızca küçük bir Dst düşüşü oldu.</li>
+          <li>Mayıs 2024 (Gannon): 108 M+X, 17 X patlaması. En düşük Dst −406 nT (2024-05-11 02:00), Kp 9. Analiz penceresindeki en güçlü fırtınalardan biri.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="sunum">
+    <div class="sec-head">
+      <span class="eyebrow">Hoca sunumu</span>
+      <h2>Konuşma akışı ve olası sorular</h2>
+      <p class="lede"><a href="index.html">Tez sitesi</a> sunum sırasıyla kuruldu. Sağ üstteki <b>Sunum modu</b> düğmesiyle tam ekran açılır, ← → tuşlarıyla bölümler arasında geçilir. Toplam 10–12 dakika.</p>
+    </div>
+    <div class="road">
+      <div class="ph"><span class="n">1</span><div class="t"><h3>Açılış sahnesi · 1 dk</h3><p>Kaydırıcıyı 2003'e getir. "Bu yıl 33 X patlaması oldu. En büyüğü 4 Kasım'da batı kenarından çıktı; ardından Dst yalnızca −29 nT." Sonra 2024'e geç. Tezin sorusu: Güneş'teki aktivite Dünya'ya nasıl yansıyor?</p></div></div>
+      <div class="ph"><span class="n">2</span><div class="t"><h3>Soru ve veri · 1 dk</h3><p>Beş araştırma sorusu, dört kaynak. S1, S2 ve S5'in sonuçlarının hazır, S3 ve S4'ün sırada olduğunu söyle.</p></div></div>
+      <div class="ph"><span class="n">3</span><div class="t"><h3>Veri sorunu · 3 dk (en önemli bölüm)</h3><p>"Ham listeye güvenseydim Döngü 25'i iki kat abartıyordum." Oran grafiğindeki 1,43 → 1,00 sıçramasını göster; 2020 geçişini veriden bulduğunu vurgula. Uydu çizelgesinde 2009 köprüsünü göster. Son grafikte oranın 2,39'dan 1,40'a indiğini göster. Hudson ve ark. (2023) ile uyumu söyle.</p></div></div>
+      <div class="ph"><span class="n">4</span><div class="t"><h3>Güneş bulguları · 2 dk</h3><p>Döngü 24 leke başına en az patlama üretti (216); Döngü 25, 24'ten %40 daha verimli. Döngü 23 çubuğundaki dikey çizgiyi gösterip belirsizliği kendin açıkla.</p></div></div>
+      <div class="ph"><span class="n">5</span><div class="t"><h3>Dünya'ya etki · 2 dk</h3><p>Doz–yanıt: 1,43× → 1,69× → 2,60×. Üst üste bindirilmiş olay analizinde ≥X1 sekmesi: etki 2.–3. günde, CME yolculuk süresiyle uyumlu. Fırtınalar leke sayısını 10–12 ay geriden izliyor.</p></div></div>
+      <div class="ph"><span class="n">6</span><div class="t"><h3>Vakalar · 1,5 dk</h3><p>2003 grafiği ve iki tablo: en güçlü fırtına (2003-11-20, −422 nT) öncesinde en büyük patlama yalnızca M7.9; kayıtlı en büyük patlamanın ardından Dst −29. "Fırtınayı patlamanın büyüklüğü değil, CME'nin yönü belirliyor."</p></div></div>
+      <div class="ph"><span class="n">7</span><div class="t"><h3>Sonuç ve sıradaki adımlar · 1 dk</h3><p>Dört bulgu, sınırlılıklar, S2 anlamlılık testleri, S3, S4 ve CME kataloğu. Hocaya CME kataloğunu eklemeyi önerip görüşünü sor.</p></div></div>
+    </div>
+    <div class="strat">
+      <div class="card">
+        <div class="card-top"><h3>Hocanın sorabileceği sorular ve kısa cevaplar</h3></div>
+        <ul>
+          <li><b>"Neden ham NOAA listesini kullanmadın?"</b> Operasyonel liste 2020'ye kadar 0,7 çarpanı içeriyordu; 47.718 patlamayı bilimsel kalite listeyle eşleştirince oran 1,43 çıktı. Düzeltilmeden karşılaştırma 1,7 kat abartıyor.</li>
+          <li><b>"Kalibrasyonun doğru olduğunu nereden biliyorsun?"</b> Model tüm uydu çiftlerini %1,3 içinde açıklıyor, bootstrap aralıkları ±%0,3. GOES-16/15 için 1,08 buldum, Hudson ve ark. 1,10 ± 0,04 buluyor. Sadece M sınıfıyla çözünce de D25/D24 = 1,403 değişmedi.</li>
+          <li><b>"Döngü 23 neden kesin değil?"</b> Eski ve yeni uydular yalnızca 2009 sonbaharında 12 gün çakışıyor. Bu yüzden 4 senaryo hesapladım; sabit fark düzeltilmiş köprü 0,93, literatür varsayımı 1,15. Sonucu aralık olarak veriyorum.</li>
+          <li><b>"Korelasyonlar zaman serisinde şişmez mi?"</b> Evet; bu yüzden şimdilik yalnızca gecikmenin yerini raporladım. Anlamlılık için blok bootstrap S2 aşamasında.</li>
+          <li><b>"Fırtınaları patlama değil CME yapar, neden CME kullanmadın?"</b> Haklısınız; bu aşamada patlama gösterge olarak kullanıldı ve vaka sonuçları da bunu gösteriyor. Sıradaki adım SOHO/LASCO CME kataloğu.</li>
+          <li><b>"Rastgele karşılaştırma neden ±180 gün?"</b> Güneş döngüsünün aynı evresinden zaman seçmek için; yoksa aktif dönemlerdeki fırtına fazlalığı patlamaya mal edilirdi.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="basari">
+    <div class="sec-head">
+      <span class="eyebrow">Başarı stratejisi</span>
+      <h2>Tezi güçlü yapacak sekiz madde</h2>
+      <p class="lede">Öncelik, jüri değerlendirmesine etkisine göre verildi.</p>
+    </div>
+    <div class="strat">
+      <div class="card">
+        <div class="card-top"><h3>Otokorelasyonu hesaba kat</h3><span class="pill p-high">Yüksek</span></div>
+        <ul>
+          <li>Zaman serilerinde ardışık aylar birbirine bağlı olduğu için Pearson korelasyonun p-değeri olduğundan çok daha "anlamlı" çıkar.</li>
+          <li>Etkin örneklem büyüklüğü ve blok bootstrap ile güven aralığı hesapla.</li>
+          <li>Korelasyonu hem ham hem de trendden arındırılmış seride raporla.</li>
+        </ul>
+        <p class="why">Lisans tezlerinde en sık yapılan istatistik hatası bu. Doğru yapmak seni diğer çalışmalardan ayırır.</p>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Flare listesini homojenleştir</h3><span class="pill p-high">Yüksek</span></div>
+        <ul>
+          <li>NOAA'nın operasyonel flare sınıfları GOES 8–15 döneminde 0.7 ölçek çarpanı içeriyordu, GOES-16 ve sonrasında içermiyor. Aynı patlama eski dönemde yaklaşık %30 daha zayıf sınıflanmış görünür.</li>
+          <li>Düzeltilmezse Döngü 25 yapay olarak daha güçlü çıkar. Ana liste olarak ölçek düzeltmesi yapılmış NCEI bilimsel kalite flare özetleri kullanılacak.</li>
+        </ul>
+        <p class="why">Döngüleri karşılaştıran bir tezde bu, sonucu doğrudan değiştirebilecek tek hata. Tezde ayrı bir alt başlık olarak anlatılacak.</p>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Katalog eksikliğini (algılama yanlılığını) ele al</h3><span class="pill p-high">Yüksek</span></div>
+        <ul>
+          <li>Güneş maksimumunda X-ışını arka planı yükselir, küçük B ve C flareler katalogda kaybolur.</li>
+          <li>Sayım analizlerinde eşik kullan (ör. ≥C1 ve ayrıca ≥M1) ve sonuçların eşikten bağımsız olup olmadığını göster.</li>
+        </ul>
+        <p class="why">Bunu yapmazsan "maksimumda flare sayısı beklenenden az" gibi yapay bir sonuç bulabilirsin.</p>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Modelleri dürüst değerlendir</h3><span class="pill p-high">Yüksek</span></div>
+        <ul>
+          <li>Rastgele değil, zamana göre ayır: eğitim geçmiş, test gelecek (ör. Döngü 25 test seti).</li>
+          <li>Her modeli basit referanslarla kıyasla: "geçen ayın değeri" ve "döngü ortalaması". Bunları geçemeyen model başarılı sayılmaz.</li>
+          <li>Kayan pencereli (walk-forward) doğrulama ve tahmin aralıkları raporla.</li>
+        </ul>
+        <p class="why">"LSTM %95 doğrulukla tahmin etti" gibi bir cümle jürinin en çok sorguladığı şeydir. Referans karşılaştırması bunu engeller.</p>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Tekrarlanabilir çalış</h3><span class="pill p-mid">Orta</span></div>
+        <ul>
+          <li>Tüm kod GitHub'da, veriyi indiren ve temizleyen betikler dahil. Ham veri asla elle düzenlenmez.</li>
+          <li>Kütüphane sürümleri sabitlenir (requirements dosyası). Her şekil koddan üretilir.</li>
+          <li>Tez bitince repo Zenodo ile arşivlenip DOI alınabilir.</li>
+        </ul>
+        <p class="why">Jüri "bu grafiği tekrar üretebilir misin?" diye sorduğunda tek komutla cevap verebilmek ciddi profesyonellik göstergesi.</p>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Literatürü erken ve sistemli tara</h3><span class="pill p-mid">Orta</span></div>
+        <ul>
+          <li>Zotero ile kaynak yönetimi. NASA ADS üzerinden arama.</li>
+          <li>Okundu: Hudson, Cliver, White, Machol ve ark. (2023), "The greatest GOES soft X-ray flares: Saturation and recalibration over two Hale cycles", Solar Physics (arXiv:2310.11457). 0.7 çarpanı, GOES-16/15 oranı (1,10 ± 0,04), aletler arası ~%20 karşılaştırılabilirlik, doymuş patlamaların yeniden hesaplanması ve arka plan çıkarmanın güç yasası üssünü değiştirdiği (1,97 ve 2,15). S3 için de temel kaynak.</li>
+          <li>Başlangıç okumaları: Hathaway (2015) güneş döngüsü derlemesi, Clette ve arkadaşlarının leke sayısı yeniden kalibrasyon çalışmaları, Veronig ve arkadaşlarının (2002) GOES flare istatistikleri, Aschwanden ve arkadaşlarının güç yasası derlemeleri.</li>
+          <li>Her makale için bu sayfada kısa not tutulacak.</li>
+        </ul>
+        <p class="why">Tartışma bölümü, bulgularını literatürle kıyaslayabildiğin ölçüde güçlü olur. Künyeler okuma sırasında doğrulanacak.</p>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Şekil standardı belirle</h3><span class="pill p-low">Düşük</span></div>
+        <ul>
+          <li>Tüm grafiklerde aynı renk ölçeği (flare sınıfları için yukarıdaki cetvel), aynı yazı tipi, birimli eksenler.</li>
+          <li>X-ışını akısı her zaman logaritmik eksende.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>Uzay temalı, 3B web sitesi</h3><span class="pill p-mid">Orta</span></div>
+        <ul>
+          <li>Profesyonel, uzay temalı bir site: 3B Güneş ve Dünya sahnesi (Three.js), üzerinde patlamaların ve fırtınaların zaman içinde oynatılması, interaktif grafikler.</li>
+          <li>Site, Colab defterlerinin ürettiği işlenmiş verileri kullanır. Böylece sitedeki her rakam tezdekiyle aynı olur.</li>
+          <li>Tasarım ve 3B sahne erken başlayabilir, veri bağlantısı analizler bittikçe eklenir.</li>
+          <li>Bu proje defteri de tezin süreç kaydı olarak ekte referans verilebilir.</li>
+        </ul>
+        <p class="why">Savunmada canlı gösterim için çok güçlü bir araç. Yalnız jüri asıl analizi puanlar, sitenin zamanı analizden çalmaması gerekir.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="yol">
+    <div class="sec-head">
+      <span class="eyebrow">Yol haritası</span>
+      <h2>Fazlar</h2>
+      <p class="lede">Teslim tarihi netleşince her faza tarih eklenecek.</p>
+    </div>
+    <div class="road">
+      <div class="ph"><span class="n">0</span><div class="t"><h3>Konu ve tez önerisi</h3><p>Başlık, sorular, hipotezler belirlendi. Danışmanın resmi onayı bekleniyor.</p></div><span class="pill p-next">Onay bekliyor</span></div>
+      <div class="ph"><span class="n">1</span><div class="t"><h3>Literatür taraması</h3><p>Temel kaynaklar, yöntem örnekleri, açık sorular.</p></div><span class="pill p-wait">Bekliyor</span></div>
+      <div class="ph"><span class="n">2</span><div class="t"><h3>Veri toplama ve temizleme</h3><p>01–05 defterleri: indirme, NCEI homojenleştirme, çapraz kalibrasyon, köprü ve duyarlılık analizleri.</p></div><span class="pill p-done">Tamamlandı</span></div>
+      <div class="ph"><span class="n">3</span><div class="t"><h3>Keşifsel analiz</h3><p>Temel grafikler, döngü hizalaması, ilk gözlemler.</p></div><span class="pill p-wait">Bekliyor</span></div>
+      <div class="ph"><span class="n">4</span><div class="t"><h3>S1–S3 ve S5 analizleri</h3><p>Karşılaştırma, korelasyon ve gecikme, güç yasası, Dünya'ya etki. S5 başladı (06 defteri).</p></div><span class="pill p-next">Devam ediyor</span></div>
+      <div class="ph"><span class="n">5</span><div class="t"><h3>S4 modelleme</h3><p>Referans modeller, SARIMA, Prophet, LSTM, kayan pencereli doğrulama.</p></div><span class="pill p-wait">Bekliyor</span></div>
+      <div class="ph"><span class="n">6</span><div class="t"><h3>Uzay temalı 3B web sitesi</h3><p>İlk sürüm yayında: 3B Güneş–Dünya sahnesi, yıl kaydırıcısı, 10 interaktif grafik, sunum modu. Tüm sayılar 07 defterinin veri dosyasından.</p></div><span class="pill p-next">İlk sürüm hazır</span></div>
+      <div class="ph"><span class="n">7</span><div class="t"><h3>Yazım ve savunma</h3><p>Tez metni, sunum, prova.</p></div><span class="pill p-wait">Bekliyor</span></div>
+    </div>
+  </section>
+
+  <section id="kararlar">
+    <div class="sec-head">
+      <span class="eyebrow">Kararlar günlüğü</span>
+      <h2>Alınan kararlar</h2>
+      <p class="lede">Her karar, kim tarafından ve neden alındığıyla birlikte kaydedilir.</p>
+    </div>
+    <div class="log">
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Tez konusu olarak güneş X-ışını akısı ve leke verisinin zaman serisi analizi seçildi.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Tez profesyonel bir proje olarak yürütülecek, tüm süreç bu web sayfasında kayıt altında tutulacak.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Başlık revize edildi: "iki tam döngü" ifadesi kaldırıldı, odak Döngü 23–25 arası flare ve leke ilişkisine çekildi.</b></p><p class="src">Öneri. Danışman görüşü bekleniyor.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Kapsama Dünya'ya etki eklendi: OMNI2 Dst/Kp verisi, yeni araştırma sorusu S5. Başlık buna göre güncellendi.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Analiz ortamı Google Colab. Veriler Google Drive'da tutulacak.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Sonuçlar uzay temalı, 3B görselleri olan profesyonel bir web sitesinde sunulacak.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Veri çekme başladı: 01_veri_cekme defteri hazırlandı.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Ana flare listesi, ölçek düzeltmesi yapılmış NCEI bilimsel kalite flare özetleri olacak. HEK listesi ön analiz ve karşılaştırma için.</b></p><p class="src">Öneri. Onay bekleniyor.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>01 defteri çalıştırıldı, tüm veriler Drive'a indi. Döngü maksimumları kesinleşti: 2001-11, 2014-04, 2024-10.</b></p><p class="src">Sonuç. Defter sürüm 1.2'ye güncellendi (değişken çakışması ve uyarılar düzeltildi).</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Tez sitesinin ilk sürümü yayınlandı ("Güneş Döngüleri 23–25"). 07 defteri tüm sonuçları tek veri dosyasına aktarıyor; site bu dosyadan okuyor. Hoca sunumu akışı eklendi.</b></p><p class="src">Sonuç.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>En güçlü fırtına (2003-11-20, Dst −422 nT) öncesindeki en büyük patlama M7.9; kayıtlı en büyük patlamanın (2003-11-04, batı kenarı) ardından Dst −29 nT. Sunumun ana örneği.</b></p><p class="src">Sonuç.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>06 sonuçları: nihai döngü tablosu (S4) kesinleşti. S5'te fırtına olasılığı patlama şiddetiyle artıyor (şiddetli fırtına için 1,43 → 1,69 → 2,60 kat). Fırtınalar leke sayısını 10–13 ay geriden izliyor.</b></p><p class="src">Sonuç.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Döngü 23 için referans senaryo S4 (veriye dayalı köprü). Sıradaki analiz S5 (Dünya'ya etki), ardından web sitesi ve hocaya sunum hazırlığı.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>05 sonuçları: Döngü 25 / 24 = 1,40 tüm testlerde sabit. Sabit fark düzeltilmiş köprü (eğim 1,091) patlama köprüsüyle (1,107) uyuşuyor. Referans senaryo önerisi: S4 (veriye dayalı, D25/D23 ≈ 0,93), S1 (1,15) alternatif. Veri hazırlığı (Faz 2) tamamlandı.</b></p><p class="src">Öneri. Tunahan'ın ve danışmanın onayı bekleniyor.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>04 sonucu: daha güçlü köprü yok. Döngü 23 karşılaştırması dört senaryoyla (bağlantısız, literatür, patlama köprüsü, dakika köprüsü) aralık olarak raporlanacak. Ana karşılaştırma Döngü 24 ve 25.</b></p><p class="src">Öneri. Onay bekleniyor.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>03 sonuçları: yeni grup (GOES 13–19) kalibrasyonu kabul edildi. Eski grubun 2009 köprüsü (11 B sınıfı olay) ana çözümde kullanılmayacak, duyarlılık analizi olarak raporlanacak. Daha güçlü köprü için 1 dakikalık veri taranacak (04 defteri).</b></p><p class="src">Öneri. Onay bekleniyor.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Uydular arası kalibrasyon farkı için çapraz kalibrasyon yapılacak: tüm uydular GOES-16 ölçeğine getirilecek (03 defteri).</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>02B sürüm 1.1 çalıştırıldı: 4 doymuş dev patlama listeye girdi ve ≥ ile işaretlendi.</b></p><p class="src">Sonuç.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>02B sonuçları: 0.7 ölçek farkı doğrulandı (oran 1,43–1,48 → 2020'den sonra 1,02). 12 uyduda 124.172 kayıt 67.462 tekil patlamaya indirildi. Doymuş patlamaların eksik olduğu fark edildi, defter sürüm 1.1'e güncellendi.</b></p><p class="src">Sonuç.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Uydu birleştirme kuralı: pik zamanları 10 dk içinde, farklı uydu, akı oranı en fazla 3 kat olan kayıtlar tek patlama sayılır. Temsilci uydu yaklaşık NOAA birincil uydu sırasıyla seçilir, uydular arası akı oranları raporlanır.</b></p><p class="src">Öneri. Sonuçlara göre gözden geçirilecek.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>02A sonuçları: HEK'te çift kayıt sorunu yok, 2024-05-08 X9.0 kaydı hatalı ve çıkarıldı. 12 uydunun NCEI dosyası indi, yapı satır bazlı (START/PEAK/END + flare_id).</b></p><p class="src">Sonuç.</p></div></div>
+      <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>NCEI'de her uydu için görev boyu tek bilimsel kalite flare dosyası bulundu (GOES 8–15 sürüm 1-0-0, GOES 16–19 sürüm 2-2-2). 02 defteri bunları kullanacak.</b></p><p class="src">Sonuç.</p></div></div>
+    </div>
+  </section>
+
+  <section id="acik">
+    <div class="sec-head">
+      <span class="eyebrow">Açık sorular</span>
+      <h2>Karar bekleyenler</h2>
+    </div>
+    <ol class="qs">
+      <li>Danışmanın resmi onayı: Tunahan'a göre büyük ihtimalle onaylanacak, onaylanınca buraya işlenecek.</li>
+      <li>Tez teslim ve savunma tarihi ne zaman? Bölüm hangisi?</li>
+      <li>Ana özgün katkı hangisi olacak: A, B, C, D ya da bir kombinasyon? İlk sonuçlar B'yi güçlendiriyor.</li>
+      <li>CME kataloğu (SOHO/LASCO CDAW) eklensin mi? S5'te patlamayı CME için gösterge olarak kullanıyoruz; katalog eklenirse fiziksel bağlantı doğrudan gösterilebilir.</li>
+      <li>Tez dili ve bölümün yazım kılavuzu (şablon, kaynak gösterme biçimi) nedir?</li>
+    </ol>
+  </section>
+
+  <footer>Proje defteri. Her çalışma oturumundan sonra güncellenir.</footer>
+</div>
+
+</body>
+</html>
