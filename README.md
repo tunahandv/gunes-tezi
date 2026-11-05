@@ -4,8 +4,8 @@
 
 2000–2025 döneminde güneş aktivitesinin nasıl değiştiğini ve bu aktivitenin Dünya'daki jeomanyetik fırtınalara nasıl yansıdığını GOES X-ışını, SILSO güneş lekesi ve NASA OMNI2 verileriyle inceleyen zaman serisi analizi.
 
-- **Tez sitesi:** `https://tunahandv.github.io/gunes-tezi/`
-- **Proje defteri** (kararlar, bulgular, yol haritası): `https://tunahandv.github.io/gunes-tezi/proje-defteri.html`
+- **Tez sitesi:** https://tunahandv.github.io/gunes-tezi/
+- **Proje defteri** (kararlar, bulgular, yol haritası): https://tunahandv.github.io/gunes-tezi/proje-defteri.html
 
 ## Araştırma soruları
 
@@ -59,3 +59,11 @@ Kullanılan başlıca kütüphaneler: `pandas`, `numpy`, `matplotlib`, `xarray`,
 ## Kaynakça
 
 - Hudson, H. S., Cliver, E. W., White, S. M., Machol, J. ve ark. (2023). *The greatest GOES soft X-ray flares: Saturation and recalibration over two Hale cycles.* arXiv:2310.11457.
+
+## Sıradaki adımlar
+
+1. Danışmana sunum ve konu onayı
+2. S2: gecikmeli korelasyonlar için blok bootstrap anlamlılık testleri
+3. S3: döngü bazında güç yasası üssü (arka planı çıkarılmış akılarla)
+4. S4: SARIMA, Prophet ve LSTM; zamana göre ayrılmış test, basit referans modellerle karşılaştırma
+5. SOHO/LASCO CME kataloğunun eklenmesi ve S5'in CME üzerinden tekrarı
