@@ -20,8 +20,8 @@
 ## Öne çıkan bulgular
 
 1. **Veri homojenleştirme sonucu değiştiriyor.** NOAA operasyonel listesindeki 0,7 ölçek çarpanı ve uydular arası kalibrasyon farkları düzeltilmeseydi Döngü 25 / Döngü 24 oranı 2,39 olarak raporlanacaktı. Düzeltilmiş değer 1,40. GOES-16 / GOES-15 oranı (1,08) Hudson ve ark. (2023) ile uyumlu.
-2. **Döngü 24 leke başına en az patlama üretti.** 1000 leke başına M+X patlama: Döngü 23 → 325,6, Döngü 24 → 215,8, Döngü 25 → 302,7. Döngü 25 / 24 = 1,40, tüm duyarlılık testlerinde sabit.
-3. **Büyük patlama fırtına olasılığını artırıyor.** Patlamadan sonraki 12–96 saatte şiddetli fırtına (Dst ≤ −100 nT) olasılığı, rastgele zamanlara göre: M1–M5 1,43×, M5–X1 1,69×, ≥X1 2,60×.
+2. **Döngü 23 leke başına hem daha çok büyük patlama hem daha çok şiddetli fırtına üretti.** 1000 leke başına M+X: Döngü 23 → 325,6, Döngü 24 → 215,8, Döngü 25 → 302,7. D23/D24 = 1,51 (blok bootstrap %95 GA 1,20–2,07, p < 0,001). Uydu kalibrasyonundan bağımsız Dst verisinde şiddetli fırtına günü D23/D24 = 1,97 (p = 0,005). Döngü 24 ile 25 arasındaki fark (1,40) anlamlı değil (p = 0,09).
+3. **Büyük patlama fırtına olasılığını artırıyor.** Patlamadan sonraki 12–96 saatte şiddetli fırtına (Dst ≤ −100 nT) olasılığı, rastgele zamanlara göre: M1–M5 1,42×, M5–X1 1,61×, ≥X1 2,67× (tümü p < 0,002). Lojistik regresyon: akı 10 kat artınca şiddetli fırtına odds'u 3,4 katına çıkıyor (z = 6,7). Patlamanın disk üzerindeki konumu anlamlı fark yaratmıyor.
 4. **Fırtınanın büyüklüğünü patlamanın büyüklüğü belirlemiyor.** Analiz penceresindeki en güçlü fırtınadan (2003-11-20, Dst −422 nT) önceki 4 günün en büyük patlaması M7.9. Kayıtlı en büyük patlamanın (2003-11-04, batı kenarı) ardından Dst yalnızca −29 nT.
 
 ## Depo yapısı

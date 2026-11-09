@@ -364,7 +364,7 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
         <p class="why">Sınır: tek bir zayıf köprü, Döngü 23 hakkındaki sonucu tersine çevirebiliyor. Daha güçlü bir köprü bulunmadan Döngü 23 karşılaştırması aralık olarak raporlanacak.</p>
       </div>
       <div class="card">
-        <div class="card-top"><h3>Döngü 25, Döngü 24'ten leke başına %40 daha fazla büyük patlama üretti</h3><span class="pill p-done">Sağlam bulgu</span></div>
+        <div class="card-top"><h3>Döngü 25 / Döngü 24 = 1,40: kalibrasyona karşı sağlam, istatistiksel olarak anlamlı değil</h3><span class="pill p-mid">08 ile düzeltildi</span></div>
         <ul>
           <li>1000 leke başına M+X, tam homojen GOES-16 ölçeğinde: Döngü 24 → 215,8, Döngü 25 → 302,7. Oran 1,40.</li>
           <li>Düzeltme aşamalarında Döngü 25 / Döngü 24 oranı: HEK 2,39 → NCEI 1,53 → NCEI + kalibrasyon 1,40. İki döngü de aynı kalibre uydu ağıyla ölçüldüğü için köprü belirsizliğinden etkilenmiyor.</li>
@@ -621,6 +621,7 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Veri çekme başladı: 01_veri_cekme defteri hazırlandı.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Ana flare listesi, ölçek düzeltmesi yapılmış NCEI bilimsel kalite flare özetleri olacak. HEK listesi ön analiz ve karşılaştırma için.</b></p><p class="src">Öneri. Onay bekleniyor.</p></div></div>
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>01 defteri çalıştırıldı, tüm veriler Drive'a indi. Döngü maksimumları kesinleşti: 2001-11, 2014-04, 2024-10.</b></p><p class="src">Sonuç. Defter sürüm 1.2'ye güncellendi (değişken çakışması ve uyarılar düzeltildi).</p></div></div>
+      <div class="entry"><time datetime="2026-11-10">10.11.2026</time><div class="t"><p><b>08 sonuçları: D25/D24 farkı anlamlı değil (p = 0,089), K2 yeniden yazıldı. D23 leke başına hem patlamada (p = 0,0008) hem uydudan bağımsız şiddetli fırtına verisinde (p = 0,005) öne çıkıyor. Fırtına olasılığı artışı ve doz–yanıt güçlü anlamlı; konum etkisi yok. Sitedeki iddialar buna göre düzeltildi.</b></p><p class="src">Sonuç.</p></div></div>
       <div class="entry"><time datetime="2026-11-10">10.11.2026</time><div class="t"><p><b>Danışman konuyu onayladı. Tezin sonunda net bir sonuca varılmasını istedi; sonuç veri biriktikçe seçilecek. "Sonuç adayları" bölümü açıldı.</b></p><p class="src">Danışman kararı, Tunahan'ın aktarımı.</p></div></div>
       <div class="entry"><time datetime="2026-11-10">10.11.2026</time><div class="t"><p><b>08 anlamlılık defteri hazırlandı. Sahte (rastgele) veriyle denendiğinde hiçbir testte anlamlı sonuç üretmedi: testler yanlış alarm vermiyor.</b></p><p class="src">Sonuç.</p></div></div>
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Proje GitHub'a taşındı (tunahandv/gunes-tezi): README, 01–07 defterleri, site, proje defteri ve veri dosyası. Site GitHub Pages'te yayında: tunahandv.github.io/gunes-tezi.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
@@ -652,23 +653,23 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
         <ul><li>Kanıt: ham liste D25/D24'ü 1,7 kat abartıyor (2,39 → 1,40); ölçek farkı 1,43 veriyle tespit edildi; GOES-16/15 = 1,08, literatürle uyumlu (02B, 03, 05).</li><li>Eksik: yok. Yöntemsel katkı olarak güçlü, tek başına ana sonuç olmak için fazla teknik.</li></ul>
       </div>
       <div class="card">
-        <div class="card-top"><h3>K2 · Döngü 24 leke başına en az patlama üretti; Döngü 25 normale döndü</h3><span class="pill p-done">Güçlü · test ediliyor</span></div>
-        <ul><li>Kanıt: D25/D24 = 1,40, tüm kalibrasyon testlerinde sabit; D24 tüm senaryolarda en düşük (06).</li><li>Bekleyen: 08-A güven aralığı ve p-değeri. S3 (şiddet dağılımı döngüler arasında farklı mı?).</li></ul>
+        <div class="card-top"><h3>K2 · Döngü 23 leke başına hem daha çok büyük patlama hem daha çok şiddetli fırtına üretti; Döngü 24 ve 25 ayırt edilemiyor</h3><span class="pill p-done">Güçlü · ana sonuç adayı</span></div>
+        <ul><li>08-A, M+X: D23/D24 = 1,51 [1,20–2,07], p = 0,0008. X: D23/D24 = 1,67 (p = 0,009), D25/D23 = 0,61 (p = 0,024).</li><li>08-A, şiddetli fırtına günü (Dst ≤ −100, uydu kalibrasyonundan bağımsız): D23/D24 = 1,97 (p = 0,005), D25/D23 = 0,59 (p = 0,004). İki bağımsız veri türü aynı yönü gösteriyor ve Güneş ile Dünya tarafını birleştiriyor.</li><li><b>Düzeltme:</b> Önceki K2 ("Döngü 25, 24'ten %40 daha verimli") istatistiksel olarak desteklenmedi: D25/D24 = 1,40 [0,86–2,10], p = 0,089. Oran kalibrasyona karşı sağlam ama Döngü 25'in kısa penceresi yüzünden belirsizlik büyük.</li><li>Çekinceler: Döngü 23'ün yükseliş evresi (1996–1999) pencere dışında; Döngü 25 bitmedi ve fırtınalar ~1 yıl gecikmeli olduğu için D25 fırtına oranları eksik kalabilir; patlama tarafında D23 S4 köprüsüne bağlı.</li><li>Bekleyen: S3 (şiddet dağılımı D23'te farklı mı?), 1996–1999 eklenerek D23'ün tamamıyla tekrar.</li></ul>
       </div>
       <div class="card">
         <div class="card-top"><h3>K3 · Patlamanın büyüklüğü fırtına olasılığını artırır ama fırtınanın şiddetini belirlemez</h3><span class="pill p-done">Güçlü · test ediliyor</span></div>
-        <ul><li>Kanıt: doz–yanıt 1,43× → 1,69× → 2,60×; en güçlü fırtına M7.9 sonrası, en büyük patlama sonrası Dst −29 (06).</li><li>Bekleyen: 08-C (katın güven aralığı, lojistik eğim), CME kataloğu ile doğrudan fiziksel bağlantı.</li></ul>
+        <ul><li>Birinci yarı doğrulandı (08-C): tüm sınıflarda katın güven aralığı 1'in üstünde; ≥X1 şiddetli fırtına 2,67× [1,71–4,46]; 500 rastgele kümenin hiçbiri ulaşamadı (p &lt; 0,002). Lojistik eğim 1,23 ± 0,18, z = 6,7, p = 1,7×10⁻¹¹: akı 10 kat artınca şiddetli fırtına odds'u 3,4 katına çıkıyor.</li><li>Konum fark yaratmıyor (08-D): merkez, doğu ve batı kenarı arasında fırtına oranı farkı anlamlı değil (p ≥ 0,67). Patlamanın kendi özellikleri fırtınayı tam açıklamıyor.</li><li>İkinci yarı ("şiddeti belirlemez") henüz yalnızca vakalarla destekli. Bekleyen: fırtına çıkan olaylarda pik akı ile en düşük Dst arasındaki sıra korelasyonu; CME kataloğu.</li></ul>
       </div>
       <div class="card">
-        <div class="card-top"><h3>K4 · Fırtınalar leke sayısını yaklaşık bir yıl geriden izler</h3><span class="pill p-mid">Orta · test ediliyor</span></div>
-        <ul><li>Kanıt: düzleştirilmiş serilerde en iyi gecikme orta fırtınalar 13, şiddetli 10 ay (06).</li><li>Bekleyen: 08-B (yapay seri testi, döngü bazında kararlılık).</li></ul>
+        <div class="card-top"><h3>K4 · Orta fırtınalar leke sayısını yaklaşık bir yıl geriden izler</h3><span class="pill p-done">Destekli</span></div>
+        <ul><li>08-B1 (aylar, düzleştirilmemiş, 2000 yapay seri, çoklu test düzeltmeli): M+X gecikme 0 ay, r = 0,76, p &lt; 0,001; orta fırtınalar 13 ay, r = 0,53, p = 0,029; şiddetli fırtınalar 13 ay, r = 0,46, p = 0,006.</li><li>08-B2 kararlılık: M+X gecikmesi her döngüde −1 ile 2 ay arası (sağlam). Orta fırtınalar D23'te 14, D24'te 12 ay; bir döngü dışarıda 12–13 ay (sağlam; D25 eksik pencere). Şiddetli fırtınalarda döngüden döngüye 1–15 ay (kararlı değil).</li><li>08-B3: trend çıkarıldıktan sonra da aylık leke fazlalığı aynı ayın patlamalarıyla (r = 0,53) ve aynı/sonraki ayın fırtınalarıyla (r = 0,15–0,18) anlamlı ilişkili.</li></ul>
       </div>
       <div class="card">
         <div class="card-top"><h3>K5 · Tahmin ve şiddet dağılımı (S3, S4)</h3><span class="pill p-wait">Bekliyor</span></div>
         <ul><li>S3 ve S4 sonuçları geldikçe burada bir aday oluşacak.</li></ul>
       </div>
     </div>
-    <p class="note">Karar kuralı (öneri): Ana sonuç, en az iki bağımsız testten geçen ve mümkünse Güneş ile Dünya tarafını birleştiren bulgu olacak. Şu anki güçlü aday birleşimi K2 + K3; K1 yöntemsel katkı olarak sonuç bölümüne girer.</p>
+    <p class="note">Karar kuralı (öneri): Ana sonuç, en az iki bağımsız testten geçen ve mümkünse Güneş ile Dünya tarafını birleştiren bulgu olacak. 08 sonrası durum: yeni K2 bu kuralı karşılayan ilk aday (iki bağımsız veri türü, iki taraf). K3'ün ilk yarısı güçlü destekleyici sonuç. K1 yöntemsel katkı, K4 ikincil bulgu.</p>
   </section>
 
   <section id="siradaki">
@@ -679,7 +680,8 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
     </div>
     <ol class="qs">
       <li><s>Hocaya sunum.</s> Tamamlandı: konu onaylandı, sonunda net bir sonuç istendi.</li>
-      <li><b>Anlamlılık testleri (08 defteri, hazır).</b> Döngü oranları için blok bootstrap, gecikmeler için faz rastgeleleştirilmiş yapay seriler, fırtına olasılığı için 500 rastgele küme ve lojistik regresyon, konum için permütasyon testi.</li>
+      <li><b>Anlamlılık testleri (08) tamamlandı.</b> Sonuç adayları güncellendi. Sırada: K3'ün ikinci yarısı için akı–fırtına şiddeti testi ve S3.</li>
+      <li style="display:none"> Döngü oranları için blok bootstrap, gecikmeler için faz rastgeleleştirilmiş yapay seriler, fırtına olasılığı için 500 rastgele küme ve lojistik regresyon, konum için permütasyon testi.</li>
       <li><b>S3 güç yasası (09 defteri).</b> Arka planı çıkarılmış pik akılarla maksimum olabilirlik üssü, döngü bazında; eşik seçimine duyarlılık; Hudson ve ark. (1,97) ile karşılaştırma.</li>
       <li><b>S4 modelleme (10 defteri).</b> 1749'dan beri aylık leke serisi ve aylık M+X; zamana göre ayrılmış test (Döngü 25); "geçen ay" ve "döngü ortalaması" referanslarına karşı SARIMA, Prophet, LSTM; kayan pencereli doğrulama.</li>
       <li><b>CME kataloğu (onay gelirse).</b> SOHO/LASCO CDAW kataloğu ile S5'i patlama yerine CME üzerinden tekrar; halo CME'lerin fırtına olasılığı.</li>

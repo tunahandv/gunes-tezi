@@ -262,7 +262,7 @@ body.sunum section.bolum,body.sunum header.sahne{scroll-snap-align:start}
     <div class="kas">
       <div class="bolum-bas">
         <span class="etiket">04 · Güneş tarafı (S1, S2)</span>
-        <h2>Döngü 24 yalnızca az lekeli değildi, leke başına da az patlama üretti</h2>
+        <h2>Döngü 23 leke başına en çok büyük patlamayı üretti; Döngü 24 ile 25 istatistiksel olarak ayırt edilemiyor</h2>
         <p>Homojenleştirilmiş listede 67.466 patlama var. Döngüleri adil karşılaştırmak için patlama sayısı, döngü boyunca toplanan leke sayısına bölündü.</p>
       </div>
       <div class="kutu">
@@ -366,7 +366,7 @@ body.sunum section.bolum,body.sunum header.sahne{scroll-snap-align:start}
             <li>Eski ve yeni uydular tek bir kısa dönemle (2009 sonbaharı, 12 gün, 176 dakika) bağlanıyor. Döngü 23 karşılaştırması bu yüzden aralık olarak verildi.</li>
             <li>Döngü 23'ün yükseliş evresi (1996–1999) pencerede yok; Döngü 25 henüz bitmedi.</li>
             <li>Fırtınaları asıl üreten koronal kütle atımları; bu aşamada patlama onların göstergesi olarak kullanıldı.</li>
-            <li>Kenar bölgelerdeki X patlaması sayısı az (33 ve 36); konum farkı için anlamlılık testi gerekli.</li>
+            <li>Döngü 25 / Döngü 24 farkı (1,40) kalibrasyona karşı sağlam, ama güven aralığı geniş (0,86–2,10) ve fark anlamlı değil (p = 0,09). Döngü 25 bitince yeniden test edilecek.</li>
           </ul>
         </div>
         <div class="kutu">
@@ -646,7 +646,7 @@ document.getElementById('ayHam').onclick = () => ayDugme(true);
   });
   const r = d.map(x => x['M+X /1000SN']), rx = d.map(x => x['X /1000SN']);
   document.getElementById('gunesMetin').innerHTML = `
-    <div class="bulgu"><span class="buyuk-sayi">%${tr((r[2] / r[1] - 1) * 100, 0)}</span><p>Döngü 25, Döngü 24'e göre leke başına bu kadar fazla M ve X sınıfı patlama üretti. Oran ${tr(r[2] / r[1], 2)}; kalibrasyonun tüm varyasyonlarında ve yalnızca M sınıfıyla yapılan kalibrasyonda aynı kaldı.</p></div>
+    <div class="bulgu"><span class="buyuk-sayi">${tr(r[0] / r[1], 2)}×</span><p>Döngü 23, Döngü 24'e göre leke başına bu kadar fazla M ve X sınıfı patlama üretti. Blok bootstrap %95 güven aralığı 1,20–2,07, p &lt; 0,001. X sınıfında oran 1,67 (p = 0,009).</p></div>
     <div class="bulgu"><span class="buyuk-sayi">${tr(r[1], 0)}</span><p>Döngü 24'ün 1000 leke başına M+X sayısı. Köprü senaryosu ne olursa olsun üç döngünün en düşüğü (Döngü 23: ${tr(lo, 0)}–${tr(hi, 0)}).</p></div>
     <p>Döngü 23 ile 25 benzer: veriye dayalı köprüyle oran ${tr(r[2] / r[0], 2)}, literatür varsayımıyla ${tr(sen[1]['D25/D23'], 2)}. X sınıfında Döngü 25 ve 24 leke başına neredeyse aynı (${tr(rx[2], 2)} ve ${tr(rx[1], 2)}); Döngü 25'in fazlalığı M sınıfından geliyor.</p>
     <p>Patlamalar leke sayısıyla eş zamanlı ilerliyor: 13 ay düzleştirilmiş serilerde en yüksek korelasyon gecikmesiz (r = ${tr(Math.max(...V.gecikme['M+X']), 2)}).</p>`;
@@ -680,7 +680,7 @@ document.getElementById('ayHam').onclick = () => ayDugme(true);
     <div class="bulgu dunya"><span class="buyuk-sayi">${tr(x['Kat'], 1)}×</span><p>X sınıfı bir patlamadan sonraki 4 günde şiddetli fırtına olasılığı (%${tr(x['Patlama sonrası %'], 1)}), rastgele bir zamana göre (%${tr(x['Rastgele %'], 1)}) bu kadar yüksek.</p></div>
     <p><strong>Doz–yanıt ilişkisi:</strong> kat, patlama büyüdükçe düzenli artıyor: M1–M5 ${tr(m['Kat'], 2)}×, M5–X1 ${tr(m5['Kat'], 2)}×, X ${tr(x['Kat'], 2)}×.</p>
     <p>Yine de X patlamalarının yaklaşık %${tr(100 - x['Patlama sonrası %'], 0)}'sinden sonra şiddetli fırtına çıkmıyor; orta fırtına bile yalnızca %${tr(x50['Patlama sonrası %'], 0)}'sinde görülüyor. Patlamanın büyüklüğü fırtınayı tek başına belirlemiyor.</p>
-    <p>Diskin doğu kenarındaki X patlamaları daha zayıf etkili görünüyor (${tr(T.ol.find(r => r.Grup === '≥X1 · doğu kenarı' && r['Fırtına'] === 'Dst ≤ -100')['Kat'], 2)}×, merkez ${tr(T.ol.find(r => r.Grup === '≥X1 · merkez' && r['Fırtına'] === 'Dst ≤ -100')['Kat'], 2)}×). Kenarlarda olay sayısı az olduğu için bu bir ipucu.</p>
+    <p>Patlamanın Güneş diskindeki konumu fark yaratmıyor: merkez, doğu ve batı kenarındaki X patlamalarından sonraki fırtına oranları arasında permütasyon testine göre anlamlı fark yok (p ≥ 0,67).</p>
     <p>Fırtınalar leke sayısını geriden izliyor: orta fırtınalar ${en('Dst≤−50 gün')}, şiddetli fırtınalar ${en('Dst≤−100 gün')} ay gecikmeli. Fırtınalar döngünün iniş evresinde yoğunlaşıyor.</p>`;
 })();
 
@@ -791,8 +791,8 @@ vakaSec('2003');
   const ff = V.en_buyuk_firtinalar[0];
   const k = [
     ['Veri', 'Homojenleştirme sonucu değiştiriyor', `Ham listeyle Döngü 25 / 24 oranı ${tr(T.asama[2]['HEK /1000SN'] / T.asama[1]['HEK /1000SN'], 2)}, düzeltilmiş listeyle ${tr(d[2] / d[1], 2)}. Ölçek farkı ve uydu kalibrasyonu literatürle uyumlu.`, R.gunes],
-    ['Güneş', 'Döngü 24 leke başına en az patlama üretti', `1000 leke başına M+X: ${tr(d[0], 0)} / ${tr(d[1], 0)} / ${tr(d[2], 0)}. Döngü 25, 24'e göre %${tr((d[2] / d[1] - 1) * 100, 0)} daha verimli; 23 ile 25 benzer.`, R.gunes],
-    ['Dünya', 'Büyük patlama, fırtına olasılığını artırıyor', `X sonrası şiddetli fırtına olasılığı rastgeleye göre ${tr(x['Kat'], 1)} kat; etki patlama büyüdükçe artıyor ve 2–3 gün sonra görülüyor.`, R.aurora],
+    ['Güneş ve Dünya', 'Döngü 23 leke başına hem daha çok patlama hem daha çok şiddetli fırtına üretti', `1000 leke başına M+X: ${tr(d[0], 0)} / ${tr(d[1], 0)} / ${tr(d[2], 0)}; D23/D24 = 1,51 (p < 0,001). Uydu kalibrasyonundan bağımsız olan Dst verisinde de D23 leke başına yaklaşık 2 kat şiddetli fırtına günü üretti (p = 0,005). D24 ile D25 arasındaki fark anlamlı değil.`, R.gunes],
+    ['Dünya', 'Büyük patlama, fırtına olasılığını artırıyor', `X sonrası şiddetli fırtına olasılığı rastgeleye göre ${tr(x['Kat'], 1)} kat (500 rastgele kümenin hiçbiri ulaşamadı, p < 0,002). Lojistik regresyon: akı 10 kat artınca şiddetli fırtına odds\'u 3,4 katına çıkıyor (z = 6,7).`, R.aurora],
     ['Dünya', 'Ama fırtınanın büyüklüğünü patlama belirlemiyor', `En güçlü fırtınanın (${ff.gun}, Dst ${ff.dst} nT) öncesindeki en büyük patlama ${ff.kaynak_sinif}. Kayıtlı en büyük patlamanın ardından Dst yalnızca ${tr(V.en_buyuk_patlamalar.find(p => p.t.startsWith('2003-11-04'))?.dst)} nT.`, R.aurora]
   ];
   document.getElementById('sonuclar').innerHTML = k.map(([e, b, p, c]) => `<div class="kutu" style="border-top:3px solid ${c}"><span class="etiket">${e}</span><h3>${b}</h3><p style="color:var(--soluk);font-size:.9rem">${p}</p></div>`).join('');
