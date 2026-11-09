@@ -178,6 +178,7 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
       <li><a href="#yol">Yol haritası</a></li>
       <li><a href="#kararlar">Kararlar</a></li>
       <li><a href="#sonuc-adaylari">Sonuç adayları</a></li>
+      <li><a href="#sorunlar">Sorunlar</a></li>
       <li><a href="#siradaki">Sıradaki adımlar</a></li>
       <li><a href="#acik">Açık sorular</a></li>
     </ul>
@@ -621,6 +622,7 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Veri çekme başladı: 01_veri_cekme defteri hazırlandı.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Ana flare listesi, ölçek düzeltmesi yapılmış NCEI bilimsel kalite flare özetleri olacak. HEK listesi ön analiz ve karşılaştırma için.</b></p><p class="src">Öneri. Onay bekleniyor.</p></div></div>
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>01 defteri çalıştırıldı, tüm veriler Drive'a indi. Döngü maksimumları kesinleşti: 2001-11, 2014-04, 2024-10.</b></p><p class="src">Sonuç. Defter sürüm 1.2'ye güncellendi (değişken çakışması ve uyarılar düzeltildi).</p></div></div>
+      <div class="entry"><time datetime="2026-11-10">10.11.2026</time><div class="t"><p><b>İlke: çekilen tüm veriler kusursuz olmalı. CME verisi (hız, Dünya'ya varış süresi) ayrı bir veri seti olarak eklenecek. "Sorunlar ve çözümler" tablosu açıldı.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
       <div class="entry"><time datetime="2026-11-10">10.11.2026</time><div class="t"><p><b>08 sonuçları: D25/D24 farkı anlamlı değil (p = 0,089), K2 yeniden yazıldı. D23 leke başına hem patlamada (p = 0,0008) hem uydudan bağımsız şiddetli fırtına verisinde (p = 0,005) öne çıkıyor. Fırtına olasılığı artışı ve doz–yanıt güçlü anlamlı; konum etkisi yok. Sitedeki iddialar buna göre düzeltildi.</b></p><p class="src">Sonuç.</p></div></div>
       <div class="entry"><time datetime="2026-11-10">10.11.2026</time><div class="t"><p><b>Danışman konuyu onayladı. Tezin sonunda net bir sonuca varılmasını istedi; sonuç veri biriktikçe seçilecek. "Sonuç adayları" bölümü açıldı.</b></p><p class="src">Danışman kararı, Tunahan'ın aktarımı.</p></div></div>
       <div class="entry"><time datetime="2026-11-10">10.11.2026</time><div class="t"><p><b>08 anlamlılık defteri hazırlandı. Sahte (rastgele) veriyle denendiğinde hiçbir testte anlamlı sonuç üretmedi: testler yanlış alarm vermiyor.</b></p><p class="src">Sonuç.</p></div></div>
@@ -670,6 +672,41 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
       </div>
     </div>
     <p class="note">Karar kuralı (öneri): Ana sonuç, en az iki bağımsız testten geçen ve mümkünse Güneş ile Dünya tarafını birleştiren bulgu olacak. 08 sonrası durum: yeni K2 bu kuralı karşılayan ilk aday (iki bağımsız veri türü, iki taraf). K3'ün ilk yarısı güçlü destekleyici sonuç. K1 yöntemsel katkı, K4 ikincil bulgu.</p>
+  </section>
+
+  <section id="sorunlar">
+    <div class="sec-head">
+      <span class="eyebrow">Veri kalitesi · 10.11.2026</span>
+      <h2>Sorunlar ve çözümler</h2>
+      <p class="lede">İlke: çekilen her veri kusursuz olmalı. Her sorun bulunduğu yerde kaydedilir, çözümü ve kalan etkisi yazılır.</p>
+    </div>
+    <div class="tbl"><table>
+      <thead><tr><th>Sorun</th><th>Nasıl fark edildi</th><th>Çözüm</th><th>Durum</th></tr></thead>
+      <tbody>
+        <tr><td>Operasyonel listede 0,7 ölçek çarpanı</td><td>D25 ham listede leke sayısına göre fazla patlama gösterdi</td><td>NCEI bilimsel kalite listesi; oran 1,43 veriyle ölçüldü</td><td><span class="pill p-done">Çözüldü</span></td></tr>
+        <tr><td>Hatalı kayıt (2024-05-08 X9.0)</td><td>Aktif bölgesiz kayıt; aynı dakikada X1.0 kaydı var</td><td>Listeden çıkarıldı</td><td><span class="pill p-done">Çözüldü</span></td></tr>
+        <tr><td>Doymuş dev patlamalar okunmuyordu</td><td>En büyük patlamalar NCEI listesinde yoktu</td><td>EVENT_PEAK_SATURATED okundu, ≥ ile işaretlendi, Hudson ve ark. değerleri ek sütunda</td><td><span class="pill p-done">Çözüldü</span></td></tr>
+        <tr><td>Uydular arası kalibrasyon farkı</td><td>Aynı patlamanın uydu çiftlerinde farklı ölçülmesi</td><td>Çapraz kalibrasyon; GOES-16/15 = 1,08 literatürle uyumlu</td><td><span class="pill p-done">Çözüldü</span></td></tr>
+        <tr><td>GOES-13 doğrusal değil</td><td>C/M/X sınıfında farklı oranlar</td><td>Temsilci uydu değil; sınırlılık olarak yazılıyor</td><td><span class="pill p-done">Etkisiz</span></td></tr>
+        <tr><td>Eski–yeni uydu köprüsü zayıf</td><td>Tek çakışma: 2009 sonbaharı, 12 gün, 176 dakika; toplamsal sabit fark</td><td>S4 referans + senaryo aralığı; uydudan bağımsız Dst verisiyle çapraz kontrol (08-A)</td><td><span class="pill p-mid">Kısmen</span></td></tr>
+        <tr><td>D25 / D24 farkı abartılıyordu</td><td>08-A güven aralığı 1'i içerdi (p = 0,089)</td><td>İddia geri çekildi, site ve sonuç adayları düzeltildi</td><td><span class="pill p-done">Düzeltildi</span></td></tr>
+        <tr><td>Döngü 23 eksik (1996–1999 yok)</td><td>Analiz penceresi 2000'de başlıyor</td><td>GOES-8/9 ve SN zaten var; OMNI 1996–1999 indirilecek; döngünün tamamıyla tekrar (09)</td><td><span class="pill p-next">Sırada</span></td></tr>
+        <tr><td>Döngü 25 bitmedi, fırtınalar ~1 yıl gecikmeli</td><td>D25 fırtına oranları düşük çıktı</td><td>Faz eşleşmeli karşılaştırma: her döngünün ilk ~6 yılı kendi arasında; 2026 verisinin eklenmesi</td><td><span class="pill p-next">Sırada</span></td></tr>
+        <tr><td>Dst'nin son yılları kesinleşmemiş</td><td>Kyoto: kesin Dst 1957–2020; 2021–2026/09 geçici; sonrası hızlı bakış. 2017, 2018, 2020 için veri eksikliği uyarısı</td><td>Her saate sürüm etiketi (kesin/geçici); D25 sonuçları için duyarlılık; SYM-H ile çapraz kontrol</td><td><span class="pill p-next">Sırada</span></td></tr>
+        <tr><td>Patlama, CME'nin vekili olarak kullanılıyor</td><td>Konum etkisi yok (08-D); en büyük fırtına M7.9 sonrası</td><td>CME kataloğu: hız, genişlik, halo; Dünya'ya varış zamanı ve hızı</td><td><span class="pill p-next">Planlandı</span></td></tr>
+        <tr><td>12–96 saat penceresi başka kaynaklı fırtınaları da içerebilir</td><td>Rastgele fırtına oranı %8–29</td><td>ICME listesiyle fırtınanın gerçek kaynağını (CME / hızlı güneş rüzgârı) ayırmak</td><td><span class="pill p-next">Planlandı</span></td></tr>
+        <tr><td>Kütüphane sürümleri sabit değil</td><td>Colab ortamı zamanla değişiyor</td><td>Her deftere sürüm kaydı hücresi; GitHub'a requirements.txt</td><td><span class="pill p-next">Sırada</span></td></tr>
+      </tbody>
+    </table></div>
+    <div class="card">
+      <div class="card-top"><h3>CME verisi için kalite planı</h3><span class="pill p-next">Planlandı</span></div>
+      <ul>
+        <li><b>SOHO/LASCO CDAW kataloğu (1996–):</b> her CME için zaman, açısal genişlik, doğrusal hız, halo bilgisi. Bilinen sorunlar: hızlar gökyüzü düzleminde ölçüldüğü için Dünya'ya yönelik CME'lerde gerçek hızı düşük gösterir; elle hazırlanmış katalog, "zayıf olay" notları var; SOHO'nun 1998 yazındaki kesintisi gibi veri boşlukları.</li>
+        <li><b>Richardson ve Cane ICME listesi (1996–):</b> CME'nin Dünya'ya gerçekten ulaştığı an, yerinde ölçülen hız, ilişkili LASCO CME'si ve Dst. Varış süresini doğrudan verir.</li>
+        <li><b>NASA DONKI (2010–):</b> CME'lerin 3B hız ve yön analizi; izdüşüm sorununu Döngü 24–25 için giderir.</li>
+        <li><b>Kontroller:</b> kataloglar arası hız karşılaştırması; patlama–CME eşleştirmesinde zaman ve konum açısı tutarlılığı; belirsiz eşleşmeler zorlanmadan ayrı işaretlenir; veri boşlukları haritalanır; her dosyanın adresi ve SHA-256 özeti kaydedilir.</li>
+      </ul>
+    </div>
   </section>
 
   <section id="siradaki">
