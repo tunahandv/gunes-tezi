@@ -42,6 +42,7 @@ data/        tez_verisi.json: sitedeki tüm grafik ve sayıların kaynağı (07 
 | `05_kopru_senaryolar` | 2009 köprüsü, M sınıfı duyarlılık analizi, Döngü 23 senaryoları |
 | `06_dunyaya_etki` | Nihai liste (S4), üst üste bindirilmiş olay analizi, fırtına olasılığı, gecikme, vakalar |
 | `07_web_verisi` | Site için `tez_verisi.json` dosyasının üretilmesi |
+| `08_anlamlilik` | Blok bootstrap, faz rastgeleleştirilmiş yapay seriler, rastgele küme ve permütasyon testleri |
 
 ## Çalıştırma
 
@@ -62,8 +63,8 @@ Kullanılan başlıca kütüphaneler: `pandas`, `numpy`, `matplotlib`, `xarray`,
 
 ## Sıradaki adımlar
 
-1. Danışmana sunum ve konu onayı
-2. S2: gecikmeli korelasyonlar için blok bootstrap anlamlılık testleri
+1. ~~Danışmana sunum ve konu onayı~~ (onaylandı)
+2. Anlamlılık testleri (08 defteri)
 3. S3: döngü bazında güç yasası üssü (arka planı çıkarılmış akılarla)
 4. S4: SARIMA, Prophet ve LSTM; zamana göre ayrılmış test, basit referans modellerle karşılaştırma
 5. SOHO/LASCO CME kataloğunun eklenmesi ve S5'in CME üzerinden tekrarı

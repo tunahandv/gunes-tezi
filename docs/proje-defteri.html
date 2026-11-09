@@ -177,6 +177,7 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
       <li><a href="#basari">Başarı stratejisi</a></li>
       <li><a href="#yol">Yol haritası</a></li>
       <li><a href="#kararlar">Kararlar</a></li>
+      <li><a href="#sonuc-adaylari">Sonuç adayları</a></li>
       <li><a href="#siradaki">Sıradaki adımlar</a></li>
       <li><a href="#acik">Açık sorular</a></li>
     </ul>
@@ -620,6 +621,8 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Veri çekme başladı: 01_veri_cekme defteri hazırlandı.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Ana flare listesi, ölçek düzeltmesi yapılmış NCEI bilimsel kalite flare özetleri olacak. HEK listesi ön analiz ve karşılaştırma için.</b></p><p class="src">Öneri. Onay bekleniyor.</p></div></div>
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>01 defteri çalıştırıldı, tüm veriler Drive'a indi. Döngü maksimumları kesinleşti: 2001-11, 2014-04, 2024-10.</b></p><p class="src">Sonuç. Defter sürüm 1.2'ye güncellendi (değişken çakışması ve uyarılar düzeltildi).</p></div></div>
+      <div class="entry"><time datetime="2026-11-10">10.11.2026</time><div class="t"><p><b>Danışman konuyu onayladı. Tezin sonunda net bir sonuca varılmasını istedi; sonuç veri biriktikçe seçilecek. "Sonuç adayları" bölümü açıldı.</b></p><p class="src">Danışman kararı, Tunahan'ın aktarımı.</p></div></div>
+      <div class="entry"><time datetime="2026-11-10">10.11.2026</time><div class="t"><p><b>08 anlamlılık defteri hazırlandı. Sahte (rastgele) veriyle denendiğinde hiçbir testte anlamlı sonuç üretmedi: testler yanlış alarm vermiyor.</b></p><p class="src">Sonuç.</p></div></div>
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Proje GitHub'a taşındı (tunahandv/gunes-tezi): README, 01–07 defterleri, site, proje defteri ve veri dosyası. Site GitHub Pages'te yayında: tunahandv.github.io/gunes-tezi.</b></p><p class="src">Tunahan'ın kararı.</p></div></div>
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>Tez sitesinin ilk sürümü yayınlandı ("Güneş Döngüleri 23–25"). 07 defteri tüm sonuçları tek veri dosyasına aktarıyor; site bu dosyadan okuyor. Hoca sunumu akışı eklendi.</b></p><p class="src">Sonuç.</p></div></div>
       <div class="entry"><time datetime="2026-11-05">05.11.2026</time><div class="t"><p><b>En güçlü fırtına (2003-11-20, Dst −422 nT) öncesindeki en büyük patlama M7.9; kayıtlı en büyük patlamanın (2003-11-04, batı kenarı) ardından Dst −29 nT. Sunumun ana örneği.</b></p><p class="src">Sonuç.</p></div></div>
@@ -637,6 +640,37 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
     </div>
   </section>
 
+  <section id="sonuc-adaylari">
+    <div class="sec-head">
+      <span class="eyebrow">Danışman isteği · 10.11.2026</span>
+      <h2>Sonuç adayları</h2>
+      <p class="lede">Danışman tezin sonunda net bir sonuca varmasını istedi. Sonuç şimdiden seçilmiyor; her analizden sonra adayların kanıt durumu güncelleniyor ve ana sonuç veriye göre belirlenecek.</p>
+    </div>
+    <div class="strat">
+      <div class="card">
+        <div class="card-top"><h3>K1 · Homojenleştirme yapılmadan yapılan döngü karşılaştırmaları yanıltıcıdır</h3><span class="pill p-done">Güçlü</span></div>
+        <ul><li>Kanıt: ham liste D25/D24'ü 1,7 kat abartıyor (2,39 → 1,40); ölçek farkı 1,43 veriyle tespit edildi; GOES-16/15 = 1,08, literatürle uyumlu (02B, 03, 05).</li><li>Eksik: yok. Yöntemsel katkı olarak güçlü, tek başına ana sonuç olmak için fazla teknik.</li></ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>K2 · Döngü 24 leke başına en az patlama üretti; Döngü 25 normale döndü</h3><span class="pill p-done">Güçlü · test ediliyor</span></div>
+        <ul><li>Kanıt: D25/D24 = 1,40, tüm kalibrasyon testlerinde sabit; D24 tüm senaryolarda en düşük (06).</li><li>Bekleyen: 08-A güven aralığı ve p-değeri. S3 (şiddet dağılımı döngüler arasında farklı mı?).</li></ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>K3 · Patlamanın büyüklüğü fırtına olasılığını artırır ama fırtınanın şiddetini belirlemez</h3><span class="pill p-done">Güçlü · test ediliyor</span></div>
+        <ul><li>Kanıt: doz–yanıt 1,43× → 1,69× → 2,60×; en güçlü fırtına M7.9 sonrası, en büyük patlama sonrası Dst −29 (06).</li><li>Bekleyen: 08-C (katın güven aralığı, lojistik eğim), CME kataloğu ile doğrudan fiziksel bağlantı.</li></ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>K4 · Fırtınalar leke sayısını yaklaşık bir yıl geriden izler</h3><span class="pill p-mid">Orta · test ediliyor</span></div>
+        <ul><li>Kanıt: düzleştirilmiş serilerde en iyi gecikme orta fırtınalar 13, şiddetli 10 ay (06).</li><li>Bekleyen: 08-B (yapay seri testi, döngü bazında kararlılık).</li></ul>
+      </div>
+      <div class="card">
+        <div class="card-top"><h3>K5 · Tahmin ve şiddet dağılımı (S3, S4)</h3><span class="pill p-wait">Bekliyor</span></div>
+        <ul><li>S3 ve S4 sonuçları geldikçe burada bir aday oluşacak.</li></ul>
+      </div>
+    </div>
+    <p class="note">Karar kuralı (öneri): Ana sonuç, en az iki bağımsız testten geçen ve mümkünse Güneş ile Dünya tarafını birleştiren bulgu olacak. Şu anki güçlü aday birleşimi K2 + K3; K1 yöntemsel katkı olarak sonuç bölümüne girer.</p>
+  </section>
+
   <section id="siradaki">
     <div class="sec-head">
       <span class="eyebrow">Kaldığımız yer · 05.11.2026</span>
@@ -644,8 +678,8 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
       <p class="lede">Veri hazırlığı, S1, S5 ve site tamam. Bir sonraki oturumda buradan devam edilecek.</p>
     </div>
     <ol class="qs">
-      <li><b>Hocaya sunum.</b> Siteyi Sunum modunda göster (konuşma akışı yukarıda). Hocaya sorulacaklar: konu onayı, CME kataloğu eklensin mi, özgün katkı (B ve D öne çıkıyor), Döngü 23 için S4 referans senaryosu uygun mu.</li>
-      <li><b>S2 anlamlılık testleri (08 defteri).</b> Gecikmeli korelasyonlar için blok bootstrap güven aralıkları; trendden arındırılmış seriyle tekrar.</li>
+      <li><s>Hocaya sunum.</s> Tamamlandı: konu onaylandı, sonunda net bir sonuç istendi.</li>
+      <li><b>Anlamlılık testleri (08 defteri, hazır).</b> Döngü oranları için blok bootstrap, gecikmeler için faz rastgeleleştirilmiş yapay seriler, fırtına olasılığı için 500 rastgele küme ve lojistik regresyon, konum için permütasyon testi.</li>
       <li><b>S3 güç yasası (09 defteri).</b> Arka planı çıkarılmış pik akılarla maksimum olabilirlik üssü, döngü bazında; eşik seçimine duyarlılık; Hudson ve ark. (1,97) ile karşılaştırma.</li>
       <li><b>S4 modelleme (10 defteri).</b> 1749'dan beri aylık leke serisi ve aylık M+X; zamana göre ayrılmış test (Döngü 25); "geçen ay" ve "döngü ortalaması" referanslarına karşı SARIMA, Prophet, LSTM; kayan pencereli doğrulama.</li>
       <li><b>CME kataloğu (onay gelirse).</b> SOHO/LASCO CDAW kataloğu ile S5'i patlama yerine CME üzerinden tekrar; halo CME'lerin fırtına olasılığı.</li>
@@ -660,7 +694,7 @@ footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-si
       <h2>Karar bekleyenler</h2>
     </div>
     <ol class="qs">
-      <li>Danışmanın resmi onayı: Tunahan'a göre büyük ihtimalle onaylanacak, onaylanınca buraya işlenecek.</li>
+      <li><s>Danışmanın resmi onayı.</s> Onaylandı (10.11.2026).</li>
       <li>Tez teslim ve savunma tarihi ne zaman? Bölüm hangisi?</li>
       <li>Ana özgün katkı hangisi olacak: A, B, C, D ya da bir kombinasyon? İlk sonuçlar B'yi güçlendiriyor.</li>
       <li>CME kataloğu (SOHO/LASCO CDAW) eklensin mi? S5'te patlamayı CME için gösterge olarak kullanıyoruz; katalog eklenirse fiziksel bağlantı doğrudan gösterilebilir.</li>
